@@ -37,7 +37,7 @@ public class DBConfig {
     public SessionFactory sessionFactory() {
         LocalSessionFactoryBean lsfb = new LocalSessionFactoryBean();
         lsfb.setDataSource(getDataSource());
-        lsfb.setPackagesToScan("com.kexie.acloud.entity");
+        lsfb.setPackagesToScan("com.kexie.acloud");
         lsfb.setHibernateProperties(hibernateProperties());
         try {
             lsfb.afterPropertiesSet();
