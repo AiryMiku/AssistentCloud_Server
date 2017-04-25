@@ -17,7 +17,7 @@ import javax.annotation.Resource;
  */
 @Component("societyDao")
 @Transactional
-public class SocietyDao extends HibernateDaoSupport {
+public class SocietyDao extends HibernateDaoSupport implements ISocietyDao{
 
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {

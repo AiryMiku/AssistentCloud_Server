@@ -16,17 +16,35 @@ import javax.annotation.Resource;
  */
 @Component("taskDao")
 @Transactional
-public class TaskDao extends HibernateDaoSupport {
+public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {
         super.setSessionFactory(sessionFactory);
     }
 
-    public Task add(Task task) {
+    public void add(Task task) {
         getHibernateTemplate().save(task);
+    }
 
-        Task t = getHibernateTemplate().get(Task.class, task.getId());
-        return t;
+    @Override
+    public void update(Task task) {
+        getHibernateTemplate().update(task);
+    }
+
+    @Override
+    public void archive(int taskId) {
+        Task task = getHibernateTemplate().get(Task.class, taskId);
+
+        // TODO: 2017/4/25 设置归档
+
+        getHibernateTemplate().update(task);
+    }
+
+    @Override
+    public void delete(int taskId) {
+        Task task = new Task();
+        task.setId(taskId);
+        getHibernateTemplate().delete(taskId);
     }
 }

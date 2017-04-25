@@ -18,8 +18,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Task {
 
-    @Id
     // 自增
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "task_id")
     public int id;
@@ -33,7 +33,6 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "society_id",nullable = false)
     public Society society;
-
 
     public int taskNum;
 

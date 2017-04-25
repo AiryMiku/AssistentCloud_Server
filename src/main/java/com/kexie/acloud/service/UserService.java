@@ -1,6 +1,6 @@
 package com.kexie.acloud.service;
 
-import com.kexie.acloud.dao.UserDao;
+import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.util.EncryptionUtil;
@@ -18,12 +18,12 @@ import javax.annotation.Resource;
 public class UserService implements IUserService {
 
     @Resource(name = "UserDao")
-    private UserDao mUserDao;
+    private IUserDao mIUserDao;
 
     @Override
     public User login(User user) throws UserException {
 
-        User loginUser = mUserDao.getUser(user.getUserId());
+        User loginUser = mIUserDao.getUser(user.getUserId());
 
         if (loginUser == null)
             throw new UserException("用户不存在");
@@ -38,7 +38,7 @@ public class UserService implements IUserService {
     @Override
     public User register(User user) throws UserException {
 
-        if (mUserDao.hasUserById(user.getUserId()))
+        if (mIUserDao.hasUserById(user.getUserId()))
             throw new UserException("用户已经被注册了");
 
         // 加密
@@ -46,15 +46,15 @@ public class UserService implements IUserService {
         user.setSalt(salt);
         user.setHash(EncryptionUtil.generateMD5(user.getPassword() + salt));
 
-        mUserDao.addUser(user);
+        mIUserDao.addUser(user);
 
-        return mUserDao.getUser(user.getUserId());
+        return mIUserDao.getUser(user.getUserId());
     }
 
     @Override
     public User getUserByUserId(String userId) throws UserException {
 
-        User user =  mUserDao.getUser(userId);
+        User user =  mIUserDao.getUser(userId);
 
         if(user == null)
             throw new UserException("用户不存在");
