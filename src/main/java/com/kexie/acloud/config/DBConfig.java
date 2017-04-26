@@ -25,13 +25,14 @@ import java.util.Properties;
 @EnableTransactionManagement
 @PropertySource("classpath:db.properties")
 public class DBConfig {
+
     @Autowired
     private Environment env;
+
     @Bean
     public HibernateTemplate hibernateTemplate() {
         return new HibernateTemplate(sessionFactory());
     }
-
 
     @Bean
     public SessionFactory sessionFactory() {
@@ -46,6 +47,7 @@ public class DBConfig {
         }
         return lsfb.getObject();
     }
+
     @Bean
     public DataSource getDataSource() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -55,9 +57,13 @@ public class DBConfig {
         dataSource.setPassword(env.getProperty("database.password"));
         return dataSource;
     }
+
     @Bean
-    public HibernateTransactionManager hibTransMan(){
-        return new HibernateTransactionManager(sessionFactory());
+    @Autowired
+    public HibernateTransactionManager transactionManager(SessionFactory s) {
+        HibernateTransactionManager txManager = new HibernateTransactionManager();
+        txManager.setSessionFactory(s);
+        return txManager;
     }
     private Properties hibernateProperties() {
         Properties properties = new Properties();
