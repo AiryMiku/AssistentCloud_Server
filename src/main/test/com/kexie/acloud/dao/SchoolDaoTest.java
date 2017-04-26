@@ -1,6 +1,6 @@
 package com.kexie.acloud.dao;
 
-import com.kexie.acloud.controller.AdminController;
+import com.kexie.acloud.domain.School;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Created by zojian on 2017/4/26.
  */
 public class SchoolDaoTest extends com.kexie.acloud.dao.BaseTest {
+
     @Autowired
-    SchoolDao schoolDao;
-    @Autowired
-    AdminController adminController;
+    ISchoolDao schoolDao;
+
 
     @Test
     public void getSchoolById(){
@@ -21,6 +21,13 @@ public class SchoolDaoTest extends com.kexie.acloud.dao.BaseTest {
     @Test
     public void getAllSchoool(){
         assert schoolDao.getAllSchool().size()>0;
+    }
+
+    @Test
+    public void addSchool(){
+        School school = new School();
+        school.setName("zhbitt");
+        schoolDao.addSchool(school);
     }
 
     @Test

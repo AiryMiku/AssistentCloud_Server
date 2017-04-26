@@ -1,10 +1,13 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.School;
-import com.kexie.acloud.service.SchoolService;
+import com.kexie.acloud.service.ISchoolService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Created by zojian on 2017/4/26.
@@ -14,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class AdminController {
 
     @Autowired
-    private SchoolService schoolService;
+    private ISchoolService schoolService;
 
     @RequestMapping(method = RequestMethod.GET)
     public String index(){
@@ -36,6 +39,7 @@ public class AdminController {
     @ResponseBody
     @RequestMapping(value = "/schools",method = RequestMethod.POST)
     public String  addSchools(School school){
+        System.out.println(school.toString());
         schoolService.addSchool(school);
         return "success!";
     }

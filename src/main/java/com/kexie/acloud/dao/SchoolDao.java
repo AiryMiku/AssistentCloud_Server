@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * Created by zojian on 2017/4/25.
  */
 @Repository
+@Transactional
 public class SchoolDao implements ISchoolDao {
     @Autowired
     private SessionFactory sessionFactory;
@@ -41,8 +43,8 @@ public class SchoolDao implements ISchoolDao {
     @Override
     public List<School> getAllSchool() {
         String hql = "FROM School  ORDER BY school_name";
-        return (List<School>) hibernateTemplate.find(hql);
-        //return (List<School>) getCurrentSession().createQuery(hql).list();
+        //return (List<School>) hibernateTemplate.find(hql);
+        return (List<School>) getCurrentSession().createQuery(hql).list();
     }
 
     @Override
@@ -52,7 +54,7 @@ public class SchoolDao implements ISchoolDao {
 
     @Override
     public void addSchool(School school) {
-        hibernateTemplate.save(school);
+        getCurrentSession().save(school);
     }
 
     @Override
