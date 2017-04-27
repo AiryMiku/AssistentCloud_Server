@@ -43,6 +43,11 @@ public class SchoolService implements ISchoolService {
     }
 
     @Override
+    public void updateSchool(School school, String name) {
+        schoolDao.updateSchool(school,name);
+    }
+
+    @Override
     public void deleteSchool(int id) {
         schoolDao.deleteSchool(id);
     }

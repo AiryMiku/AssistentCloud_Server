@@ -20,6 +20,8 @@ public interface ISchoolService {
 
     public void addSchool(School school);
 
+    public void updateSchool(School school,String name);
+
     public void deleteSchool(int id);
 
     public void addSchoolsFromExcel(File file);

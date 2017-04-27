@@ -71,6 +71,12 @@ public class SchoolDao implements ISchoolDao {
     }
 
     @Override
+    public void updateSchool(School school,String name) {
+        school.setName(name);
+        getCurrentSession().update(school);
+    }
+
+    @Override
     public void deleteSchool(int id) {
         School school = getSchoolById(id);
         if(school!=null)

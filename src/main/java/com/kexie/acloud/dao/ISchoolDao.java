@@ -20,6 +20,8 @@ public interface ISchoolDao {
 
     void addSchool(School school);
 
+    void updateSchool(School school,String name);
+
     void deleteSchool(int id);
 
     void addSchoolsFromExcel(File file);
