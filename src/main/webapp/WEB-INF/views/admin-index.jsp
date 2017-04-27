@@ -12,7 +12,7 @@
 </head>
 <body>
 <div align="center">
-    <form action="/admin/schools" method="post">
+    <form action="/admin/schools/excel" method="post" enctype="multipart/form-data">
         <br/>
         上传学校文件:<input type="file" name="school_excel"/>
         <input type="submit" value="upload"/>
