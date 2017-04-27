@@ -11,7 +11,7 @@ import com.kexie.acloud.domain.User;
 public interface IUserDao {
 
     /**
-     * 通过 Id 获取 User 对象
+     * 通过 Id 获取 TestUser 对象
      */
     User getUser(String userId);
 

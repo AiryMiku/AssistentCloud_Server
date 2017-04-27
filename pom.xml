@@ -9,6 +9,12 @@
     <name>AssistentCloud_Server Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
+
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -17,6 +23,30 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- 添加了spring socket之后，需要添加这个依赖-->
+        <!-- http://stackoverflow.com/questions/27643786/spring-web-socket-message-broker-failing-tests-->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-websocket</artifactId>
+            <version>8.0.23</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-websocket</artifactId>
+            <version>4.3.7.RELEASE</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-messaging -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
+            <version>4.3.7.RELEASE</version>
+        </dependency>
+
 
         <!-- Spring Test -->
         <dependency>
@@ -35,10 +65,11 @@
 
 
         <!--Servlet 核心-->
+        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>RELEASE</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
 
         <!--Spring 核心-->
@@ -154,17 +185,17 @@
     </dependencies>
 
 
-    <build>
-        <finalName>AssistentCloud_Server</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <!--<build>-->
+    <!--<finalName>AssistentCloud_Server</finalName>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<groupId>org.apache.maven.plugins</groupId>-->
+    <!--<artifactId>maven-compiler-plugin</artifactId>-->
+    <!--<configuration>-->
+    <!--<source>1.6</source>-->
+    <!--<target>1.6</target>-->
+    <!--</configuration>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
 </project>

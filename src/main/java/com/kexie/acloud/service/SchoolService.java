@@ -1,7 +1,9 @@
 package com.kexie.acloud.service;
 
+import com.kexie.acloud.dao.ISchoolDao;
 import com.kexie.acloud.dao.SchoolDao;
 import com.kexie.acloud.domain.School;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +16,11 @@ import java.util.List;
 public class SchoolService implements ISchoolService {
 
     @Autowired
-    private SchoolDao schoolDao;
+    private ISchoolDao schoolDao;
 
     @Override
     public List<School> getAllSchool() {
-       return schoolDao.getAllSchool();
+        return schoolDao.getAllSchool();
     }
 
     @Override

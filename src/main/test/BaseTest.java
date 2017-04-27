@@ -1,6 +1,8 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.config.AppConfig;
+
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,5 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 //@TransactionConfiguration(defaultRollback = true)
 //@Transactional
 public class BaseTest{
+
+    @Test
+    public void add(){
+
+    }
 
 }
