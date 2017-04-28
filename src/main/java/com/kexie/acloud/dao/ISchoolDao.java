@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.College;
+import com.kexie.acloud.domain.Major;
 import com.kexie.acloud.domain.School;
 
 import java.io.File;
@@ -37,7 +38,20 @@ public interface ISchoolDao {
 
     List<College> getAllCollege(int school_id);
 
-    void addCollege(College college);
+    void addCollege(College college,int school_id);
 
     void deleteCollege(int college_id);
+
+    // 专业
+    Major getMajorById(int id);
+
+    Major getMajorByName(String name,int college_id);
+
+    boolean majorHasExists(String name,int college_id);
+
+    List<Major> getAllMajor(int college_id);
+
+    void addMajor(Major major,int college_id);
+
+    void deleteMajor(int major_id);
 }
