@@ -1,10 +1,8 @@
 package com.kexie.acloud.controller;
 
-import com.kexie.acloud.domain.School;
-import com.kexie.acloud.service.SchoolService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by zojian on 2017/4/26.
@@ -13,32 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private SchoolService schoolService;
-
-    @RequestMapping(method = RequestMethod.GET)
+    //管理员后台界面
+    @RequestMapping(method = RequestMethod.GET
+            ,produces = {"application/json;charset=UTF-8"})
     public String index(){
        return "admin-index";
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/schools",method = RequestMethod.GET)
-    public String getAllSchool(){
-        return schoolService.getAllSchool().toString();
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/schools/{id}",method = RequestMethod.GET)
-    public String getSchoolById(@PathVariable int id){
-        return schoolService.getSchoolById(id).toString();
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/schools",method = RequestMethod.POST)
-    public String  addSchools(School school){
-        schoolService.addSchool(school);
-        return "success!";
-    }
 
 
 }
