@@ -20,7 +20,14 @@ public interface ITaskDao {
     List<Task> getTasksByPublisherId(String publishId);
 
     /**
-     * 获取一个任务信息
+     * 获取用户拥有的所有任务
+     * @param userId
+     * @return
+     */
+    List<Task> getTasksByUserId(String userId);
+
+    /**
+     * 获取一个任务详细信息
      *
      * @param taskId
      * @return

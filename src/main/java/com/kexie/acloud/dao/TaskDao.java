@@ -34,6 +34,12 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     }
 
     @Override
+    public List<Task> getTasksByUserId(String userId) {
+        return (List<Task>) getHibernateTemplate()
+                .find("from Task where publisher.userId = ?", userId);
+    }
+
+    @Override
     public Task getTasksByTaskId(int taskId) {
         return getHibernateTemplate().get(Task.class,taskId);
     }
