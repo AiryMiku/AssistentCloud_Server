@@ -11,7 +11,21 @@ import java.util.List;
  */
 public interface ITaskDao {
 
-    List<Task> getAllTask();
+    /**
+     * 获取发布者发布的所有任务
+     *
+     * @param publishId 发布者 userId
+     * @return 当前发布者发布的所有任务
+     */
+    List<Task> getTasksByPublisherId(String publishId);
+
+    /**
+     * 获取一个任务信息
+     *
+     * @param taskId
+     * @return
+     */
+    Task getTasksByTaskId(int taskId);
 
     void add(Task task);
 

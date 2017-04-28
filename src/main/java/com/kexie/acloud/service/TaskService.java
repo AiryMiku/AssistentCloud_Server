@@ -1,7 +1,11 @@
 package com.kexie.acloud.service;
 
+import com.kexie.acloud.dao.ITaskDao;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +15,13 @@ import java.util.Map;
  * DateTime : 2017/4/27 10:00
  * Description :
  */
-public class TaskService implements ITaskService{
+
+@Service
+public class TaskService implements ITaskService {
+
+    @Autowired
+    ITaskDao mTaskDao;
+
     @Override
     public Task getTaskByTaskId(String taskId) {
         return null;
@@ -25,6 +35,11 @@ public class TaskService implements ITaskService{
     @Override
     public List<Task> getTaskByUserId(String userId) {
         return null;
+    }
+
+    @Override
+    public List<Task> getTaskByPublisherId(String publisherId) {
+        return mTaskDao.getTasksByPublisherId(publisherId);
     }
 
     @Override

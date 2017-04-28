@@ -35,6 +35,12 @@ public interface ITaskService {
     List<Task> getTaskByUserId(String userId);
 
     /**
+     * 获取发布者的任务
+     * @param publisherId
+     * @return
+     */
+    List<Task> getTaskByPublisherId(String publisherId);
+    /**
      * 创建一个任务
      *
      * @param task

@@ -1,5 +1,7 @@
 package com.kexie.acloud.dao;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.kexie.acloud.config.AppConfig;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SubTask;
@@ -10,17 +12,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
 
 /**
  * Created : wen
@@ -32,47 +28,59 @@ import javax.annotation.Resource;
 @ContextConfiguration(classes = AppConfig.class)
 public class TaskDaoTest {
 
-
     @Autowired
     ITaskDao taskDao;
 
     @Test
     public void add() throws Exception {
-//        Task task = new Task();
-//        User user = new User();
-//        Society society = new Society();
-//
-//        society.setId(1);
-//        user.setUserId("admin");
-//
-//        task.setPublisher(user);
-//        task.setSociety(society);
-//        taskDao.add(task);
+        Task task = new Task();
+        Task t2 = new Task();
+
+        // 任务发布者
+        User publisher = new User();
+        publisher.setUserId("wen");
+        task.setPublisher(publisher);
+        t2.setPublisher(publisher);
+
+        // 任务属于的Id
+        Society society = new Society();
+        society.setId(1);
+        task.setSociety(society);
+        t2.setSociety(society);
+
+        // 子任务
+        List<SubTask> subTasks = new ArrayList<>();
+        subTasks.add(new SubTask("问题1", 0.1));
+        task.setSubTask(subTasks);
+
+        List<SubTask> subTasks2 = new ArrayList<>();
+        subTasks2.add(new SubTask("问题1", 0.1));
+        subTasks2.add(new SubTask("问题2", 0.2));
+        subTasks2.add(new SubTask("问题3", 0.3));
+        t2.setSubTask(subTasks2);
+
+        taskDao.add(task);
+        taskDao.add(t2);
+
+        List<Task> tasksByPublisherId = taskDao.getTasksByPublisherId(publisher.getUserId());
+
+        // 处理游离化问题
+        System.out.println(
+                JSON.toJSONString(tasksByPublisherId, SerializerFeature.DisableCircularReferenceDetect));
     }
 
     @Test
     public void update() {
-        Task task = new Task();
+        Task task = taskDao.getTasksByTaskId(2);
+        System.out.println(task);
+        System.out.println(JSON.toJSONString(task));
 
-        User user = new User();
-        Society society = new Society();
+        String s = "{\"executors\":[],\"id\":2,\"publisher\":\"wen\",\"society\":1,\"subTask\":[{\"id\":2,\"progress\":0.1,\"question\":\"问题1，是否能更新啊\"},{\"id\":3,\"progress\":0.2,\"question\":\"问题2\"},{\"id\":4,\"progress\":0.3,\"question\":\"问题3\"}],\"sumProgress\":0.0,\"taskNum\":0,\"time\":1493410104238,\"title\":\"123\"}";
 
-        society.setId(1);
-        user.setUserId("admin");
+        Task x = JSON.parseObject(s, Task.class);
+        System.out.println(x);
 
-        task.setPublisher(user);
-        task.setSociety(society);
-
-
-        List<SubTask> subTasks = new ArrayList<>();
-
-        subTasks.add(new SubTask("问题1",0.1));
-
-        task.setSubTask(subTasks);
-
-        taskDao.add(task);
-
-        System.out.println(taskDao.getAllTask());
+        taskDao.update(x);
     }
 
 }

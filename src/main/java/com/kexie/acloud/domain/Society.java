@@ -95,4 +95,23 @@ public class Society {
     public void setSociety_logo(String society_logo) {
         this.society_logo = society_logo;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("\"id\":")
+                .append(id);
+        sb.append(",\"name\":\"")
+                .append(name).append('\"');
+        sb.append(",\"summary\":\"")
+                .append(summary).append('\"');
+        sb.append(",\"principal\":")
+                .append(principal);
+        sb.append(",\"createTime\":\"")
+                .append(createTime).append('\"');
+        sb.append(",\"society_logo\":\"")
+                .append(society_logo).append('\"');
+        sb.append('}');
+        return sb.toString();
+    }
 }
