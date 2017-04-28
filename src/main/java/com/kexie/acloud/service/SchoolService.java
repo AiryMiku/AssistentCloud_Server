@@ -3,6 +3,7 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.dao.ISchoolDao;
 import com.kexie.acloud.domain.School;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

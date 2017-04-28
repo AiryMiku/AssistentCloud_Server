@@ -1,6 +1,8 @@
 
 package com.kexie.acloud.websocket;
 
+import com.kexie.acloud.log.Log;
+
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -45,6 +47,7 @@ public class HandShake implements HandshakeInterceptor {
     }
 
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
+        Log.debug("握手之后");
     }
 
 }

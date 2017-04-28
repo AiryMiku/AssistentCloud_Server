@@ -150,6 +150,7 @@
         } else {
             websocket = new SockJS("http://" + path + "/ws/sockjs" + uid);
         }
+        // 连接成功的回调，应该是new之后就开启连接
         websocket.onopen = function (event) {
             console.log("WebSocket:已连接");
             console.log(event);
@@ -179,6 +180,7 @@
                 data["fromName"] = fromName;
                 data["to"] = to;
                 data["text"] = v;
+                // webSocket 发送一条信息
                 websocket.send(JSON.stringify(data));
                 $("#content").append("<div class='tmsg'><label class='name'>我&nbsp;" + new Date().Format("yyyy-MM-dd hh:mm:ss") + "</label><div class='tmsg_text'>" + data.text + "</div></div>");
                 scrollToBottom();

@@ -1,5 +1,7 @@
 package com.kexie.acloud.websocket;
 
+import com.kexie.acloud.log.Log;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.socket.WebSocketHandler;
@@ -25,6 +27,8 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
      * @param registry
      */
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+
+        Log.debug("配置WebSocket");
 
         // 表示添加了一个/socket端点，客户端就可以通过这个端点来进行连接。
         registry.addHandler(handler, "/ws")
