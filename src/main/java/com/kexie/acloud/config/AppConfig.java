@@ -4,7 +4,10 @@ package com.kexie.acloud.config;
  * Created by zojian on 2017/4/25.
  */
 
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import org.springframework.context.annotation.*;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -12,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 @Configuration
 @ComponentScan(basePackages = {"com.kexie.acloud"},
@@ -31,6 +35,16 @@ public class AppConfig extends WebMvcConfigurerAdapter  {
     public MultipartResolver multipartResolver()throws IOException{
         return new CommonsMultipartResolver();
     }
+
+    @Bean
+    public HttpMessageConverter httpMessageConverter(){
+        FastJsonHttpMessageConverter mpc = new FastJsonHttpMessageConverter();
+        ArrayList<MediaType> list = new ArrayList<MediaType>();
+        list.add(MediaType.APPLICATION_JSON);
+        mpc.setSupportedMediaTypes(list);
+        return mpc;
+    }
+
 //    @Bean
 //    public MessageSource messageSource() {
 //        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();

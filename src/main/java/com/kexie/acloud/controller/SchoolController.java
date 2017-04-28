@@ -1,6 +1,7 @@
 package com.kexie.acloud.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.School;
 import com.kexie.acloud.exception.SchoolNotFoundException;
 import com.kexie.acloud.service.ISchoolService;
@@ -84,10 +85,35 @@ public class SchoolController {
         }
     }
 
+
+    /**
+     * 获取某所学校所有学院信息
+     * @param school_id
+     * @return
+     */
     @RequestMapping(value = "/{school_id}/colleges",method = RequestMethod.GET
             ,produces = {"application/json;charset=UTF-8"})
     public String getAllCollege(@PathVariable int school_id){
         return JSON.toJSONString(schoolService.getAllCollege(school_id));
+    }
+
+    /**
+     * 向某所学校添加学院信息
+     * @param school_id
+     * @param college
+     * @return
+     */
+    @RequestMapping(value = "/{school_id}/colleges",method = RequestMethod.POST,
+            produces = {"application/json;charset=UTF-8"})
+    public String addCollege(@PathVariable int school_id, College college){
+        schoolService.addCollege(college,school_id);
+        return "success!";
+    }
+
+    @RequestMapping(value = "/{school_id}/colleges/{college_id}/majors",method = RequestMethod.GET,
+            produces = {"application/json;charset=UTF-8"})
+    public String getAllMajor(@PathVariable int college_id){
+        return JSON.toJSONString(schoolService.getAllMajor(college_id));
     }
 
     @ExceptionHandler(SchoolNotFoundException.class)

@@ -4,34 +4,26 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * Created by zojian on 2017/4/27.
+ * Created by zojian on 2017/4/28.
  */
 @Entity
-@Table(name = "College")
-public class College {
+public class Major {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "college_id")
+    @Column(name = "major_id")
     private int id;
 
-    @Column(name = "college_name")
+    @Column(name = "major_name")
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.SAVE_UPDATE)
-    @JoinColumn(name = "school_id",nullable = false)
-    private School school;
-
-    @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "college_id")
-    private Set<Major> majors = new HashSet<Major>();
+    private College college;
 
-    public College() {
+    public Major() {
     }
 
     public int getId() {
@@ -50,28 +42,19 @@ public class College {
         this.name = name;
     }
 
-    public School getSchool() {
-        return school;
+    public College getCollege() {
+        return college;
     }
 
-    public void setSchool(School school) {
-        this.school = school;
-    }
-
-    public Set<Major> getMajors() {
-        return majors;
-    }
-
-    public void setMajors(Set<Major> majors) {
-        this.majors = majors;
+    public void setCollege(College college) {
+        this.college = college;
     }
 
     @Override
     public String toString() {
-        return "College{" +
+        return "Major{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", majors=" + majors +
                 '}';
     }
 }

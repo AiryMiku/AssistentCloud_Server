@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.College;
+import com.kexie.acloud.domain.Major;
 import com.kexie.acloud.domain.School;
 import com.kexie.acloud.util.ExcelUtil;
 import org.hibernate.Session;
@@ -126,8 +127,10 @@ public class SchoolDao implements ISchoolDao {
     }
 
     @Override
-    public void addCollege(College college) {
-        if(collegeHasExists(college.getName(),college.getSchool().getId())==false) {
+    public void addCollege(College college,int school_id) {
+        School school = getSchoolById(school_id);
+        if(collegeHasExists(college.getName(),school_id)==false) {
+            college.setSchool(school);
             getCurrentSession().save(college);
         }
     }
@@ -137,6 +140,54 @@ public class SchoolDao implements ISchoolDao {
         College college = getCollegeById(college_id);
         if(college!=null){
             getCurrentSession().delete(college);
+        }
+    }
+
+    @Override
+    public Major getMajorById(int id) {
+        return getCurrentSession().get(Major.class,id);
+    }
+
+    @Override
+    public Major getMajorByName(String name, int college_id) {
+        String hql = "FROM Major WHERE major_name = ? AND college_id = ?";
+        Query query = getCurrentSession().createQuery(hql);
+        query.setParameter(0,name);
+        query.setParameter(1,college_id);
+        List<Major> result = (List<Major>)query.list();
+        if(result.size()>0){
+            return result.get(0);
+        }
+        else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean majorHasExists(String name, int major_id) {
+        return getMajorByName(name,major_id) == null ? false:true;
+    }
+
+    @Override
+    public List<Major> getAllMajor(int college_id) {
+        return (List<Major>)getCurrentSession().createQuery("FROM Major WHERE college_id = ?")
+                .setParameter(0,college_id).list();
+    }
+
+    @Override
+    public void addMajor(Major major, int college_id) {
+        College college = getCollegeById(college_id);
+        if(majorHasExists(major.getName(),college_id)==false){
+            major.setCollege(college);
+            getCurrentSession().save(major);
+        }
+    }
+
+    @Override
+    public void deleteMajor(int major_id) {
+        Major major = getMajorById(major_id);
+        if(major!=null){
+            getCurrentSession().delete(major);
         }
     }
 }
