@@ -83,4 +83,41 @@ public class TaskDaoTest {
         taskDao.update(x);
     }
 
+    @Test
+    public void getTasksByUserId() throws Exception {
+
+        Task task = new Task();
+        Task t2 = new Task();
+
+        // 任务发布者
+        User publisher = new User();
+        publisher.setUserId("admin");
+        task.setPublisher(publisher);
+        t2.setPublisher(publisher);
+
+        // 任务属于社团的Id
+        Society society = new Society();
+        society.setId(1);
+        task.setSociety(society);
+        t2.setSociety(society);
+
+        User u1 = new User("wen", "123");
+        User u2 = new User("admin", "123");
+        // 执行者
+        List<User> executor = new ArrayList<>();
+        executor.add(u1);
+        executor.add(u2);
+        task.setExecutors(executor);
+
+        List<User> executor2 = new ArrayList<>();
+        executor2.add(u2);
+        t2.setExecutors(executor2);
+
+        taskDao.add(task);
+        taskDao.add(t2);
+
+        List<Task> tasks = taskDao.getTasksByUserId("wen");
+        System.out.println(tasks);
+    }
+
 }

@@ -34,14 +34,15 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        FastJsonHttpMessageConverter fastJsonHttpMessageConverter4=new FastJsonHttpMessageConverter();
-        FastJsonConfig fastJsonConfig=new FastJsonConfig();
+        FastJsonHttpMessageConverter fastJsonHttpMessageConverter4 = new FastJsonHttpMessageConverter();
+        FastJsonConfig fastJsonConfig = new FastJsonConfig();
 
         fastJsonConfig.setFeatures(Feature.IgnoreNotMatch);
         fastJsonConfig.setCharset(Charset.forName("UTF-8"));
 
         fastJsonHttpMessageConverter4.setFastJsonConfig(fastJsonConfig);
         converters.add(fastJsonHttpMessageConverter4);
+
         super.configureMessageConverters(converters);
     }
 

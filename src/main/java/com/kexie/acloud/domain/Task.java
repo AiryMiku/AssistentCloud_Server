@@ -70,7 +70,7 @@ public class Task {
     @JoinTable(name = "task_user_permission",
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @Fetch(value = FetchMode.SUBSELECT)
     private List<User> executors;
 

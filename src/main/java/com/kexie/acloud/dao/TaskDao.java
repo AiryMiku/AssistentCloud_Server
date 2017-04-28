@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Task;
+import com.kexie.acloud.domain.User;
 
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
@@ -8,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -25,6 +29,7 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         super.setSessionFactory(sessionFactory);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Task> getTasksByPublisherId(String publishId) {
         // Can not set java.lang.String field com.kexie.acloud.domain.User.userId to java.lang.String
@@ -33,15 +38,19 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
                 .find("from Task where publisher.userId = ?", publishId);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Task> getTasksByUserId(String userId) {
+        User user = new User();
+        user.setUserId(userId);
+        // 查询啊,好难
         return (List<Task>) getHibernateTemplate()
-                .find("from Task where publisher.userId = ?", userId);
+                .find("from Task  where ? in elements(executors) ", user);
     }
 
     @Override
     public Task getTasksByTaskId(int taskId) {
-        return getHibernateTemplate().get(Task.class,taskId);
+        return getHibernateTemplate().get(Task.class, taskId);
     }
 
     public void add(Task task) {

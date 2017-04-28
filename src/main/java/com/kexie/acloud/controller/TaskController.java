@@ -18,16 +18,16 @@ import java.util.List;
  * Description :
  */
 @RestController
-@RequestMapping("/task")
+@RequestMapping(value = "/task", produces = {"application/json;charset=UTF-8"})
 public class TaskController {
 
     @Autowired
     private ITaskService mTaskService;
 
-    @RequestMapping(value = "publisher", method = RequestMethod.GET,
-            produces = {"application/json;charset=UTF-8"})
+    @RequestMapping(value = "publisher", method = RequestMethod.GET)
     public List<Task> getTaskByPublisherId(@RequestParam("publisherId") String userId) {
         return mTaskService.getTaskByPublisherId(userId);
     }
+
 
 }
