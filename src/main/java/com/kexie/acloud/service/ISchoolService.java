@@ -1,5 +1,6 @@
 package com.kexie.acloud.service;
 
+import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.School;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public interface ISchoolService {
 
+    //==========学校================
     public List<School> getAllSchool();
 
     public School getSchoolById(int id);
@@ -25,4 +27,17 @@ public interface ISchoolService {
     public void deleteSchool(int id);
 
     public void addSchoolsFromExcel(File file);
+
+    //==========学院================
+    public College getCollegeById(int id);
+
+    public College getCollegeByName(String name,int school_id);
+
+    public boolean collegeHasExists(String name,int school_id);
+
+    public List<College> getAllCollege(int school_id);
+
+    public void addCollege(College college);
+
+    public void deleteCollege(int college_id);
 }

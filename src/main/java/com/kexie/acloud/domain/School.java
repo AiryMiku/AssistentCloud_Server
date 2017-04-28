@@ -10,11 +10,11 @@ import javax.persistence.*;
 public class School{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "school_id")
     private int id;
 
-    @Column(name = "school_name")
+    @Column(name = "school_name",unique = true,nullable = false)
     private String name;
 
     public int getId() {

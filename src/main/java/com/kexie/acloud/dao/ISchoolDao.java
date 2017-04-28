@@ -1,5 +1,6 @@
 package com.kexie.acloud.dao;
 
+import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.School;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public interface ISchoolDao {
 
+    //学校
     School getSchoolById(int id);
 
     School getSchoolByName(String name);
@@ -25,4 +27,17 @@ public interface ISchoolDao {
     void deleteSchool(int id);
 
     void addSchoolsFromExcel(File file);
+
+    //学院
+    College getCollegeById(int id);
+
+    College getCollegeByName(String name,int school_id);
+
+    boolean collegeHasExists(String name,int school_id);
+
+    List<College> getAllCollege(int school_id);
+
+    void addCollege(College college);
+
+    void deleteCollege(int college_id);
 }

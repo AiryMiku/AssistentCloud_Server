@@ -222,7 +222,6 @@ public class ExcelUtil {
         }
 
         List<School> schoolList = new ArrayList<School>();
-        System.out.println("row:"+Rows+" cols:"+Cols);
         for(int r = 1; r < Rows;r++){
             Row row = sheet.getRow(r);
             if(row==null)continue;
@@ -239,7 +238,5 @@ public class ExcelUtil {
             schoolList.add(school);
         }
         return schoolList;
-
-
     }
 }

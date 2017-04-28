@@ -1,6 +1,7 @@
 package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.ISchoolDao;
+import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.School;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,5 +56,35 @@ public class SchoolService implements ISchoolService {
     @Override
     public void addSchoolsFromExcel(File file) {
         schoolDao.addSchoolsFromExcel(file);
+    }
+
+    @Override
+    public College getCollegeById(int id) {
+        return schoolDao.getCollegeById(id);
+    }
+
+    @Override
+    public College getCollegeByName(String name, int school_id) {
+        return schoolDao.getCollegeByName(name,school_id);
+    }
+
+    @Override
+    public boolean collegeHasExists(String name, int school_id) {
+        return schoolDao.collegeHasExists(name,school_id);
+    }
+
+    @Override
+    public List<College> getAllCollege(int school_id) {
+        return schoolDao.getAllCollege(school_id);
+    }
+
+    @Override
+    public void addCollege(College college) {
+        schoolDao.addCollege(college);
+    }
+
+    @Override
+    public void deleteCollege(int college_id) {
+        schoolDao.deleteCollege(college_id);
     }
 }

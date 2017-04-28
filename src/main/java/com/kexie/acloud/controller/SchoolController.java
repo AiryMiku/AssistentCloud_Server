@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
@@ -27,7 +28,6 @@ public class SchoolController {
     private ISchoolService schoolService;
 
     //获取所有学校信息
-
     @RequestMapping(method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
     public String getAllSchool(){
@@ -35,11 +35,12 @@ public class SchoolController {
     }
 
     //通过ID获取学校信息
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}",method = RequestMethod.GET,
+            produces = {"application/json;charset=UTF-8"})
     public ResponseEntity<String> getSchoolById(@PathVariable int id){
         School school = schoolService.getSchoolById(id);
         if(school==null){
-          throw new SchoolNotFoundException(id);
+            throw new SchoolNotFoundException(id);
         }
         return new ResponseEntity<String>(JSON.toJSONString(school),HttpStatus.OK);
 
@@ -47,16 +48,20 @@ public class SchoolController {
     }
 
     //导入一个学校信息
-    @RequestMapping(method = RequestMethod.POST
-            ,produces = {"application/json;charset=UTF-8"})
-    public String addSchools(School school){
+    @RequestMapping(method = RequestMethod.POST)
+    public void addSchools(School school, HttpServletResponse response){
         schoolService.addSchool(school);
-        return "redirect:/admin/schools";
+        try {
+            response.sendRedirect("/admin/schools");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    //通过Excel表导入学校信息
-    //Excel格式
-    //|编号|学校名称|
+    /*通过Excel表导入学校信息
+      Excel格式
+      |编号|学校名称|
+    */
     @RequestMapping(value = "/excel",method = RequestMethod.POST
             ,produces = {"application/json;charset=UTF-8"})
     public String  addSchoolsFromExcel(@RequestParam(value = "school_excel",required = false) MultipartFile school_excel){
@@ -77,6 +82,12 @@ public class SchoolController {
             }
             return "success!excel";
         }
+    }
+
+    @RequestMapping(value = "/{school_id}/colleges",method = RequestMethod.GET
+            ,produces = {"application/json;charset=UTF-8"})
+    public String getAllCollege(@PathVariable int school_id){
+        return JSON.toJSONString(schoolService.getAllCollege(school_id));
     }
 
     @ExceptionHandler(SchoolNotFoundException.class)

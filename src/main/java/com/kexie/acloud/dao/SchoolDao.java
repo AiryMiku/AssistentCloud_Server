@@ -1,5 +1,6 @@
 package com.kexie.acloud.dao;
 
+import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.School;
 import com.kexie.acloud.util.ExcelUtil;
 import org.hibernate.Session;
@@ -34,7 +35,6 @@ public class SchoolDao implements ISchoolDao {
     @Autowired
     private HibernateTemplate hibernateTemplate;
 
-
     @Override
     public School getSchoolById(int id) {
         return getCurrentSession().get(School.class,id);
@@ -56,7 +56,6 @@ public class SchoolDao implements ISchoolDao {
     @Override
     public List<School> getAllSchool() {
         String hql = "FROM School  ORDER BY school_name";
-        //return (List<School>) hibernateTemplate.find(hql);
         return (List<School>) getCurrentSession().createQuery(hql).list();
     }
 
@@ -94,6 +93,50 @@ public class SchoolDao implements ISchoolDao {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public College getCollegeById(int id) {
+        return getCurrentSession().get(College.class,id);
+    }
+
+    @Override
+    public College getCollegeByName(String name,int school_id) {
+        String hql = "FROM College WHERE college_name = ? AND school_id = ?";
+        Query query = getCurrentSession().createQuery(hql);
+        List<College> result = (List<College>) query.setParameter(0,name).setParameter(1,school_id).list();
+        if(result.size()>0){
+            return result.get(0);
+        }
+        else{
+            return null;
+        }
+    }
+
+    @Override
+    public boolean collegeHasExists(String name,int school_id) {
+        return getCollegeByName(name,school_id) == null ? false : true;
+    }
+
+    @Override
+    public List<College> getAllCollege(int school_id) {
+        return (List<College>) getCurrentSession().createQuery("FROM College WHERE school_id = ?")
+                .setParameter(0,school_id).list();
+    }
+
+    @Override
+    public void addCollege(College college) {
+        if(collegeHasExists(college.getName(),college.getSchool().getId())==false) {
+            getCurrentSession().save(college);
+        }
+    }
+
+    @Override
+    public void deleteCollege(int college_id) {
+        College college = getCollegeById(college_id);
+        if(college!=null){
+            getCurrentSession().delete(college);
         }
     }
 }
