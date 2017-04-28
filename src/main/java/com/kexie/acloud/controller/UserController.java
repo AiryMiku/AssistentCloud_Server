@@ -51,7 +51,7 @@ public class UserController {
 //        if (token != null) {
 //            String userId = RedisUtil.get(token);
 //            if (userId != null) {
-//                User userByUserId = mUserService.getUserByUserId(userId);
+//                TestUser userByUserId = mUserService.getUserByUserId(userId);
 //                return UserUtil.getCilentUserField(userByUserId);
 //            }
 //        }
@@ -59,7 +59,7 @@ public class UserController {
 //         验证表单
 //        checkForm(result);
 //
-//        User loginUser = mUserService.login(user);
+//        TestUser loginUser = mUserService.login(user);
 //
 //        String newToken = EncryptionUtil.generateMD5(loginUser.getUserId());
 //        response.addCookie(new Cookie("token", newToken));
@@ -78,7 +78,7 @@ public class UserController {
     ) throws UserException {
 
         // todo 是不是该弄个拦截器什么的
-//        User u = (User) session.getAttribute("user");
+//        TestUser u = (TestUser) session.getAttribute("user");
 //        if (u != null) return u;
 
         // 验证表单
@@ -129,7 +129,7 @@ public class UserController {
 //        if (token != null) {
 //            String userId = RedisUtil.get(token);
 //            if (userId != null) {
-//                User userByUserId = mUserService.getUserByUserId(userId);
+//                TestUser userByUserId = mUserService.getUserByUserId(userId);
 //                return UserUtil.getCilentUserField(userByUserId);
 //            }
 //        }

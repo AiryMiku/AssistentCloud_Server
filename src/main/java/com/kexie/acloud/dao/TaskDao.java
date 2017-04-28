@@ -7,6 +7,8 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -21,6 +23,11 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {
         super.setSessionFactory(sessionFactory);
+    }
+
+    @Override
+    public List<Task> getAllTask() {
+        return (List<Task>) getHibernateTemplate().find("from Task");
     }
 
     public void add(Task task) {

@@ -17,6 +17,7 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+
 import java.io.IOException;
 import java.util.Properties;
 
@@ -65,12 +66,13 @@ public class DBConfig {
         txManager.setSessionFactory(s);
         return txManager;
     }
+
     private Properties hibernateProperties() {
         Properties properties = new Properties();
         properties.put("hibernate.dialect", env.getProperty("hibernate.dialect"));
         properties.put("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
         properties.put("hibernate.show_sql", env.getProperty("hibernate.show_sql"));
-        properties.put("hibernate.dialect.storage_engine",env.getProperty("hibernate.dialect.storage_engine"));
+        properties.put("hibernate.dialect.storage_engine", env.getProperty("hibernate.dialect.storage_engine"));
         properties.put("hibernate.format_sql", env.getProperty("hibernate.format_sql"));
         return properties;
     }
