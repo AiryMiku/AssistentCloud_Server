@@ -1,7 +1,6 @@
 package com.kexie.acloud.websocket;
 
 import com.alibaba.fastjson.JSON;
-import com.kexie.acloud.entity.Message;
 
 import java.io.IOException;
 import java.util.Date;
@@ -11,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
@@ -30,7 +28,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
     public static final Map<Long, WebSocketSession> userSocketSessionMap;
 
     static {
-        userSocketSessionMap = new HashMap<Long, WebSocketSession>();
+        userSocketSessionMap = new HashMap<>();
     }
 
     /**
@@ -115,18 +113,14 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
             if (entry.getValue().isOpen()) {
                 // entry.getValue().sendMessage(message);
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        try {
-                            if (entry.getValue().isOpen()) {
-                                entry.getValue().sendMessage(message);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                new Thread(() -> {
+                    try {
+                        if (entry.getValue().isOpen()) {
+                            entry.getValue().sendMessage(message);
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-
                 }).start();
             }
 

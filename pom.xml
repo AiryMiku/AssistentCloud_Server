@@ -33,7 +33,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--https://mvnrepository.com/artifact/org.springframework/spring-websocket -->
+        <!-- spring Websocket 依赖的库-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-websocket</artifactId>

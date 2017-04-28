@@ -10,21 +10,32 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import javax.annotation.Resource;
 
 /**
- * WebScoket配置处理器
- * @author Goofy
- * @Date 2015年6月11日 下午1:15:09
+ * Created : wen
+ * DateTime : 2017/4/28 11:01
+ * Description : WebSocket 配置文件，定义全局的配置信息
  */
 @Service
 @EnableWebSocket
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
-	@Resource
-	WebSocketHandler handler;
+    @Resource
+    WebSocketHandler handler;
 
-	public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-		registry.addHandler(handler, "/ws").addInterceptors(new HandShake());
+    /**
+     * @param registry
+     */
+    public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
 
-		registry.addHandler(handler, "/ws/sockjs").addInterceptors(new HandShake()).withSockJS();
-	}
+        // 表示添加了一个/socket端点，客户端就可以通过这个端点来进行连接。
+        registry.addHandler(handler, "/ws")
+                .addInterceptors(new HandShake());
+
+        registry.addHandler(handler, "/ws/sockjs")
+                // 添加一个拦截器
+                .addInterceptors(new HandShake())
+                // 开启sockJs的支持
+                // fixme 什么是SckJs
+                .withSockJS();
+    }
 
 }

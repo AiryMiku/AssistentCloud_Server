@@ -1,9 +1,13 @@
 package com.kexie.acloud.domain;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -56,19 +60,21 @@ public class Task {
     @JoinTable(name = "task_user_permission",
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER,cascade = {CascadeType.ALL})
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<User> executors;
 
-    // 子任务-进度
-    @ElementCollection
-    // 表名
-    @JoinTable(name = "subTask", joinColumns = @JoinColumn(name = "task_id"))
-    // 子任务的进度
-    @Column(name = "progress",columnDefinition = "double default 0.0")
-    // 问题
-    @MapKeyColumn(name = "question")
-    // FIXME: 2017/4/27 解决Hibernate lazy的问题
-    private Map<String, Double> subTask;
+
+    // 遇到过这样的问题:
+    // Use of @OneToMany or @ManyToMany targeting an unmapped class: com.kexie.acloud.domain.Task.subTask[java.lang.Double]
+    //
+    // 原因：因为当时是使用map保存<问题，进度>的，进度使用的是Double，Double没有使用@Entity注解，所以使用不了
+    //      而且这样并不好，因为如果之后子问题需要扩充，就需要改了。
+    //      而且遇到上面的问题，所以使用一个实体SubTask保存子任务
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @JoinTable(name = "task_subTask", joinColumns = @JoinColumn(name = "task_id"))
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<SubTask> subTask;
 
     public int getId() {
         return id;
@@ -126,11 +132,11 @@ public class Task {
         this.executors = executors;
     }
 
-    public Map<String, Double> getSubTask() {
+    public List<SubTask> getSubTask() {
         return subTask;
     }
 
-    public void setSubTask(Map<String, Double> subTask) {
+    public void setSubTask(List<SubTask> subTask) {
         this.subTask = subTask;
     }
 

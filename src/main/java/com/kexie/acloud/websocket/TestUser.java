@@ -1,4 +1,4 @@
-package com.kexie.acloud.entity;
+package com.kexie.acloud.websocket;
 
 public class TestUser {
 

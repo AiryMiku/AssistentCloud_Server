@@ -1,10 +1,7 @@
-package com.kexie.acloud.controller;
+package com.kexie.acloud.websocket;
 
 
 import com.alibaba.fastjson.JSON;
-import com.kexie.acloud.entity.Message;
-import com.kexie.acloud.entity.TestUser;
-import com.kexie.acloud.websocket.MyWebSocketHandler;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;

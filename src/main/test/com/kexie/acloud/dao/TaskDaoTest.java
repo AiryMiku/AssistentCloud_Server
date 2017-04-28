@@ -2,6 +2,7 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.config.AppConfig;
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 
@@ -14,7 +15,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -60,12 +63,12 @@ public class TaskDaoTest {
         task.setPublisher(user);
         task.setSociety(society);
 
-        Map<String, Double> subTask = new HashMap<>();
 
-        subTask.put("子任务", 0.9);
-        subTask.put("子任务", 0.9);
+        List<SubTask> subTasks = new ArrayList<>();
 
-        task.setSubTask(subTask);
+        subTasks.add(new SubTask("问题1",0.1));
+
+        task.setSubTask(subTasks);
 
         taskDao.add(task);
 
