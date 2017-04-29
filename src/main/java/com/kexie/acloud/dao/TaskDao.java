@@ -1,9 +1,13 @@
 package com.kexie.acloud.dao;
 
+import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +53,7 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     }
 
     @Override
-    public Task getTasksByTaskId(int taskId) {
+    public Task getTasksByTaskId(String taskId) {
         return getHibernateTemplate().get(Task.class, taskId);
     }
 
@@ -59,23 +63,39 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Override
     public void update(Task task) {
-        // 不考虑动态更新的问题了
         getHibernateTemplate().update(task);
     }
 
     @Override
-    public void archive(int taskId) {
-        Task task = getHibernateTemplate().get(Task.class, taskId);
-
-        // TODO: 2017/4/25 设置归档
-
-        getHibernateTemplate().update(task);
+    public void updateSubTask(SubTask subTask) {
+        getHibernateTemplate().update(subTask);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void delete(int taskId) {
-        Task task = new Task();
-        task.setId(taskId);
-        getHibernateTemplate().delete(taskId);
+    public List<Task> getTasksBySocietyId(int societyId) {
+        return (List<Task>) getHibernateTemplate()
+                .find("from Task where society.id = ?", societyId);
     }
+
+    //    @Override
+//    public void active(String taskId) {
+//        Task task = getHibernateTemplate().get(Task.class, taskId);
+//        task.setTaskType(1);
+//        getHibernateTemplate().update(task);
+//    }
+//
+//    @Override
+//    public void archive(String taskId) {
+//        Task task = getHibernateTemplate().get(Task.class, taskId);
+//        task.setTaskType(2);
+//        getHibernateTemplate().update(task);
+//    }
+//
+//    @Override
+//    public void delete(String taskId) {
+//        Task task = getHibernateTemplate().get(Task.class, taskId);
+//        task.setTaskType(3);
+//        getHibernateTemplate().update(task);
+//    }
 }

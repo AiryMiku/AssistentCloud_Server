@@ -1,10 +1,10 @@
 package com.kexie.acloud.service;
 
+import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created : wen
@@ -25,7 +25,7 @@ public interface ITaskService {
      *
      * @param societyId
      */
-    List<Task> getTaskBySocietyId(String societyId);
+    List<Task> getTaskBySocietyId(int societyId);
 
     /**
      * 获取用户的所有Task
@@ -56,20 +56,17 @@ public interface ITaskService {
 
     /**
      * 更新任务进度
-     *
-     * @param taskId   更新的任务Id
-     * @param progress 任务进度
+     * @param subTasks
      */
-    void updateProgress(String taskId, double progress);
+    void updateSubTask(List<SubTask> subTasks);
 
 
     /**
      * 更新子任务
-     *
-     * @param taskId  更新任务的Id
+     *  @param taskId  更新任务的Id
      * @param subTask 最新的子任务
      */
-    void updateSubTask(String taskId, Map<String, Double> subTask);
+    void updateSubTask(String taskId, List<SubTask> subTask);
 
     /**
      * 更新任务的执行者
@@ -78,6 +75,8 @@ public interface ITaskService {
      * @param executors 最新的执行者
      */
     void updateExecutor(String taskId, List<User> executors);
+
+    void active(String taskId);
 
     /**
      * 归档一个Task
@@ -92,4 +91,6 @@ public interface ITaskService {
      * @param taskId
      */
     void delete(String taskId);
+
+
 }

@@ -1,5 +1,6 @@
 package com.kexie.acloud.dao;
 
+import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public interface ITaskDao {
 
     /**
      * 获取用户拥有的所有任务
+     *
      * @param userId
      * @return
      */
@@ -32,13 +34,13 @@ public interface ITaskDao {
      * @param taskId
      * @return
      */
-    Task getTasksByTaskId(int taskId);
+    Task getTasksByTaskId(String taskId);
 
     void add(Task task);
 
     void update(Task task);
 
-    void archive(int taskId);
+    void updateSubTask(SubTask subTask);
 
-    void delete(int taskId);
+    List<Task> getTasksBySocietyId(int societyId);
 }

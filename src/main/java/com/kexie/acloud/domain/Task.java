@@ -5,6 +5,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SelectBeforeUpdate;
 
 import java.util.Date;
@@ -39,9 +40,10 @@ public class Task {
 
     // 自增
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid",strategy = "uuid")
     @Column(name = "task_id")
-    private int id;
+    private String id;
 
     private String title;
 
@@ -61,7 +63,11 @@ public class Task {
 
     private int taskNum;
 
-    private Date time;
+    // 任务类型：1:活动，2:已经归档，3:删除
+    private int taskType = 1;
+
+    // 任务创建时间
+    private Date time = new Date();
 
     // 总进度
     private double sumProgress;
@@ -72,6 +78,7 @@ public class Task {
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @Fetch(value = FetchMode.SUBSELECT)
+    @JSONField(serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> executors;
 
     // 遇到过这样的问题:
@@ -85,11 +92,11 @@ public class Task {
     @Fetch(value = FetchMode.SUBSELECT)
     private List<SubTask> subTask;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -155,6 +162,14 @@ public class Task {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(int taskType) {
+        this.taskType = taskType;
     }
 
     @Override

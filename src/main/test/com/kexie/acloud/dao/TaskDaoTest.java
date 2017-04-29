@@ -71,7 +71,7 @@ public class TaskDaoTest {
 
     @Test
     public void update() {
-        Task task = taskDao.getTasksByTaskId(2);
+        Task task = taskDao.getTasksByTaskId("123");
         System.out.println(task);
         System.out.println(JSON.toJSONString(task));
 
@@ -113,11 +113,16 @@ public class TaskDaoTest {
         executor2.add(u2);
         t2.setExecutors(executor2);
 
+
         taskDao.add(task);
-        taskDao.add(t2);
+//        taskDao.add(t2);
 
         List<Task> tasks = taskDao.getTasksByUserId("wen");
         System.out.println(tasks);
     }
 
+    @Test
+    public void archive() throws Exception {
+//        taskDao.archive(2);
+    }
 }

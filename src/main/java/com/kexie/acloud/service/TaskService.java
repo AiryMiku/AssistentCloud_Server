@@ -1,14 +1,15 @@
 package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.ITaskDao;
+import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.TaskException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created : wen
@@ -24,17 +25,23 @@ public class TaskService implements ITaskService {
 
     @Override
     public Task getTaskByTaskId(String taskId) {
-        return null;
+
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+
+        if (task == null)
+            throw new TaskException("没有找到当前任务");
+
+        return task;
     }
 
     @Override
-    public List<Task> getTaskBySocietyId(String societyId) {
-        return null;
+    public List<Task> getTaskBySocietyId(int societyId) {
+        return mTaskDao.getTasksBySocietyId(societyId);
     }
 
     @Override
     public List<Task> getTaskByUserId(String userId) {
-        return null;
+        return mTaskDao.getTasksByUserId(userId);
     }
 
     @Override
@@ -44,36 +51,52 @@ public class TaskService implements ITaskService {
 
     @Override
     public void create(Task task) {
-
+        mTaskDao.add(task);
     }
 
     @Override
     public void update(Task task) {
-
+        mTaskDao.update(task);
     }
 
     @Override
-    public void updateProgress(String taskId, double progress) {
-
+    public void updateSubTask(List<SubTask> subTasks) {
+        // 更新子任务
+        subTasks.forEach(task -> mTaskDao.updateSubTask(task) );
     }
 
     @Override
-    public void updateSubTask(String taskId, Map<String, Double> subTask) {
-
+    public void updateSubTask(String taskId, List<SubTask> subTask) {
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+        task.setSubTask(subTask);
+        mTaskDao.update(task);
     }
 
     @Override
     public void updateExecutor(String taskId, List<User> executors) {
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+        task.setExecutors(executors);
+        mTaskDao.update(task);
+    }
 
+    @Override
+    public void active(String taskId) {
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+        task.setTaskType(1);
+        mTaskDao.update(task);
     }
 
     @Override
     public void archive(String taskId) {
-
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+        task.setTaskType(2);
+        mTaskDao.update(task);
     }
 
     @Override
     public void delete(String taskId) {
-
+        Task task = mTaskDao.getTasksByTaskId(taskId);
+        task.setTaskType(3);
+        mTaskDao.update(task);
     }
 }

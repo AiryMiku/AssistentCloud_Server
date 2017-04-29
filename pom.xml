@@ -86,14 +86,12 @@
             <version>4.3.7.RELEASE</version>
         </dependency>
 
-        <!-- fixme Hibernate 和 Spring 连接的配置工具-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>4.3.7.RELEASE</version>
         </dependency>
 
-        <!-- fixme Hibernate 和 Spring 连接的配置工具-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
