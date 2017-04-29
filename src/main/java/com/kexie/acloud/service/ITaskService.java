@@ -36,10 +36,12 @@ public interface ITaskService {
 
     /**
      * 获取发布者的任务
+     *
      * @param publisherId
      * @return
      */
     List<Task> getTaskByPublisherId(String publisherId);
+
     /**
      * 创建一个任务
      *
@@ -56,6 +58,7 @@ public interface ITaskService {
 
     /**
      * 更新任务进度
+     *
      * @param subTasks
      */
     void updateSubTask(List<SubTask> subTasks);
@@ -63,7 +66,8 @@ public interface ITaskService {
 
     /**
      * 更新子任务
-     *  @param taskId  更新任务的Id
+     *
+     * @param taskId  更新任务的Id
      * @param subTask 最新的子任务
      */
     void updateSubTask(String taskId, List<SubTask> subTask);

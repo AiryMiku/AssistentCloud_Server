@@ -27,8 +27,11 @@ public class TaskController {
     @Resource
     private ITaskService mTaskService;
 
-    @RequestMapping(value = "publisher", method = RequestMethod.GET)
-    public List<Task> getTaskByPublisherId(@RequestParam("publisherId") String userId) {
+    /**
+     * 根据发布者Id获取任务
+     */
+    @RequestMapping(value = "/publisher/{id}", method = RequestMethod.GET)
+    public List<Task> getTaskByPublisherId(@PathVariable("id") String userId) {
         return mTaskService.getTaskByPublisherId(userId);
     }
 
