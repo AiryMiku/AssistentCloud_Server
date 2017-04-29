@@ -32,6 +32,17 @@ public class TaskDaoTest {
     ITaskDao taskDao;
 
     @Test
+    public void addJson(){
+
+        String json = "{ \"executors\": [ \"admin\", \"wen\" ], \"publisher\": \"wen\", \"society\": 1, \"subTask\": [ {\"progress\": 0.1, \"question\": \"问题1\" } ], \"sumProgress\": 0, \"taskNum\": 0, \"taskType\": 1, \"time\": 1493479530484 }";
+
+        Task task = JSON.parseObject(json,Task.class);
+
+        taskDao.add(task);
+
+    }
+
+    @Test
     public void add() throws Exception {
         Task task = new Task();
         Task t2 = new Task();

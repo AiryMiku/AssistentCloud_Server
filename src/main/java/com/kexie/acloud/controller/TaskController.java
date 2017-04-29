@@ -5,6 +5,7 @@ import com.kexie.acloud.service.ITaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +27,15 @@ public class TaskController {
 
     @Resource
     private ITaskService mTaskService;
+
+    /**
+     * 添加一个Task
+     */
+    @RequestMapping(value = "/add")
+    public String addTask(@RequestBody Task task){
+        mTaskService.create(task);
+        return "添加成功";
+    }
 
     /**
      * 根据发布者Id获取任务
