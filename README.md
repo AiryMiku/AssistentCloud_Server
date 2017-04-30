@@ -16,6 +16,9 @@ url : /login/web
 | userId    |  用户登录Id(还没有做邮箱验证啊)  |
 | password    |  密码  |
 
+登录成功返回的信息：
+
+
 ### 注册
 
 url : /register

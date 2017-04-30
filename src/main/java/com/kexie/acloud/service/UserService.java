@@ -6,6 +6,7 @@ import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.util.EncryptionUtil;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
  * Description :
  */
 @Component("UserService")
+@Transactional
 public class UserService implements IUserService {
 
     @Resource(name = "UserDao")
