@@ -77,43 +77,37 @@ public class UserController {
                          HttpSession session
     ) throws UserException {
 
-        // todo 是不是该弄个拦截器什么的
-//        TestUser u = (TestUser) session.getAttribute("user");
-//        if (u != null) return u;
+        User u = (User) session.getAttribute("user");
+
+        if (u != null)
+            return UserUtil.getCilentUserField(u);
 
         // 验证表单
         checkForm(result);
 
         User loginUser = mUserService.login(user);
-        // 获取应该返回的字段
-        loginUser = UserUtil.getCilentUserField(loginUser);
 
         session.setAttribute("user", loginUser);
 
-        return loginUser;
+        return UserUtil.getCilentUserField(loginUser);
     }
 
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
     public User register(@Valid User user,
                          BindingResult result,
-                         HttpServletResponse response,
                          HttpSession session) throws UserException {
+
+        System.out.println(user);
 
         checkForm(result);
 
         User registerUser = mUserService.register(user);
 
-        String newToken = EncryptionUtil.generateMD5(registerUser.getUserId());
-        response.addCookie(new Cookie("token", newToken));
-
-
         // 获取要返回的字段
         User clientUser = UserUtil.getCilentUserField(registerUser);
 
-        session.setAttribute("user",clientUser);
-        // 添加到redis
-//        RedisUtil.set(newToken, registerUser.getUserId());
+        session.setAttribute("user", registerUser);
 
         return clientUser;
 
@@ -123,7 +117,7 @@ public class UserController {
     @RequestMapping(value = "/user/info", method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
     public String getUserInfo(HttpServletResponse response,
-                            @CookieValue(value = "token", required = false) String token) throws UserException {
+                              @CookieValue(value = "token", required = false) String token) throws UserException {
 
         // 验证token
 //        if (token != null) {

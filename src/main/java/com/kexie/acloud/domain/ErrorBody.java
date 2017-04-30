@@ -6,17 +6,17 @@ package com.kexie.acloud.domain;
  * Description :
  */
 public class ErrorBody {
-    String errorMessage;
+    String msg;
 
-    public ErrorBody(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public ErrorBody(String msg) {
+        this.msg = msg;
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return msg;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setErrorMessage(String msg) {
+        this.msg = msg;
     }
 }
