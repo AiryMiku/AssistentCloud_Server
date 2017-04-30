@@ -55,6 +55,32 @@ url : /register
 }
 ```
 
+### 更新任务
+ 
+ url: /task/update
+
+上传一个Json（更新什么，上传什么）:
+```json
+{
+    "executors":[  // 执行者id
+        "admin",
+        "wen"
+    ],
+    "publisher":"wen", // 发布者id
+    "society":1,  // 所属社团id
+    "subTask":[  // 子任务
+        {
+            "progress":0.1, // 任务进度
+            "question":"问题1" // 子任务的问题
+        }
+    ],
+    "sumProgress":0, // 总进度
+    "taskNum":0, // 任务数量
+    "taskType":1, // 任务类型 ：1:活动，2:已经归档，3:删除
+    "time":1493479530484 // 创建时间
+}
+```
+
 
 ### 获取任务
 

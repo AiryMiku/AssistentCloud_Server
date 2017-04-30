@@ -75,7 +75,7 @@ public class TaskController {
      * 更新任务
      */
     @RequestMapping(value = "update")
-    public Task updateTask(@Valid @RequestBody Task task, BindingResult result) {
+    public Task updateTask(@RequestBody Task task, BindingResult result) {
         return mTaskService.update(task);
     }
 
