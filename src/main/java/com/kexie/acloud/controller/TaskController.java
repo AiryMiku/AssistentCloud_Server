@@ -4,6 +4,7 @@ import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.service.ITaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 /**
  * Created : wen
@@ -32,7 +34,7 @@ public class TaskController {
      * 添加一个Task
      */
     @RequestMapping(value = "/add")
-    public String addTask(@RequestBody Task task){
+    public String addTask(@RequestBody Task task) {
         mTaskService.create(task);
         return "添加成功";
     }
@@ -69,5 +71,12 @@ public class TaskController {
         return mTaskService.getTaskBySocietyId(societyId);
     }
 
+    /**
+     * 更新任务
+     */
+    @RequestMapping(value = "update")
+    public Task updateTask(@RequestBody Task task, BindingResult result) {
+        return mTaskService.update(task);
+    }
 
 }

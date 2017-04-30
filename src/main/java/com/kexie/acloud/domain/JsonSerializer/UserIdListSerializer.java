@@ -1,7 +1,8 @@
-package com.kexie.acloud.domain;
+package com.kexie.acloud.domain.JsonSerializer;
 
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
+import com.kexie.acloud.domain.User;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

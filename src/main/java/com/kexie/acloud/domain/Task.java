@@ -1,33 +1,30 @@
 package com.kexie.acloud.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.kexie.acloud.domain.JsonSerializer.SocietyDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.SocietySerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserIdListDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserIdListSerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.SelectBeforeUpdate;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 
 /**
@@ -175,14 +172,18 @@ public class Task {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"id\":")
-                .append(id);
+        sb.append("\"id\":\"")
+                .append(id).append('\"');
+        sb.append(",\"title\":\"")
+                .append(title).append('\"');
         sb.append(",\"publisher\":")
                 .append(publisher);
         sb.append(",\"society\":")
                 .append(society);
         sb.append(",\"taskNum\":")
                 .append(taskNum);
+        sb.append(",\"taskType\":")
+                .append(taskType);
         sb.append(",\"time\":\"")
                 .append(time).append('\"');
         sb.append(",\"sumProgress\":")

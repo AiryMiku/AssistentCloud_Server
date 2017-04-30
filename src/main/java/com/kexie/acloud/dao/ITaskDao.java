@@ -38,7 +38,7 @@ public interface ITaskDao {
 
     void add(Task task);
 
-    void update(Task task);
+    Task update(Task task);
 
     void updateSubTask(SubTask subTask);
 

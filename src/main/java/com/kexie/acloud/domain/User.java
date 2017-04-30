@@ -1,19 +1,15 @@
 package com.kexie.acloud.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
-
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SelectBeforeUpdate;
-import org.hibernate.validator.constraints.Length;
+import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
+import com.kexie.acloud.domain.JsonSerializer.MajorDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.MajorSerializer;
 
 import javax.persistence.Convert;
-import javax.persistence.Converts;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 /**
  * Created : wen
@@ -21,18 +17,19 @@ import javax.validation.constraints.Pattern;
  * Description :
  */
 @Entity
-// 这两个注解的意思是在更新之前先select一下，判断那些值是改变的在做修改
-@SelectBeforeUpdate
-@DynamicUpdate
 public class User {
+
+    // TODO: 2017/5/1 用户表单验证
+    // TODO: 2017/5/1 应该添加一个UserForm，与数据库实体User分开。
+    // TODO: 2017/5/1 应该每个请求对应一个Form类？
 
     @Id
 //    @Pattern(regexp = "",message = "邮箱格式不正确")
     private String userId;
 
     @Transient
-    @Length(min = 6, message = "密码要大于6")
-    @NotNull(message = "密码不能为空")
+//    @Length(min = 6, message = "密码要大于6")
+//    @NotNull(message = "密码不能为空")
     private String password;
 
     private String salt;
@@ -43,16 +40,16 @@ public class User {
     private String realName;
 
     // 昵称
-    @Length(min = 1, max = 10, message = "昵称长度：1-10")
+//    @Length(min = 1, max = 10, message = "昵称长度：1-10")
     private String nickName;
 
     // 学号
-    @NotNull(message = "学号不能为空")
+//    @NotNull(message = "学号不能为空")
     private String stuId;
 
     // 专业
     @ManyToOne
-    @NotNull(message = "专业不能为空")
+//    @NotNull(message = "专业不能为空")
     @JSONField(serializeUsing = MajorSerializer.class, deserializeUsing = MajorDeserializer.class)
     @Convert(converter = MajorConvert.class)
     private Major major;
@@ -61,11 +58,11 @@ public class User {
     private String classNum;
 
     // 电话号码
-    @NotNull(message = "手机号码不能为空")
+//    @NotNull(message = "手机号码不能为空")
     private int phone;
 
     // 性别
-    @NotNull(message = "你是男还是女啊")
+//    @NotNull(message = "你是男还是女啊")
     private int gender;
 
     // 图片Url TODO: 2017/4/30 设置默认值

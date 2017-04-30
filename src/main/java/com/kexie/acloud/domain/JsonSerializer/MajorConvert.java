@@ -1,4 +1,6 @@
-package com.kexie.acloud.domain;
+package com.kexie.acloud.domain.JsonSerializer;
+
+import com.kexie.acloud.domain.Major;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

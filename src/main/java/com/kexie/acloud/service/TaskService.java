@@ -5,11 +5,19 @@ import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.TaskException;
+import com.kexie.acloud.util.BeanUtil;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.transaction.Transactional;
 
 /**
  * Created : wen
@@ -18,6 +26,7 @@ import java.util.List;
  */
 
 @Service
+@Transactional
 public class TaskService implements ITaskService {
 
     @Autowired
@@ -55,9 +64,10 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void update(Task task) {
-        mTaskDao.update(task);
+    public Task update(Task task) {
+        return mTaskDao.update(task);
     }
+
 
     @Override
     public void updateSubTask(List<SubTask> subTasks) {
