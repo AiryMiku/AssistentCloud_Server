@@ -40,8 +40,9 @@ public class Society {
     @Column(name = "creation_time")
     private Date createTime;
 
-    // TODO: 2017/4/24 学院实体
-//    private College college;
+    // 学院
+    @ManyToOne
+    private College college;
 
     // 社团logo
     @Column(name = "society_logo")

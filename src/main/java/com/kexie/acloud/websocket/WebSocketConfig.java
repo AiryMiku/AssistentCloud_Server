@@ -38,7 +38,6 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
                 // 添加一个拦截器
                 .addInterceptors(new HandShake())
                 // 开启sockJs的支持
-                // fixme 什么是SckJs
                 .withSockJS();
     }
 

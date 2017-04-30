@@ -1,25 +1,23 @@
-package com.kexie.acloud.domain;
+package com.kexie.acloud.domain.JsonSerializer;
 
 import com.alibaba.fastjson.parser.DefaultJSONParser;
 import com.alibaba.fastjson.parser.deserializer.ObjectDeserializer;
+import com.kexie.acloud.domain.User;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created : wen
- * DateTime : 2017/4/29 22:52
+ * DateTime : 2017/4/28 20:54
  * Description :
  */
-public class UserIdListDeserializer implements ObjectDeserializer {
+public class UserDeserializer implements ObjectDeserializer {
     @Override
     public <T> T deserialze(DefaultJSONParser parser, Type type, Object fieldName) {
-        List<String> ids = parser.parseArray(String.class);
-        List<User> users = new ArrayList<>();
-
-        ids.forEach(id -> users.add(new User(id, null)));
-        return (T) users;
+        String userId = parser.parseObject(String.class);
+        User user = new User();
+        user.setUserId(userId);
+        return (T) user;
     }
 
     @Override

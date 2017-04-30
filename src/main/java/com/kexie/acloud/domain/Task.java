@@ -1,33 +1,30 @@
 package com.kexie.acloud.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.kexie.acloud.domain.JsonSerializer.SocietyDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.SocietySerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserIdListDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserIdListSerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
-import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.SelectBeforeUpdate;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapKey;
-import javax.persistence.MapKeyClass;
-import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 
 /**
