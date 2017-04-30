@@ -3,10 +3,12 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.util.BeanUtil;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
@@ -25,7 +27,7 @@ import javax.annotation.Resource;
  * Description :
  */
 @Repository
-@Transactional
+
 public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Resource
@@ -62,8 +64,11 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     }
 
     @Override
-    public void update(Task task) {
-        getHibernateTemplate().update(task);
+    public Task update(Task task) {
+        Task t = getHibernateTemplate().get(Task.class, task.getId());
+        BeanUtil.copyProperties(task, t);
+        getHibernateTemplate().update(t);
+        return getHibernateTemplate().get(Task.class, task.getId());
     }
 
     @Override

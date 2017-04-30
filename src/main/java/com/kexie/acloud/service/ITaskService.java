@@ -54,7 +54,7 @@ public interface ITaskService {
      *
      * @param task
      */
-    void update(Task task);
+    Task update(Task task);
 
     /**
      * 更新任务进度

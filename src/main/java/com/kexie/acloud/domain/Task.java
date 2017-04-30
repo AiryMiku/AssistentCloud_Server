@@ -175,14 +175,18 @@ public class Task {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"id\":")
-                .append(id);
+        sb.append("\"id\":\"")
+                .append(id).append('\"');
+        sb.append(",\"title\":\"")
+                .append(title).append('\"');
         sb.append(",\"publisher\":")
                 .append(publisher);
         sb.append(",\"society\":")
                 .append(society);
         sb.append(",\"taskNum\":")
                 .append(taskNum);
+        sb.append(",\"taskType\":")
+                .append(taskType);
         sb.append(",\"time\":\"")
                 .append(time).append('\"');
         sb.append(",\"sumProgress\":")
