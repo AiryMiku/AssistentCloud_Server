@@ -4,9 +4,9 @@ import com.kexie.acloud.domain.ErrorBody;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.service.IUserService;
-import com.kexie.acloud.util.EncryptionUtil;
 import com.kexie.acloud.util.UserUtil;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
@@ -37,6 +36,9 @@ public class UserController {
     @Resource(name = "UserService")
     private IUserService mUserService;
 
+    /**
+     * App登录
+     */
     @ResponseBody
     @RequestMapping(value = "/login/app", method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
@@ -71,17 +73,23 @@ public class UserController {
 //        return UserUtil.getCilentUserField(loginUser);
     }
 
+    /**
+     * 网页登录
+     */
     @ResponseBody
     @RequestMapping(value = "/login/web", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public User webLogin(@Validated(value = User.Login.class) User user,
+    public User webLogin(@Validated(value = User.LoginForm.class) User user,
                          BindingResult result,
                          HttpSession session
     ) throws UserException {
 
         User u = (User) session.getAttribute("user");
 
-        if (u != null)
-            return UserUtil.getCilentUserField(u);
+        if (u != null) {
+            User r = new User();
+            BeanUtils.copyProperties(u, r, User.CLIENT_IGNORE_FIELD);
+            return r;
+        }
 
         // 验证表单
         checkForm(result);
@@ -98,8 +106,6 @@ public class UserController {
     public User register(@Valid User user,
                          BindingResult result,
                          HttpSession session) throws UserException {
-
-        System.out.println(user);
 
         checkForm(result);
 

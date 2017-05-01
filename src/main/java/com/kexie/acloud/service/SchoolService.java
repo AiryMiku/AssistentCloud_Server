@@ -4,6 +4,7 @@ import com.kexie.acloud.dao.ISchoolDao;
 import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.Major;
 import com.kexie.acloud.domain.School;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,12 @@ public class SchoolService implements ISchoolService {
 
     @Autowired
     private ISchoolDao schoolDao;
+
     @Override
     public List<School> getAllSchool() {
-       return schoolDao.getAllSchool();
+        return schoolDao.getAllSchool();
     }
+
     @Override
     public School getSchoolById(int id) {
         return schoolDao.getSchoolById(id);
@@ -47,7 +50,7 @@ public class SchoolService implements ISchoolService {
 
     @Override
     public void updateSchool(School school, String name) {
-        schoolDao.updateSchool(school,name);
+        schoolDao.updateSchool(school, name);
     }
 
     @Override
@@ -67,12 +70,12 @@ public class SchoolService implements ISchoolService {
 
     @Override
     public College getCollegeByName(String name, int school_id) {
-        return schoolDao.getCollegeByName(name,school_id);
+        return schoolDao.getCollegeByName(name, school_id);
     }
 
     @Override
     public boolean collegeHasExists(String name, int school_id) {
-        return schoolDao.collegeHasExists(name,school_id);
+        return schoolDao.collegeHasExists(name, school_id);
     }
 
     @Override
@@ -81,8 +84,8 @@ public class SchoolService implements ISchoolService {
     }
 
     @Override
-    public void addCollege(College college,int school_id) {
-        schoolDao.addCollege(college,school_id);
+    public void addCollege(College college, int school_id) {
+        schoolDao.addCollege(college, school_id);
     }
 
     @Override
@@ -97,12 +100,12 @@ public class SchoolService implements ISchoolService {
 
     @Override
     public Major getMajorByName(String name, int college_id) {
-        return schoolDao.getMajorByName(name,college_id);
+        return schoolDao.getMajorByName(name, college_id);
     }
 
     @Override
     public boolean majorHasExists(String name, int college_id) {
-        return schoolDao.majorHasExists(name,college_id);
+        return schoolDao.majorHasExists(name, college_id);
     }
 
     @Override
@@ -112,7 +115,7 @@ public class SchoolService implements ISchoolService {
 
     @Override
     public void addMajor(Major major, int college_id) {
-        schoolDao.addMajor(major,college_id);
+        schoolDao.addMajor(major, college_id);
     }
 
     @Override

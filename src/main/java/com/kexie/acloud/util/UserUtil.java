@@ -7,6 +7,7 @@ import com.kexie.acloud.domain.User;
  * DateTime : 2017/4/12 0:14
  * Description :
  */
+@Deprecated
 public class UserUtil {
 
     /**

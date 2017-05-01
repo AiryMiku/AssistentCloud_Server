@@ -18,21 +18,25 @@ import javax.validation.constraints.Pattern;
 /**
  * Created : wen
  * DateTime : 16-11-18 上午12:12
- * Description :
+ * Description : 用户实体
  */
 @Entity
 public class User {
 
     // TODO: 2017/5/1 用户表单验证
-    // TODO: 2017/5/1 应该添加一个UserForm，与数据库实体User分开。
-    // TODO: 2017/5/1 应该每个请求对应一个Form类？
 
-    public interface Login {
-
+    public interface LoginForm {
     }
 
+    public interface RegisterForm {
+    }
+
+    public static final String[] CLIENT_IGNORE_FIELD  = new String[]{
+            "password","salt","hash"
+    };
+
     @Id
-    @Pattern(regexp = "", message = "邮箱格式不正确", groups = {Login.class})
+//    @Pattern(regexp = "", message = "邮箱格式不正确", groups = {Login.class})
     private String userId;
 
     @Transient
