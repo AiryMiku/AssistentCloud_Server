@@ -10,6 +10,7 @@ import com.kexie.acloud.util.UserUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -72,7 +73,7 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping(value = "/login/web", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public User webLogin(@Valid User user,
+    public User webLogin(@Validated(value = User.Login.class) User user,
                          BindingResult result,
                          HttpSession session
     ) throws UserException {

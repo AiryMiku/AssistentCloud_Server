@@ -5,11 +5,15 @@ import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
 import com.kexie.acloud.domain.JsonSerializer.MajorDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.MajorSerializer;
 
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.Pattern;
 
 /**
  * Created : wen
@@ -23,12 +27,16 @@ public class User {
     // TODO: 2017/5/1 应该添加一个UserForm，与数据库实体User分开。
     // TODO: 2017/5/1 应该每个请求对应一个Form类？
 
+    public interface Login {
+
+    }
+
     @Id
-//    @Pattern(regexp = "",message = "邮箱格式不正确")
+    @Pattern(regexp = "", message = "邮箱格式不正确", groups = {Login.class})
     private String userId;
 
     @Transient
-//    @Length(min = 6, message = "密码要大于6")
+//    @Length(min = 6, message = "密码要大于6",groups = )
 //    @NotNull(message = "密码不能为空")
     private String password;
 
