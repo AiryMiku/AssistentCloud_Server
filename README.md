@@ -11,23 +11,27 @@
 
 url : /login/web
 
-| 字段      |    含义 |
-| :--------: | :--------:|
-| userId    |  用户登录Id(还没有做邮箱验证啊)  |
-| password    |  密码  |
-
-登录成功返回的信息：
-
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| userId    | Email| true| 用户登录Id(还没有做邮箱验证啊)  |
+| password    | string| true|密码，长度大于6  |
 
 ### 注册
 
 url : /register
 
-| 字段      |    含义 |
-| :--------: | :--------:|
-| userId    |  用户登录Id(还没有做邮箱验证啊)  |
-| password    |  密码  |
-| nickName | 昵称 |
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| userId    | Email| true| 用户登录Id  |
+| password    | string| true|密码，长度大于6  |
+| realName | string | false | 真实姓名 |
+| nickName | string | true | 昵称 |
+| stuId | string | true | 学号|
+| major | string | true | 专业id |
+| classNum | string | false | 班级 |  
+| phone | long | true | 电话号码|
+| gender | int | true | 性别 | 
+
  
 
 ## 任务模块
@@ -37,32 +41,6 @@ url : /register
  url: /task/add
 
 上传一个Json:
-```json
-{
-    "executors":[  // 执行者id
-        "admin",
-        "wen"
-    ],
-    "publisher":"wen", // 发布者id
-    "society":1,  // 所属社团id
-    "subTask":[  // 子任务
-        {
-            "progress":0.1, // 任务进度
-            "question":"问题1" // 子任务的问题
-        }
-    ],
-    "sumProgress":0, // 总进度
-    "taskNum":0, // 任务数量
-    "taskType":1, // 任务类型 ：1:活动，2:已经归档，3:删除
-    "time":1493479530484 // 创建时间
-}
-```
-
-### 更新任务
- 
- url: /task/update
-
-上传一个Json（更新什么，上传什么）:
 ```json
 {
     "executors":[  // 执行者id
