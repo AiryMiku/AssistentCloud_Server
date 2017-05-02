@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 public class MajorConvert implements Converter<String, Major> {
     @Override
     public Major convert(String source) {
+        if (source == null || "".equals(source))
+            return null;
         Major major = new Major();
         major.setId(new Integer(source));
         return major;

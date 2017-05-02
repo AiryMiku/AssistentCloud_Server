@@ -12,11 +12,11 @@ public class ErrorBody {
         this.msg = msg;
     }
 
-    public String getErrorMessage() {
+    public String getMsg() {
         return msg;
     }
 
-    public void setErrorMessage(String msg) {
+    public void setMsg(String msg) {
         this.msg = msg;
     }
 }

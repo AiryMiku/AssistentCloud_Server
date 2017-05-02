@@ -13,6 +13,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -23,45 +24,51 @@ import javax.validation.constraints.Pattern;
 @Entity
 public class User {
 
-    // TODO: 2017/5/1 用户表单验证
-
+    // 用户登录表单验证接口,直接写一个空接口就可以了
     public interface LoginForm {
     }
 
     public interface RegisterForm {
     }
 
-    public static final String[] CLIENT_IGNORE_FIELD  = new String[]{
-            "password","salt","hash"
+    // 返回用户信息不需要返回的字段
+    public static final String[] CLIENT_IGNORE_FIELD = new String[]{
+            "password", "salt", "hash"
     };
 
+    // 用户Id
     @Id
-//    @Pattern(regexp = "", message = "邮箱格式不正确", groups = {Login.class})
+    @Email(message = "你确定你写的是邮箱？",
+            groups = {LoginForm.class, RegisterForm.class})
     private String userId;
 
+    // 密码
     @Transient
-//    @Length(min = 6, message = "密码要大于6",groups = )
-//    @NotNull(message = "密码不能为空")
+    @Length(min = 6,
+            message = "密码要大于6,字母数字你随意",
+            groups = {LoginForm.class, RegisterForm.class})
     private String password;
 
+    // 随机盐
     private String salt;
 
+    // MD5(salt + password)
     private String hash;
 
     // 真实姓名
     private String realName;
 
     // 昵称
-//    @Length(min = 1, max = 10, message = "昵称长度：1-10")
+    @Length(min = 1, max = 10, message = "昵称长度：1-10", groups = RegisterForm.class)
     private String nickName;
 
     // 学号
-//    @NotNull(message = "学号不能为空")
+    @Length(min = 1, message = "学号不能为空", groups = RegisterForm.class)
     private String stuId;
 
     // 专业
     @ManyToOne
-//    @NotNull(message = "专业不能为空")
+    @NotNull(message = "专业不能为空", groups = RegisterForm.class)
     @JSONField(serializeUsing = MajorSerializer.class, deserializeUsing = MajorDeserializer.class)
     @Convert(converter = MajorConvert.class)
     private Major major;
@@ -70,11 +77,11 @@ public class User {
     private String classNum;
 
     // 电话号码
-//    @NotNull(message = "手机号码不能为空")
-    private int phone;
+    @NotNull(message = "手机号码不能为空", groups = RegisterForm.class)
+    private long phone;
 
     // 性别
-//    @NotNull(message = "你是男还是女啊")
+    @NotNull(message = "你是男还是女啊", groups = RegisterForm.class)
     private int gender;
 
     // 图片Url TODO: 2017/4/30 设置默认值
@@ -191,11 +198,11 @@ public class User {
         this.classNum = classNum;
     }
 
-    public int getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 

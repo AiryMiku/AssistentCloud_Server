@@ -2,6 +2,7 @@ package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.ErrorBody;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.service.IUserService;
 import com.kexie.acloud.util.UserUtil;
@@ -18,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +34,7 @@ import javax.validation.Valid;
  * Description :
  */
 @Controller
+@RestController
 @CrossOrigin("*")
 public class UserController {
 
@@ -81,7 +86,7 @@ public class UserController {
     public User webLogin(@Validated(value = User.LoginForm.class) User user,
                          BindingResult result,
                          HttpSession session
-    ) throws UserException {
+    ) throws UserException, FormException {
 
         User u = (User) session.getAttribute("user");
 
@@ -92,7 +97,9 @@ public class UserController {
         }
 
         // 验证表单
-        checkForm(result);
+        if (result.hasErrors()) {
+            throw new FormException(result);
+        }
 
         User loginUser = mUserService.login(user);
 
@@ -101,13 +108,18 @@ public class UserController {
         return UserUtil.getCilentUserField(loginUser);
     }
 
+    /**
+     * 注册
+     */
     @ResponseBody
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
-    public User register(@Valid User user,
+    public User register(@Validated(User.RegisterForm.class) User user,
                          BindingResult result,
-                         HttpSession session) throws UserException {
+                         HttpSession session) throws UserException, FormException {
 
-        checkForm(result);
+        if (result.hasErrors()) {
+            throw new FormException(result);
+        }
 
         User registerUser = mUserService.register(user);
 
@@ -120,47 +132,36 @@ public class UserController {
 
     }
 
+    /**
+     * 获取用户信息
+     */
     @ResponseBody
     @RequestMapping(value = "/user/info", method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
     public String getUserInfo(HttpServletResponse response,
                               @CookieValue(value = "token", required = false) String token) throws UserException {
 
-        // 验证token
-//        if (token != null) {
-//            String userId = RedisUtil.get(token);
-//            if (userId != null) {
-//                TestUser userByUserId = mUserService.getUserByUserId(userId);
-//                return UserUtil.getCilentUserField(userByUserId);
-//            }
-//        }
-
-//        throw new UserException("用户没有登录");
         return "不写先";
     }
 
     /**
-     * 处理用户异常
-     *
-     * @param e
-     * @return
+     * 处理数据库用户异常
      */
-    @ResponseBody
     @ExceptionHandler(UserException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public ErrorBody handlerException(UserException e) {
+        e.printStackTrace();
         return new ErrorBody(e.getMessage());
     }
 
     /**
-     * 处理表单的错误信息，在登录注册中，只需要返回第一条错误信息就可以了
-     *
-     * @param result
-     * @throws UserException
+     * 表单异常
      */
-    private void checkForm(BindingResult result) throws UserException {
-        if (result.hasErrors()) {
-            throw new UserException(result.getFieldErrors().get(0).getDefaultMessage());
-        }
+    @ExceptionHandler(FormException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Map<String, String> handlerFormException(FormException fe) {
+        fe.printStackTrace();
+        return fe.getErrorForm();
     }
+
 }
