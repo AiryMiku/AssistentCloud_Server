@@ -35,7 +35,6 @@ import javax.validation.Valid;
  */
 @Controller
 @RestController
-@CrossOrigin("*")
 public class UserController {
 
     @Resource(name = "UserService")
