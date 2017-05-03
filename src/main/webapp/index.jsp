@@ -31,8 +31,8 @@
     <input name="nickName" type="text"><br>
     学号
     <input name="stuId" type="text"><br>
-    电话
-    <input name="phone" type="text"><br>
+    <%--电话--%>
+    <%--<input name="phone" type="text"><br>--%>
     专业
     <input name="major" type="text">
 

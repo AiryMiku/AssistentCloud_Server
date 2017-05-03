@@ -61,16 +61,16 @@ public class User {
     private String realName;
 
     // 昵称
-    @Length(min = 1, max = 10, message = "昵称长度：1-10", groups = RegisterForm.class)
+//    @Length(min = 1, max = 10, message = "昵称长度：1-10", groups = RegisterForm.class)
     private String nickName;
 
     // 学号
-    @Length(min = 1, message = "学号不能为空", groups = RegisterForm.class)
+//    @Length(min = 1, message = "学号不能为空", groups = RegisterForm.class)
     private String stuId;
 
     // 专业
     @ManyToOne
-    @NotNull(message = "专业不能为空", groups = RegisterForm.class)
+//    @NotNull(message = "专业不能为空", groups = RegisterForm.class)
     @JSONField(serializeUsing = MajorSerializer.class, deserializeUsing = MajorDeserializer.class)
     @Convert(converter = MajorConvert.class)
     private Major major;
@@ -79,11 +79,11 @@ public class User {
     private String classNum;
 
     // 电话号码
-    @NotNull(message = "手机号码不能为空", groups = RegisterForm.class)
+//    @NotNull(message = "手机号码不能为空", groups = RegisterForm.class)
     private long phone;
 
     // 性别
-    @NotNull(message = "你是男还是女啊", groups = RegisterForm.class)
+//    @NotNull(message = "你是男还是女啊", groups = RegisterForm.class)
     private int gender;
 
     // 图片Url TODO: 2017/4/30 设置默认值
