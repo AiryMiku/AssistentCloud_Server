@@ -40,6 +40,7 @@ public class User {
     @Id
     @Email(message = "你确定你写的是邮箱？",
             groups = {LoginForm.class, RegisterForm.class})
+    @NotNull(groups = {LoginForm.class, RegisterForm.class})
     private String userId;
 
     // 密码
@@ -47,6 +48,7 @@ public class User {
     @Length(min = 6,
             message = "密码要大于6,字母数字你随意",
             groups = {LoginForm.class, RegisterForm.class})
+    @NotNull(groups = {LoginForm.class, RegisterForm.class})
     private String password;
 
     // 随机盐
