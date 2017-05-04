@@ -1,5 +1,6 @@
 package com.kexie.acloud.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
@@ -12,16 +13,19 @@ import javax.persistence.*;
 @Entity
 public class Major {
     //专业ID
+    @JSONField(ordinal = 1)
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "major_id")
     private int id;
 
     //专业名称
+    @JSONField(ordinal = 2)
     @Column(name = "major_name")
     private String name;
 
     //所属学院（多对一）
+    @JSONField(serialize = false,deserialize = false)
     @ManyToOne(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "college_id")

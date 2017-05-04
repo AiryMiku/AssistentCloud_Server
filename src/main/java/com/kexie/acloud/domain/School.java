@@ -28,7 +28,8 @@ public class School{
     private String name;
 
     //学院集合（一对多）
-    @JSONField(serialize = false,deserialize = false)
+    //@JSONField(serialize = false,deserialize = false,ordinal=3)
+    @JSONField(ordinal = 3)
     @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "school_id")

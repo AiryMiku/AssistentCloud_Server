@@ -5,6 +5,125 @@
 
 [toc]
 
+## 学校/学院/专业 模块
+前缀url：/admin
+
+### 获取所有学校列表
+url：GET /schools
+
+返回JSON格式
+```json
+[
+  {
+    "id": 1,
+    "name": "北京理工大学珠海学院",
+    "colleges": [
+      {
+        "id": 1,
+        "name": "计算机学院",
+        "majors": [
+          {
+            "id": 6,
+            "name": "网络工程"
+          },
+          {
+            "id": 5,
+            "name": "软件工程"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name": "信息学院",
+        "majors": []
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "北京师范大学珠海学院",
+    "colleges": []
+  }
+]
+```
+
+### 添加一个学校信息
+url：POST /schools
+上传JSON格式
+```json
+{
+  "name": "暨南大学"
+}
+```
+
+### 通过Excel文件添加学校信息
+url: POST /schools/excel
+
+excel格式
+
+编号 | 学校名称
+------- | -------
+1 | 北理珠
+
+### 获取学校的学院列表
+url：GET /schools/{school_id}/colleges
+
+返回JSON格式
+```json
+[
+  {
+    "id": 1,
+    "name": "计算机学院",
+    "majors": [
+      {
+        "id": 5,
+        "name": "软件工程"
+      },
+      {
+        "id": 6,
+        "name": "网络工程"
+      }
+    ]
+  }
+]
+```
+### 向学校添加学院信息
+url：POST /schools/{school_id}/colleges
+
+上传JSON格式
+```json
+{
+  "name": "艺术学院"
+}
+```
+
+### 获取某个学院的专业列表
+url：GET /colleges/{college_id}/majors
+
+返回JSON格式
+```json
+[
+  {
+    "id": 5,
+    "name": "软件工程"
+  },
+  {
+    "id": 6,
+    "name": "网络工程"
+  }
+]
+```
+
+### 向某个学院添加专业
+url：POST /colleges/{college_id}/majors
+
+上传JSON格式
+```json
+{
+  "name": "树莓"
+}
+```
+
 ## 用户模块
 
 ### 登录

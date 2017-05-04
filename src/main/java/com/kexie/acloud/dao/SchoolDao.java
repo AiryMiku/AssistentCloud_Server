@@ -56,7 +56,7 @@ public class SchoolDao implements ISchoolDao {
 
     @Override
     public List<School> getAllSchool() {
-        String hql = "FROM School  ORDER BY school_name";
+        String hql = "FROM School  ORDER BY school_name DESC ";
         return (List<School>) getCurrentSession().createQuery(hql).list();
     }
 
