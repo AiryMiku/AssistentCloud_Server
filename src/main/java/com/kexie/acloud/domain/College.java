@@ -8,31 +8,44 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * 学院表
  * Created by zojian on 2017/4/27.
  */
 @Entity
-@Table(name = "College")
 public class College {
+    //学院ID
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "college_id")
     private int id;
 
+    //学院名称
     @Column(name = "college_name")
     private String name;
 
+    //所属学校（多对一）
     @ManyToOne(fetch = FetchType.EAGER)
-    @Cascade(CascadeType.SAVE_UPDATE)
+    @Cascade(CascadeType.ALL)
     @JoinColumn(name = "school_id",nullable = false)
     private School school;
 
+    //专业集合（一对多）
     @OneToMany(fetch = FetchType.EAGER)
     @Cascade(CascadeType.ALL)
     @JoinColumn(name = "college_id")
     private Set<Major> majors = new HashSet<Major>();
 
-    public College() {
+    @Override
+    public String toString() {
+        return "College{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", school=" + school +
+                ", majors=" + majors +
+                '}';
     }
+
+    public College() {}
 
     public int getId() {
         return id;
@@ -66,12 +79,4 @@ public class College {
         this.majors = majors;
     }
 
-    @Override
-    public String toString() {
-        return "College{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", majors=" + majors +
-                '}';
-    }
 }
