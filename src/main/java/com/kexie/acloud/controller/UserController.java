@@ -35,7 +35,10 @@ import javax.validation.Valid;
  */
 @Controller
 @RestController
+@RequestMapping(produces = {"application/json;charset=UTF-8"})
 public class UserController {
+
+    public static final String SESSION_USER_KEY = "user";
 
     @Resource(name = "UserService")
     private IUserService mUserService;
@@ -46,35 +49,8 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/login/app", method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
-    public String appLogin(@Valid User user,
-                           BindingResult result,
-                           HttpServletResponse response,
-                           @CookieValue(value = "token", required = false) String token) throws UserException {
-
-        return "滚 ！！,都没写，你为什么要用";
-
-
-        // 验证token
-//        if (token != null) {
-//            String userId = RedisUtil.get(token);
-//            if (userId != null) {
-//                TestUser userByUserId = mUserService.getUserByUserId(userId);
-//                return UserUtil.getCilentUserField(userByUserId);
-//            }
-//        }
-//
-//         验证表单
-//        checkForm(result);
-//
-//        TestUser loginUser = mUserService.login(user);
-//
-//        String newToken = EncryptionUtil.generateMD5(loginUser.getUserId());
-//        response.addCookie(new Cookie("token", newToken));
-//
-//        // 添加到redis
-//        RedisUtil.set(newToken, loginUser.getUserId());
-//
-//        return UserUtil.getCilentUserField(loginUser);
+    public String appLogin() throws UserException {
+        return "Todo";
     }
 
     /**
@@ -125,7 +101,7 @@ public class UserController {
         // 获取要返回的字段
         User clientUser = UserUtil.getCilentUserField(registerUser);
 
-        session.setAttribute("user", registerUser);
+        session.setAttribute(SESSION_USER_KEY, registerUser);
 
         return clientUser;
 
@@ -134,13 +110,41 @@ public class UserController {
     /**
      * 获取用户信息
      */
-    @ResponseBody
     @RequestMapping(value = "/user/info", method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
-    public String getUserInfo(HttpServletResponse response,
-                              @CookieValue(value = "token", required = false) String token) throws UserException {
+    public User getUserInfo(HttpSession session,
+                            @CookieValue(value = "token", required = false) String token) throws UserException {
 
-        return "不写先";
+        User user = (User) session.getAttribute(SESSION_USER_KEY);
+        User result = new User();
+
+        if (user == null)
+            throw new UserException("用户未登录");
+
+        BeanUtils.copyProperties(user, result, User.CLIENT_IGNORE_FIELD);
+
+        return result;
+    }
+
+    /**
+     * 更新用户信息
+     */
+    @RequestMapping(value = "/user/update", method = RequestMethod.POST)
+    public User updateUser(@Validated User user, BindingResult form, HttpSession session) throws FormException {
+
+        if (form.hasErrors()) {
+            throw new FormException(form);
+        }
+
+        User update = mUserService.update(user);
+
+        session.setAttribute(SESSION_USER_KEY, update);
+
+        User result = new User();
+
+        BeanUtils.copyProperties(update, result, User.CLIENT_IGNORE_FIELD);
+
+        return result;
     }
 
     /**

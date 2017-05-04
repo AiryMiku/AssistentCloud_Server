@@ -16,4 +16,6 @@ public interface IUserService {
     User register(User user) throws UserException;
 
     User getUserByUserId(String userId) throws UserException;
+
+    User update(User user);
 }

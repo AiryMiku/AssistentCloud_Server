@@ -143,14 +143,40 @@ url : /register
 | :--------: |:---:|:------: |:--------:|
 | userId    | Email| true| 用户登录Id  |
 | password    | string| true|密码，长度大于6  |
-| realName | string | false | 真实姓名 |
-| nickName | string | true | 昵称 |
-| stuId | string | true | 学号|
-| major | string | true | 专业id |
-| classNum | string | false | 班级 |  
-| phone | long | true | 电话号码|
-| gender | int | true | 性别 | 
 
+### 获取当前用户的详细信息
+
+url: /user/info 
+method : GET
+
+返回格式：
+```json
+{
+	"gender": 0,
+	"major": 1,
+	"nickName": "丿灬文丶少",
+	"phone": 123,
+	"realName": "赖远文",
+	"stuId": "140202021006",
+	"userId": "helloworld.wen@gmail.com"
+}
+```
+
+### 更新用户信息（暂时不能更新密码
+
+url: /user/update
+method : POST
+
+需要什么，更新什么
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| realName | string | false | 真实姓名 |
+| nickName | string |  | 昵称 |
+| stuId | string | false | 学号|
+| major | string | false | 专业id |
+| classNum | string | false | 班级 |  
+| phone | long | false | 电话号码|
+| gender | int | false | 性别 | 
  
 
 ## 任务模块

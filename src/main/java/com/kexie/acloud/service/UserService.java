@@ -3,6 +3,7 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.UserException;
+import com.kexie.acloud.util.BeanUtil;
 import com.kexie.acloud.util.EncryptionUtil;
 
 import org.springframework.stereotype.Component;
@@ -20,12 +21,12 @@ import javax.annotation.Resource;
 public class UserService implements IUserService {
 
     @Resource(name = "UserDao")
-    private IUserDao mIUserDao;
+    private IUserDao mUserDao;
 
     @Override
     public User login(User user) throws UserException {
 
-        User loginUser = mIUserDao.getUser(user.getUserId());
+        User loginUser = mUserDao.getUser(user.getUserId());
 
         if (loginUser == null)
             throw new UserException("用户不存在");
@@ -40,7 +41,7 @@ public class UserService implements IUserService {
     @Override
     public User register(User user) throws UserException {
 
-        if (mIUserDao.hasUserById(user.getUserId()))
+        if (mUserDao.hasUserById(user.getUserId()))
             throw new UserException("用户已经被注册了");
 
         // 加密
@@ -48,19 +49,27 @@ public class UserService implements IUserService {
         user.setSalt(salt);
         user.setHash(EncryptionUtil.generateMD5(user.getPassword() + salt));
 
-        mIUserDao.addUser(user);
+        mUserDao.addUser(user);
 
-        return mIUserDao.getUser(user.getUserId());
+        return mUserDao.getUser(user.getUserId());
     }
 
     @Override
     public User getUserByUserId(String userId) throws UserException {
 
-        User user =  mIUserDao.getUser(userId);
+        User user = mUserDao.getUser(userId);
 
-        if(user == null)
+        if (user == null)
             throw new UserException("用户不存在");
 
         return user;
+    }
+
+    @Override
+    public User update(User user) {
+        User u = mUserDao.getUser(user.getUserId());
+        BeanUtil.copyProperties(user, u);
+        mUserDao.updateUser(u);
+        return u;
     }
 }
