@@ -21,7 +21,7 @@ public interface ISchoolService {
 
     public boolean schoolHasExists(String name);
 
-    public void addSchool(School school);
+    public boolean addSchool(School school);
 
     public void updateSchool(School school,String name);
 
@@ -38,7 +38,7 @@ public interface ISchoolService {
 
     public List<College> getAllCollege(int school_id);
 
-    public void addCollege(College college,int school_id);
+    public boolean addCollege(College college,int school_id);
 
     public void deleteCollege(int college_id);
 
@@ -51,7 +51,7 @@ public interface ISchoolService {
 
     List<Major> getAllMajor(int college_id);
 
-    void addMajor(Major major,int college_id);
+    boolean addMajor(Major major,int college_id);
 
     void deleteMajor(int major_id);
 }

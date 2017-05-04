@@ -29,12 +29,12 @@ public class SchoolDao implements ISchoolDao {
     @Autowired
     private SessionFactory sessionFactory;
 
+    @Autowired
+    private HibernateTemplate hibernateTemplate;
+
     protected Session getCurrentSession(){
         return sessionFactory.getCurrentSession();
     }
-
-    @Autowired
-    private HibernateTemplate hibernateTemplate;
 
     @Override
     public School getSchoolById(int id) {
@@ -66,8 +66,14 @@ public class SchoolDao implements ISchoolDao {
     }
 
     @Override
-    public void addSchool(School school) {
-        getCurrentSession().save(school);
+    public boolean addSchool(School school) {
+        if(schoolHasExists(school.getName())==false) {
+            getCurrentSession().save(school);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     @Override
@@ -127,11 +133,15 @@ public class SchoolDao implements ISchoolDao {
     }
 
     @Override
-    public void addCollege(College college,int school_id) {
+    public boolean addCollege(College college,int school_id) {
         School school = getSchoolById(school_id);
         if(collegeHasExists(college.getName(),school_id)==false) {
             college.setSchool(school);
             getCurrentSession().save(college);
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
@@ -175,11 +185,15 @@ public class SchoolDao implements ISchoolDao {
     }
 
     @Override
-    public void addMajor(Major major, int college_id) {
+    public boolean addMajor(Major major, int college_id) {
         College college = getCollegeById(college_id);
         if(majorHasExists(major.getName(),college_id)==false){
             major.setCollege(college);
             getCurrentSession().save(major);
+            return true;
+        }
+        else{
+            return false;
         }
     }
 

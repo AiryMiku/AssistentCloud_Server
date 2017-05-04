@@ -49,19 +49,20 @@ public class SchoolController {
 
     //导入一个学校信息
     @RequestMapping(value = "/schools", method = RequestMethod.POST)
-    public void addSchools(School school, HttpServletResponse response){
-        schoolService.addSchool(school);
-        try {
-            response.sendRedirect("/admin/schools");
-        } catch (IOException e) {
-            e.printStackTrace();
+    public String addSchools(@RequestBody School school, HttpServletResponse response){
+        if(schoolService.addSchool(school)){
+            return "添加学校成功！";
         }
+        else{
+            return "添加学校失败";
+        }
+
     }
 
-    /*通过Excel表导入学校信息
-      Excel格式
-      |编号|学校名称|
-    */
+    /**通过Excel表导入学校信息
+     * Excel格式
+     * |编号|学校名称|
+     */
     @RequestMapping(value = "/schools/excel",method = RequestMethod.POST
             ,produces = {"application/json;charset=UTF-8"})
     public String  addSchoolsFromExcel(@RequestParam(value = "school_excel",required = false) MultipartFile school_excel){
@@ -104,15 +105,47 @@ public class SchoolController {
      */
     @RequestMapping(value = "/schools/{school_id}/colleges",method = RequestMethod.POST,
             produces = {"application/json;charset=UTF-8"})
-    public String addCollege(@PathVariable int school_id, College college){
-        schoolService.addCollege(college,school_id);
-        return "success!";
+    public String addCollege(@PathVariable int school_id, @RequestBody College college){
+        if(schoolService.getSchoolById(school_id)==null){
+            return "添加学院失败！";
+        }
+        if(schoolService.addCollege(college,school_id)) {
+            return "添加学院成功!";
+        }
+        else{
+            return "添加学院失败！";
+        }
     }
 
+    /**
+     * 获取某个学院的所有专业信息
+     * @param college_id 学院ID
+     * @return
+     */
     @RequestMapping(value = "/colleges/{college_id}/majors",method = RequestMethod.GET,
             produces = {"application/json;charset=UTF-8"})
     public List<Major> getAllMajor(@PathVariable int college_id){
         return schoolService.getAllMajor(college_id);
+    }
+
+    /**
+     * 向某个学院添加专业
+     * @param college_id 学院ID
+     * @param major 专业信息
+     * @return
+     */
+    @RequestMapping(value = "/colleges/{college_id}/majors",method = RequestMethod.POST,
+            produces = {"application/json;charset=UTF-8"})
+    public String addMajor(@PathVariable int college_id,@RequestBody Major major){
+        if(schoolService.getCollegeById(college_id)==null){
+            return "添加专业失败";
+        }
+        if(schoolService.addMajor(major,college_id)){
+            return "添加专业成功！";
+        }
+        else{
+            return "添加专业失败";
+        }
     }
 
     @ExceptionHandler(SchoolNotFoundException.class)

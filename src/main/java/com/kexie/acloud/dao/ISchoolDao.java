@@ -21,7 +21,7 @@ public interface ISchoolDao {
 
     boolean schoolHasExists(String name);
 
-    void addSchool(School school);
+    boolean addSchool(School school);
 
     void updateSchool(School school,String name);
 
@@ -38,7 +38,7 @@ public interface ISchoolDao {
 
     List<College> getAllCollege(int school_id);
 
-    void addCollege(College college,int school_id);
+    boolean addCollege(College college,int school_id);
 
     void deleteCollege(int college_id);
 
@@ -51,7 +51,7 @@ public interface ISchoolDao {
 
     List<Major> getAllMajor(int college_id);
 
-    void addMajor(Major major,int college_id);
+    boolean addMajor(Major major,int college_id);
 
     void deleteMajor(int major_id);
 }

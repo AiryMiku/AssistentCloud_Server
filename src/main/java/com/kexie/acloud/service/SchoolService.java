@@ -4,9 +4,7 @@ import com.kexie.acloud.dao.ISchoolDao;
 import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.Major;
 import com.kexie.acloud.domain.School;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +42,8 @@ public class SchoolService implements ISchoolService {
     }
 
     @Override
-    public void addSchool(School school) {
-        schoolDao.addSchool(school);
+    public boolean addSchool(School school) {
+        return schoolDao.addSchool(school);
     }
 
     @Override
@@ -84,8 +82,8 @@ public class SchoolService implements ISchoolService {
     }
 
     @Override
-    public void addCollege(College college, int school_id) {
-        schoolDao.addCollege(college, school_id);
+    public boolean addCollege(College college, int school_id){
+         return schoolDao.addCollege(college, school_id);
     }
 
     @Override
@@ -114,8 +112,8 @@ public class SchoolService implements ISchoolService {
     }
 
     @Override
-    public void addMajor(Major major, int college_id) {
-        schoolDao.addMajor(major, college_id);
+    public boolean addMajor(Major major, int college_id) {
+        return schoolDao.addMajor(major, college_id);
     }
 
     @Override
