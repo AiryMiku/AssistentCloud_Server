@@ -16,14 +16,14 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter{
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
     public static final String DEF_USERS_BY_USERNAME_QUERY =
             "select username,password" +
-            "from users" +
-            "where username = ?";
+                    "from users" +
+                    "where username = ?";
 
 
     @Override
@@ -42,14 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.
-//                formLogin()
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers("/admin/**").authenticated()
-//                .anyRequest().permitAll()
-//                .and()
-//                .csrf()
-//                .disable();
+        http.formLogin()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/admin/**").authenticated()
+                .anyRequest().permitAll()
+                .and()
+                .csrf()
+                .disable();
     }
 }

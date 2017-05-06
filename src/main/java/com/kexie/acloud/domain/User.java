@@ -5,6 +5,8 @@ import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
 import com.kexie.acloud.domain.JsonSerializer.MajorDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.MajorSerializer;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
@@ -19,10 +21,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 /**
  * Created : wen
@@ -76,12 +76,13 @@ public class User {
 //    @Length(min = 1, message = "学号不能为空", groups = RegisterForm.class)
     private String stuId;
 
-    // 拥有的社团
-    @JoinTable(name = "user_society",
+    // 拥有的社团职位
+    @JoinTable(name = "user_society_position",
             joinColumns = {@JoinColumn(name = "userId")},
-            inverseJoinColumns = @JoinColumn(name = "societyId"))
+            inverseJoinColumns = @JoinColumn(name = "positionId"))
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    private List<Society> societies;
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<SocietyPosition> societyPostions;
 
     // 专业
     @ManyToOne
@@ -112,12 +113,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Society> getSocieties() {
-        return societies;
+    public List<SocietyPosition> getSocietyPostions() {
+        return societyPostions;
     }
 
-    public void setSocieties(List<Society> societies) {
-        this.societies = societies;
+    public void setSocietyPostions(List<SocietyPosition> societyPostions) {
+        this.societyPostions = societyPostions;
     }
 
     public static String[] getClientIgnoreField() {
@@ -181,6 +182,8 @@ public class User {
                 .append(nickName).append('\"');
         sb.append(",\"stuId\":\"")
                 .append(stuId).append('\"');
+        sb.append(",\"societyPostions\":")
+                .append(societyPostions);
         sb.append(",\"major\":")
                 .append(major);
         sb.append(",\"classNum\":\"")
