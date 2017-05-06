@@ -40,15 +40,12 @@ public class College {
     @JoinColumn(name = "college_id")
     private Set<Major> majors = new HashSet<Major>();
 
-    @Override
-    public String toString() {
-        return "College{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", school=" + school +
-                ", majors=" + majors +
-                '}';
-    }
+    // 社团集合（一对多）
+    @JSONField(ordinal = 4)
+    @OneToMany(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @JoinColumn(name = "college_id")
+    private Set<Society> societies = new HashSet<Society>();
 
     public College() {}
 
@@ -84,4 +81,23 @@ public class College {
         this.majors = majors;
     }
 
+    public Set<Society> getSocieties() {
+        return societies;
+    }
+
+    public void setSocieties(Set<Society> societies) {
+        this.societies = societies;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("College{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", school=").append(school);
+        sb.append(", majors=").append(majors);
+        sb.append(", societies=").append(societies);
+        sb.append('}');
+        return sb.toString();
+    }
 }

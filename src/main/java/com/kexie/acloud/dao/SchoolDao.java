@@ -29,9 +29,6 @@ public class SchoolDao implements ISchoolDao {
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Autowired
-    private HibernateTemplate hibernateTemplate;
-
     protected Session getCurrentSession(){
         return sessionFactory.getCurrentSession();
     }

@@ -1,14 +1,9 @@
 package com.kexie.acloud.domain;
 
 import java.util.Date;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * Created : wen
@@ -44,10 +39,27 @@ public class Society {
     @ManyToOne
     private College college;
 
+    // 学校
+    @ManyToOne
+    private School school;
+
     // 社团logo
     @Column(name = "society_logo")
     private String society_logo;
 
+    // 社团等级(0: 校级社团  1：院级社团)
+    @Column(name = "society_level")
+    private int level;
+
+    //社团状态(-1:待审核 0：审核通过 1：注销)
+    @Column(name = "society_status")
+
+    //社团成员
+    @OneToMany
+    @JoinColumn(name = "society_id")
+    private Set<User> users;
+
+    private int status;
 
     public int getId() {
         return id;
@@ -97,21 +109,60 @@ public class Society {
         this.society_logo = society_logo;
     }
 
+    public School getSchool() {
+        return school;
+    }
+
+    public void setSchool(School school) {
+        this.school = school;
+    }
+
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"id\":")
-                .append(id);
-        sb.append(",\"name\":\"")
-                .append(name).append('\"');
-        sb.append(",\"summary\":\"")
-                .append(summary).append('\"');
-        sb.append(",\"principal\":")
-                .append(principal);
-        sb.append(",\"createTime\":\"")
-                .append(createTime).append('\"');
-        sb.append(",\"society_logo\":\"")
-                .append(society_logo).append('\"');
+        final StringBuffer sb = new StringBuffer("Society{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", summary='").append(summary).append('\'');
+        sb.append(", principal=").append(principal);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", college=").append(college);
+        sb.append(", school=").append(school);
+        sb.append(", society_logo='").append(society_logo).append('\'');
+        sb.append(", level=").append(level);
+        sb.append(", users=").append(users);
+        sb.append(", status=").append(status);
         sb.append('}');
         return sb.toString();
     }
