@@ -8,10 +8,18 @@ import com.kexie.acloud.domain.JsonSerializer.MajorSerializer;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -68,6 +76,13 @@ public class User {
 //    @Length(min = 1, message = "学号不能为空", groups = RegisterForm.class)
     private String stuId;
 
+    // 拥有的社团
+    @JoinTable(name = "user_society",
+            joinColumns = {@JoinColumn(name = "userId")},
+            inverseJoinColumns = @JoinColumn(name = "societyId"))
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    private List<Society> societies;
+
     // 专业
     @ManyToOne
 //    @NotNull(message = "专业不能为空", groups = RegisterForm.class)
@@ -95,6 +110,18 @@ public class User {
     public User(String userId, String password) {
         this.userId = userId;
         this.password = password;
+    }
+
+    public List<Society> getSocieties() {
+        return societies;
+    }
+
+    public void setSocieties(List<Society> societies) {
+        this.societies = societies;
+    }
+
+    public static String[] getClientIgnoreField() {
+        return CLIENT_IGNORE_FIELD;
     }
 
     public String getUserId() {
