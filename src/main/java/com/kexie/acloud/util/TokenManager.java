@@ -6,9 +6,16 @@ package com.kexie.acloud.util;
  * Description : 处理Toekn的工具类
  */
 public class TokenManager {
-    public static String createToken(String userId) {
 
-        return "token";
+    public static String createToken(String userId) {
+        return userId;
     }
 
+    public static boolean checkToken(String token) {
+        return true;
+    }
+
+    public static String getTokenValue(String token) {
+        return token;
+    }
 }

@@ -10,7 +10,7 @@
     <script type="text/javascript" src="/resources/js/jquery.js"></script>
 </head>
 <body>
-<form action="login/web" method="post">
+<form action="login" method="post">
     用户名:
     <input name="userId" type="text"><br>
     密码:
