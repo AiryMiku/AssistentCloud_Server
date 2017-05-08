@@ -2,39 +2,37 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import java.util.Date;
 
 /**
  * Created : wen
  * DateTime : 2017/4/24 21:41
  * Description :
  */
-public class SocietyDaoTest {
+public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
 
-    static ClassPathXmlApplicationContext context;
-    static SocietyDao societyDao;
+    @Autowired
+    ISocietyDao societyDao;
 
-    @BeforeClass
-    public static void before() {
-        context = new ClassPathXmlApplicationContext("applicationContext.xml");
-        societyDao = (SocietyDao) context.getBean("societyDao");
+    @Autowired
+    IUserDao userDao;
+
+    @Test
+    public void addSociety(){
+        User user = userDao.getUser("zojian@qq.com");
+        Society society = new Society();
+        society.setName("计算机科协");
+        society.setPrincipal(user);
+        society.setCreateTime(new Date());
+        societyDao.add(society);
     }
 
     @Test
-    public void add() throws Exception {
-        Society society = new Society();
-        User user = new User();
-        user.setUserId("admin");
-
-        society.setName("科协 弟哥哥");
-        society.setPrincipal(user);
-
-        societyDao.add(society);
+    public void getSocietyById(){
+        System.out.println(societyDao.getSocietyById(1));
     }
 
 }
