@@ -46,8 +46,9 @@ public interface ITaskService {
      * 创建一个任务
      *
      * @param task
+     * @param userId
      */
-    void create(Task task);
+    void create(Task task, String userId);
 
     /**
      * 更新task信息
@@ -84,8 +85,8 @@ public interface ITaskService {
 
     /**
      * 归档一个Task
+     *  @param taskId
      *
-     * @param taskId
      */
     void archive(String taskId);
 

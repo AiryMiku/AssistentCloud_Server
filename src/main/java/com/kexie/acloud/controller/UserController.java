@@ -56,8 +56,7 @@ public class UserController {
         if (form.hasErrors()) {
             throw new FormException(form);
         }
-        if (!userId.equals(user.getUserId()))
-            throw new AuthorizedException("你不能那么强，你不能改其他用户的信息啊");
+        user.setUserId(userId);
 
         User update = mUserService.update(user);
         User result = new User();
