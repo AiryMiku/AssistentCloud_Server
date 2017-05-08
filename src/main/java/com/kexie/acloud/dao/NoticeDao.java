@@ -1,13 +1,19 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
+import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.BeanUtil;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.orm.hibernate4.HibernateCallback;
+import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -15,16 +21,21 @@ import java.util.List;
  */
 @Repository
 @Transactional
-public class NoticeDao extends HibernateDaoSupport implements INoticeDao {
+public class NoticeDao implements INoticeDao {
+//    @Autowired
+//    public void setSuperSessionFactory(SessionFactory sessionFactory) {
+//        super.setSessionFactory(sessionFactory);
+//    }
     @Autowired
-    public void setSuperSessionFactory(SessionFactory sessionFactory) {
-        super.setSessionFactory(sessionFactory);
+    SessionFactory sessionFactory;
+    public Session getCurrentSession(){
+        return sessionFactory.getCurrentSession();
     }
 
     @Override
     public boolean addNotice(Notice notice) {
         try {
-            getHibernateTemplate().save(notice);
+            getCurrentSession().save(notice);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -35,9 +46,9 @@ public class NoticeDao extends HibernateDaoSupport implements INoticeDao {
     @Override
     public boolean updateNotice(Notice notice) {
         try {
-            Notice newNotice = getHibernateTemplate().get(Notice.class,notice.getId());
+            Notice newNotice = getCurrentSession().get(Notice.class,notice.getId());
             BeanUtil.copyProperties(notice,newNotice);
-            getHibernateTemplate().save(newNotice);
+            getCurrentSession().save(newNotice);
             return true;
         }
         catch (Exception e){
@@ -52,19 +63,40 @@ public class NoticeDao extends HibernateDaoSupport implements INoticeDao {
     }
 
     @Override
-    public List<Notice> getNoticesByUserId(int user_id, int page) {
-        return null;
+    public List<Notice> getNoticesByUserId(String user_id, int page,int pageSize) {
+        String hql = "FROM Notice WHERE publisher_id = ? OR ? in elements(executors) ORDER BY time DESC";
+        User user = new User();
+        user.setUserId(user_id);
+        Query query = getCurrentSession().createQuery(hql);
+        query.setParameter(0,user_id);
+        query.setParameter(1,user);
+        query.setFirstResult((page-1)*pageSize);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
     @Override
-    public List<Notice> getNoticesByPublisherId(int publisher_id, int page) {
-//        String hql = "FROM Notice WHERE ";
-        return null;
+    public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize) {
+        String hql = "FROM Notice WHERE (publisher_id = ? AND society_id = ?) OR ? in elements(executors) ORDER BY time DESC";
+        User user = new User();
+        user.setUserId(user_id);
+        Query query = getCurrentSession().createQuery(hql);
+        query.setParameter(0,user_id);
+        query.setParameter(1,society_id);
+        query.setParameter(2,user);
+        query.setFirstResult((page-1)*pageSize);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
     @Override
-    public List<Notice> getNoticesByUserIdAndSocietyId(int user_id, int society_id, int page) {
-        return null;
+    public List<Notice> getNoticesByPublisherId(String publisher_id, int page,int pageSize) {
+        String hql = "FROM Notice WHERE publisher_id = ? ORDER BY time DESC";
+        Query query = getCurrentSession().createQuery(hql);
+        query.setParameter(0,publisher_id);
+        query.setFirstResult((page-1)*pageSize);
+        query.setMaxResults(pageSize);
+        return query.list();
     }
 
     @Override
