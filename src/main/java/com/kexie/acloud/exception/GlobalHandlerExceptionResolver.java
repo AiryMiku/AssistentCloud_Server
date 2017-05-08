@@ -23,11 +23,11 @@ public class GlobalHandlerExceptionResolver implements HandlerExceptionResolver 
 
         ex.printStackTrace();
 
-
         if (ex instanceof FormException) {
-            return handlerFormException(request, request, (FormException) ex);
+            return handlerFormException(request, response, (FormException) ex);
         } else {
 
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             ModelAndView mv = new ModelAndView();
 
         /*  使用FastJson提供的FastJsonJsonView视图返回，不需要捕获异常   */
@@ -47,7 +47,9 @@ public class GlobalHandlerExceptionResolver implements HandlerExceptionResolver 
     /**
      * 处理表单错误
      */
-    private ModelAndView handlerFormException(HttpServletRequest request, HttpServletRequest httpServletRequest, FormException ex) {
+    private ModelAndView handlerFormException(HttpServletRequest request, HttpServletResponse response, FormException ex) {
+
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
         ModelAndView mv = new ModelAndView();
         FastJsonJsonView view = new FastJsonJsonView();

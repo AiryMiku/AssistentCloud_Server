@@ -9,6 +9,7 @@ import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
 import com.kexie.acloud.exception.GlobalHandlerExceptionResolver;
+import com.kexie.acloud.interceptor.CorsInterceptor;
 import com.kexie.acloud.interceptor.TokenInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,11 @@ import java.util.List;
 @EnableWebMvc
 public class AppConfig extends WebMvcConfigurerAdapter {
 
-    // 跨域请求
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**").allowedOrigins("*");
+        // 跨域请求写到了拦截器上了
+        // 不在这里配置的原因是因为在token拦截器拦截未登录的请求之后，不会返回Access-Control-Allow-Origin头部
+//        registry.addMapping("/**").allowedOrigins("*");
     }
 
 
@@ -52,12 +54,19 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         return new TokenInterceptor();
     }
 
+    // cors拦截器
+    @Bean
+    public CorsInterceptor corsInterceptor() {
+        return new CorsInterceptor();
+    }
+
     /**
      * 拦截器的配置
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tokenInterceptor()).addPathPatterns("/user/**","/task/**");
+        registry.addInterceptor(corsInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(tokenInterceptor()).addPathPatterns("/user/**", "/task/**");
     }
 
     @Override
