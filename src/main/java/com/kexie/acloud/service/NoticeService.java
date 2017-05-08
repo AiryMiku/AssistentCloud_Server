@@ -31,18 +31,18 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public List<Notice> getNoticesByUserId(int user_id, int page) {
-        return null;
+    public List<Notice> getNoticesByUserId(String user_id, int page, int pageSize) {
+        return noticeDao.getNoticesByUserId(user_id,page,pageSize);
     }
 
     @Override
-    public List<Notice> getNoticesByPublisherId(int publisher_id, int page) {
-        return null;
+    public List<Notice> getNoticesByPublisherId(String publisher_id, int page, int pageSize) {
+        return noticeDao.getNoticesByPublisherId(publisher_id,page,pageSize);
     }
 
     @Override
-    public List<Notice> getNoticesByUserIdAndSocietyId(int user_id, int society_id, int page) {
-        return null;
+    public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize) {
+        return noticeDao.getNoticesByUserIdAndSocietyId(user_id,society_id,page,pageSize);
     }
 
     @Override

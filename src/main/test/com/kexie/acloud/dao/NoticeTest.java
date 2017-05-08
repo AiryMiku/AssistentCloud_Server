@@ -38,4 +38,19 @@ public class NoticeTest extends com.kexie.acloud.dao.BaseTest {
         System.out.println(JSON.toJSONString(notice));
         noticeDao.addNotice(notice);
     }
+
+    @Test
+    public void getNoticesByPublisherId(){
+        System.out.println(JSON.toJSONString(noticeDao.getNoticesByPublisherId("zojian@qq.com",2,10)));
+    }
+
+    @Test
+    public void getNoticesByUserId(){
+        System.out.println(JSON.toJSONString(noticeDao.getNoticesByUserId("admin@qq.com",1,100)));
+    }
+
+    @Test
+    public void getNoticesByUserIdAndSocietyId(){
+        System.out.println(JSON.toJSONString(noticeDao.getNoticesByUserIdAndSocietyId("zojian@qq.com",2,1,10)));
+    }
 }

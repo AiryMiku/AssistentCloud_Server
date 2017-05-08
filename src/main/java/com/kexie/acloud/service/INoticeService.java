@@ -35,24 +35,26 @@ public interface INoticeService {
      * @param page 页数
      * @return
      */
-    public List<Notice> getNoticesByUserId(int user_id, int page);
+    public List<Notice> getNoticesByUserId(String user_id, int page,int pageSize);
 
     /**
      * 根据发布者ID分页获取由用户发布的公告
-     * @param publisher_id 发布者ID(即当前的user_id)
+     * @param publisher_id
      * @param page
+     * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByPublisherId(int publisher_id,int page);
+    public List<Notice> getNoticesByPublisherId(String publisher_id,int page, int pageSize);
 
     /**
      * 根据用户ID和社团ID分页获取公告列表
-     * @param user_id 用户ID
-     * @param society_id 社团ID
+     * @param user_id
+     * @param society_id
      * @param page
+     * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByUserIdAndSocietyId(int user_id,int society_id,int page);
+    public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize);
 
     /**
      * 根据公告ID获取公告详细信息
