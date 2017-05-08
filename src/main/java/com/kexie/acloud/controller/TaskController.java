@@ -1,10 +1,12 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.Task;
+import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.ITaskService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,9 +36,23 @@ public class TaskController {
      * 添加一个Task
      */
     @RequestMapping(value = "/add")
-    public String addTask(@RequestBody Task task) {
+    public void addTask(@Validated @RequestBody Task task, BindingResult result) throws FormException {
+
+        if (result.hasErrors()) throw new FormException(result);
+
         mTaskService.create(task);
-        return "添加成功";
+    }
+
+
+    /**
+     * 更新任务
+     */
+    @RequestMapping(value = "/update")
+    public Task updateTask(@RequestBody Task task, BindingResult result) throws FormException {
+
+        if (result.hasErrors()) throw new FormException(result);
+
+        return mTaskService.update(task);
     }
 
     /**
@@ -71,12 +87,5 @@ public class TaskController {
         return mTaskService.getTaskBySocietyId(societyId);
     }
 
-    /**
-     * 更新任务
-     */
-    @RequestMapping(value = "update")
-    public Task updateTask(@RequestBody Task task, BindingResult result) {
-        return mTaskService.update(task);
-    }
 
 }
