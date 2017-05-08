@@ -54,7 +54,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         return new TokenInterceptor();
     }
 
-    // cors拦截器
+    // Cors拦截器
     @Bean
     public CorsInterceptor corsInterceptor() {
         return new CorsInterceptor();
