@@ -5,17 +5,11 @@ import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.TaskException;
-import com.kexie.acloud.util.BeanUtil;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.transaction.Transactional;
 
@@ -59,7 +53,13 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void create(Task task) {
+    public void create(Task task, String userId) {
+
+        User user = new User();
+        user.setUserId(userId);
+
+        task.setPublisher(user);
+
         mTaskDao.add(task);
     }
 
@@ -72,7 +72,7 @@ public class TaskService implements ITaskService {
     @Override
     public void updateSubTask(List<SubTask> subTasks) {
         // 更新子任务
-        subTasks.forEach(task -> mTaskDao.updateSubTask(task) );
+        subTasks.forEach(task -> mTaskDao.updateSubTask(task));
     }
 
     @Override
@@ -98,7 +98,14 @@ public class TaskService implements ITaskService {
 
     @Override
     public void archive(String taskId) {
+
         Task task = mTaskDao.getTasksByTaskId(taskId);
+
+        if (task == null)
+            throw new TaskException("没有这条数据");
+
+        // TODO: 2017/5/8 需要判断userId是否有权修改这个任务吗
+
         task.setTaskType(2);
         mTaskDao.update(task);
     }
@@ -106,6 +113,10 @@ public class TaskService implements ITaskService {
     @Override
     public void delete(String taskId) {
         Task task = mTaskDao.getTasksByTaskId(taskId);
+
+        if (task == null)
+            throw new TaskException("没有这条数据");
+
         task.setTaskType(3);
         mTaskDao.update(task);
     }

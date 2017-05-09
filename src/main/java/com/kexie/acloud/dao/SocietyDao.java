@@ -1,11 +1,12 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
-import org.hibernate.Session;
+
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * Created : wen
@@ -13,30 +14,21 @@ import org.springframework.transaction.annotation.Transactional;
  * Description :
  */
 @Repository
-@Transactional
-public class SocietyDao implements ISocietyDao{
+public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
-    @Autowired
-    SessionFactory sessionFactory;
-
-    public Session getCurrentSession(){
-        return sessionFactory.getCurrentSession();
-    }
-
-    @Override
-    public boolean add(Society society) {
-        try {
-            getCurrentSession().save(society);
-            return true;
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
+    @Resource
+    public void setSuperSessionFactory(SessionFactory sessionFactory) {
+        super.setSessionFactory(sessionFactory);
     }
 
     @Override
     public Society getSocietyById(int society_id) {
-        return getCurrentSession().get(Society.class,society_id);
+        return getHibernateTemplate().get(Society.class, society_id);
     }
+
+    @Override
+    public void add(Society society) {
+        getHibernateTemplate().save(society);
+    }
+
 }

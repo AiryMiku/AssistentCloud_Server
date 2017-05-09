@@ -3,6 +3,8 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.User;
 
+import java.util.List;
+
 /**
  * Created : wen
  * DateTime : 2017/4/8 14:21
@@ -39,4 +41,6 @@ public interface IUserDao {
      * 删除所有的数据，测试可以用
      */
     void clear();
+
+    List<User> getUserBySociety(String society_id);
 }
