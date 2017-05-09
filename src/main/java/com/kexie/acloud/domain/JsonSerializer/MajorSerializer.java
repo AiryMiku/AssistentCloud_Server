@@ -8,6 +8,8 @@ import com.kexie.acloud.domain.Major;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import javafx.beans.property.Property;
+
 /**
  * Created : wen
  * DateTime : 2017/4/30 10:53
@@ -20,6 +22,8 @@ public class MajorSerializer implements ObjectSerializer {
         Major value = (Major) object;
         if (value == null)
             return;
-        out.writeInt(value.getId());
+        out.writeString(value.getName());
+        out.writeFieldValue(',', "college", value.getCollege().getName());
+        out.writeFieldValue(',', "school", value.getCollege().getSchool().getName());
     }
 }

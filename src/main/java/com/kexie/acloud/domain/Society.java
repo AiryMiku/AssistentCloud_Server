@@ -97,6 +97,14 @@ public class Society {
         this.society_logo = society_logo;
     }
 
+    public College getCollege() {
+        return college;
+    }
+
+    public void setCollege(College college) {
+        this.college = college;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
