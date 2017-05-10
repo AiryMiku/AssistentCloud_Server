@@ -82,7 +82,7 @@ public class SocietyController {
     /**
      * 一个社团的详细信息
      */
-    @RequestMapping("{societyId}")
+    @RequestMapping(value = "{societyId}",method = RequestMethod.GET)
     public Society addSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
         return mSocietyService.getSocietyById(societyId);
     }
@@ -91,7 +91,7 @@ public class SocietyController {
      * 添加一个社团
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void addSociety(@Validated @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
+    public void addSociety(@Validated(Society.Create.class) @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
 
         if (form.hasErrors()) throw new FormException(form);
 
@@ -102,7 +102,7 @@ public class SocietyController {
      * 更新社团
      */
     @RequestMapping(method = RequestMethod.PUT)
-    public void updateSociety(@Validated @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
+    public void updateSociety(@Validated(Society.Update.class) @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
 
         if (form.hasErrors()) throw new FormException(form);
 
@@ -112,7 +112,7 @@ public class SocietyController {
     /**
      * 获取当前社团的所有用户
      */
-    @RequestMapping("{societyId}/users")
+    @RequestMapping(value = "{societyId}/users",method = RequestMethod.GET)
     public List<User> getUser(@PathVariable("societyId") int societyId) {
         return mSocietyService.getUsersIn(societyId);
     }

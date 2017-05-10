@@ -8,6 +8,8 @@ import com.kexie.acloud.domain.JsonSerializer.UserConvert;
 import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
+import org.hibernate.validator.constraints.Length;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -18,6 +20,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created : wen
@@ -27,34 +31,44 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Society {
 
+    public interface Create {
+    }
+
+    public interface Update {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "society_id")
+    @Min(value = 1, groups = {Update.class}, message = "社团Id不合法")// 从零开始递增，id不可能小于1
     private int id;
 
     // 社团名字
     @Column(name = "society_name")
+    @Length(min = 1, groups = {Create.class, Update.class}, message = "社团名字不能为空")
     private String name;
 
     // 社团介绍
     @Column(name = "society_summary")
-    private String summary;
+    private String summary = "这个社团很懒，什么都没有说";
 
     // 社团负责人
     @ManyToOne
     @JoinColumn(name = "principal_id")
     @JSONField(serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
-    @Convert(converter = UserConvert.class)
+    @NotNull(groups = {Create.class}, message = "社团不能没有社团负责人")
     private User principal;
 
     // 创建时间
     @Column(name = "creation_time")
+    @NotNull(groups = {Create.class}, message = "创建时间不能为空")
     private Date createTime;
 
     // 学院
     @ManyToOne
     @JSONField(serializeUsing = CollegeSerializer.class, deserializeUsing = CollegeDeserializer.class)
     @Convert(converter = CollegeConvert.class)
+    @NotNull(groups = {Create.class}, message = "学院不能为空")
     private College college;
 
     // 社团logo
