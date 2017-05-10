@@ -36,17 +36,27 @@ public class SocietyService implements ISocietyService {
     }
 
     @Override
+    public void updateSociety(Society society) {
+        mSocietyDao.update(society);
+    }
+
+    @Override
     public Society getSocietyById(int society_id) {
         return mSocietyDao.getSocietyById(society_id);
     }
 
     @Override
-    public List<User> getUsersIn(String society_id) {
+    public List<User> getUsersIn(int society_id) {
         return mUserDao.getUserBySociety(society_id);
     }
 
     @Override
-    public List<Society> getSoiceties() {
-        return mSocietyDao.getSocieties();
+    public List<Society> getSoicetiesBySchoolId(int schoolId) {
+        return mSocietyDao.getSocietiesBySchoolId(schoolId);
+    }
+
+    @Override
+    public List<Society> getSoicetiesByCollegeId(int collegeId) {
+        return mSocietyDao.getSocietiesByCollegeId(collegeId);
     }
 }

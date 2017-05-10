@@ -1,8 +1,17 @@
 package com.kexie.acloud.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.kexie.acloud.domain.FormConvert.CollegeConvert;
+import com.kexie.acloud.domain.JsonSerializer.CollegeDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.CollegeSerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserConvert;
+import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
+
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -34,6 +43,8 @@ public class Society {
     // 社团负责人
     @ManyToOne
     @JoinColumn(name = "principal_id")
+    @JSONField(serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
+    @Convert(converter = UserConvert.class)
     private User principal;
 
     // 创建时间
@@ -42,12 +53,13 @@ public class Society {
 
     // 学院
     @ManyToOne
+    @JSONField(serializeUsing = CollegeSerializer.class, deserializeUsing = CollegeDeserializer.class)
+    @Convert(converter = CollegeConvert.class)
     private College college;
 
     // 社团logo
     @Column(name = "society_logo")
     private String society_logo;
-
 
     public int getId() {
         return id;

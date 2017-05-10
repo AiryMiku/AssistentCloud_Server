@@ -42,5 +42,5 @@ public interface IUserDao {
      */
     void clear();
 
-    List<User> getUserBySociety(String society_id);
+    List<User> getUserBySociety(int society_id);
 }

@@ -10,6 +10,8 @@ import org.hibernate.query.Query;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -55,5 +57,11 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
         session.createQuery("delete User").executeUpdate();
         session.getTransaction().commit();
         session.close();
+    }
+
+    @Override
+    public List<User> getUserBySociety(int society_id) {
+        return (List<User>) getHibernateTemplate()
+                .find("from User where (from SocietyPosition where society.id = ?) in elements(societyPositions)", society_id);
     }
 }
