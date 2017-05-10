@@ -63,6 +63,10 @@ public class Notice {
     @JSONField(ordinal = 6, serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> executors;
 
+    //公告状态 (0:可显示   1： 已删除)
+    @Column(name = "notice_status")
+    private short status;
+
     public int getId() {
         return id;
     }
@@ -117,6 +121,14 @@ public class Notice {
 
     public void setExecutors(List<User> executors) {
         this.executors = executors;
+    }
+
+    public short getStatus() {
+        return status;
+    }
+
+    public void setStatus(short status) {
+        this.status = status;
     }
 
     @Override

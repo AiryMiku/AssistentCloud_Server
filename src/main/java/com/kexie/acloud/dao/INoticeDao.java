@@ -25,10 +25,10 @@ public interface INoticeDao {
 
     /**
      * 删除公告
-     * @param notice
+     * @param notice_id
      * @return
      */
-    public boolean deleteNotice(Notice notice);
+    public boolean deleteNotice(int notice_id);
 
     /**
      * 根据用户ID分页获取所以用户可见的公告列表
