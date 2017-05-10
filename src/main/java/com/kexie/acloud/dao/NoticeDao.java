@@ -58,13 +58,21 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public boolean deleteNotice(Notice notice) {
-        return false;
+    public boolean deleteNotice(int notice_id) {
+        try{
+            Notice notice = getNoticeByNoticeId(notice_id);
+            notice.setStatus((short)1);
+            getCurrentSession().update(notice);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
     public List<Notice> getNoticesByUserId(String user_id, int page,int pageSize) {
-        String hql = "FROM Notice WHERE publisher_id = ? OR ? in elements(executors) ORDER BY time DESC";
+        String hql = "FROM Notice WHERE (publisher_id = ? AND notice_status = 0)OR ? in elements(executors) ORDER BY time DESC";
         User user = new User();
         user.setUserId(user_id);
         Query query = getCurrentSession().createQuery(hql);
@@ -77,7 +85,7 @@ public class NoticeDao implements INoticeDao {
 
     @Override
     public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize) {
-        String hql = "FROM Notice WHERE (publisher_id = ? AND society_id = ?) OR ? in elements(executors) ORDER BY time DESC";
+        String hql = "FROM Notice WHERE (publisher_id = ? AND society_id = ? AND notice_status = 0) OR ? in elements(executors) ORDER BY time DESC";
         User user = new User();
         user.setUserId(user_id);
         Query query = getCurrentSession().createQuery(hql);
@@ -91,7 +99,7 @@ public class NoticeDao implements INoticeDao {
 
     @Override
     public List<Notice> getNoticesByPublisherId(String publisher_id, int page,int pageSize) {
-        String hql = "FROM Notice WHERE publisher_id = ? ORDER BY time DESC";
+        String hql = "FROM Notice WHERE publisher_id = ? AND notice_status = 0 ORDER BY time DESC";
         Query query = getCurrentSession().createQuery(hql);
         query.setParameter(0,publisher_id);
         query.setFirstResult((page-1)*pageSize);
@@ -101,6 +109,6 @@ public class NoticeDao implements INoticeDao {
 
     @Override
     public Notice getNoticeByNoticeId(int notice_id) {
-        return null;
+        return getCurrentSession().get(Notice.class,notice_id);
     }
 }

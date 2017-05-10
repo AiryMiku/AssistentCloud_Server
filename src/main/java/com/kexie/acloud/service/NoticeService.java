@@ -26,8 +26,8 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public boolean deleteNotice(Notice notice) {
-        return false;
+    public boolean deleteNotice(int notice_id) {
+        return noticeDao.deleteNotice(notice_id);
     }
 
     @Override
