@@ -36,5 +36,9 @@ public interface ISocietyDao {
      */
     public Society getSocietyById(int society_id);
 
-    List<Society> getSocieties();
+    List<Society> getSocietiesBySchoolId(int schoolId);
+
+    List<Society> getSocietiesByCollegeId(int collegeId);
+
+    void update(Society society);
 }

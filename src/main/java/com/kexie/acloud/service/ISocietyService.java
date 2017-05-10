@@ -42,11 +42,15 @@ public interface ISocietyService {
      * @param society_id
      * @return
      */
-    List<User> getUsersIn(String society_id);
+    List<User> getUsersIn(int society_id);
 
     /**
      * 获取所有的社团信息
+     *
+     * @param schoolId
      */
-    List<Society> getSoiceties();
+    List<Society> getSoicetiesBySchoolId(int schoolId);
+
+    List<Society> getSoicetiesByCollegeId(int collegeId);
 }
 

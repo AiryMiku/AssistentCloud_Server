@@ -7,7 +7,10 @@ package com.kexie.acloud.config;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.kexie.acloud.domain.College;
+import com.kexie.acloud.domain.FormConvert.CollegeConvert;
 import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
+import com.kexie.acloud.domain.JsonSerializer.UserConvert;
 import com.kexie.acloud.exception.GlobalHandlerExceptionResolver;
 import com.kexie.acloud.interceptor.CorsInterceptor;
 import com.kexie.acloud.interceptor.TokenInterceptor;
@@ -90,10 +93,16 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     MajorConvert mMajorConvert;
+    @Autowired
+    UserConvert mUserConvert;
+    @Autowired
+    CollegeConvert mCollegeConvert;
 
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(mMajorConvert);
+        registry.addConverter(mUserConvert);
+        registry.addConverter(mCollegeConvert);
     }
 
     @Bean

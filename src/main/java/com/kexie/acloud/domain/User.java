@@ -80,7 +80,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "positionId"))
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @Fetch(value = FetchMode.SUBSELECT)
-    private List<SocietyPosition> societyPostions;
+    private List<SocietyPosition> societyPositions;
 
     // 专业
     @ManyToOne
@@ -111,12 +111,12 @@ public class User {
         this.password = password;
     }
 
-    public List<SocietyPosition> getSocietyPostions() {
-        return societyPostions;
+    public List<SocietyPosition> getSocietyPositions() {
+        return societyPositions;
     }
 
-    public void setSocietyPostions(List<SocietyPosition> societyPostions) {
-        this.societyPostions = societyPostions;
+    public void setSocietyPositions(List<SocietyPosition> societyPostions) {
+        this.societyPositions = societyPostions;
     }
 
     public static String[] getClientIgnoreField() {
@@ -181,7 +181,7 @@ public class User {
         sb.append(",\"stuId\":\"")
                 .append(stuId).append('\"');
         sb.append(",\"societyPostions\":")
-                .append(societyPostions);
+                .append(societyPositions);
         sb.append(",\"major\":")
                 .append(major);
         sb.append(",\"classNum\":\"")
