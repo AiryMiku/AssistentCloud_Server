@@ -183,7 +183,7 @@ url：POST /colleges/{college_id}/majors
 
 ### 获取专业拥有的社团
 
-- url : /society/{societyId}
+- url : /society/college/{collegeId}
 - method: GET
 - 返回值：
 ```json
@@ -234,7 +234,7 @@ url：POST /colleges/{college_id}/majors
 ```
 
 ### 获取社团的详细信息
-- url : /society/college/{collegeId}
+- url : /society/{societyId}
 - method: GET
 - 返回值：
 ```json
