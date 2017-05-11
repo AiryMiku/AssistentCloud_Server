@@ -20,13 +20,6 @@ import javax.annotation.Resource;
  * Created : wen
  * DateTime : 2017/4/8 13:28
  * Description :
- * <p>
- * 一些逻辑：
- * 登录和注册的时候，成功之后只要返回一个token，之后客户端请求的时候，在cookie或者在head中带上这个token就可以了。
- * token保存在redis中。
- * 现在不考虑安全问题，不考虑报文被人截获的情况
- * 重构：登录注册写到TokenController中，指责单一。
- * 一些需要登录的界面就检查他是否已经登录
  */
 @RestController
 @RequestMapping(value = "/user", produces = {"application/json;charset=UTF-8"})

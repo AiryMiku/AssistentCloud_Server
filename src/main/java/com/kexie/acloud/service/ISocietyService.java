@@ -54,5 +54,7 @@ public interface ISocietyService {
     List<Society> getSoicetiesByCollegeId(int collegeId);
 
     List<Society> getSocietiesByUserId(String userId);
+
+    void updateSocietyLogo(int societyId, String relativePath);
 }
 

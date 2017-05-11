@@ -65,6 +65,8 @@ public class TaskService implements ITaskService {
 
     @Override
     public Task update(Task task) {
+        if (mTaskDao.getTasksByTaskId(task.getId()) == null)
+            throw new TaskException("任务不存在,taskId找不到");
         return mTaskDao.update(task);
     }
 

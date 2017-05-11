@@ -6,6 +6,7 @@ import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.service.ISocietyService;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,12 +14,18 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created : wen
@@ -49,7 +56,7 @@ public class SocietyController {
             Society s = new Society();
             s.setId(society.getId());
             s.setName(society.getName());
-            s.setSociety_logo(society.getSociety_logo());
+            s.setSocietyLogo(society.getSocietyLogo());
             result.add(s);
         });
 
@@ -71,7 +78,7 @@ public class SocietyController {
             Society s = new Society();
             s.setId(society.getId());
             s.setName(society.getName());
-            s.setSociety_logo(society.getSociety_logo());
+            s.setSocietyLogo(society.getSocietyLogo());
             result.add(s);
         });
 
@@ -122,5 +129,27 @@ public class SocietyController {
     @RequestMapping(value = "user", method = RequestMethod.GET)
     public List<Society> getSocietyByUserId(@RequestAttribute("userId") String userId) {
         return mSocietyService.getSocietiesByUserId(userId);
+    }
+
+    /**
+     * 上传社团logo
+     *
+     * @param logo
+     * @param societyId
+     */
+    @RequestMapping(value = "logo", method = RequestMethod.POST)
+    public void uploadLogo(HttpServletRequest request, @RequestParam("logo") MultipartFile logo,
+                           @RequestParam("societyId") int societyId) throws IOException {
+
+        String realName = logo.getOriginalFilename();
+        String fileName = UUID.randomUUID().toString() + realName.substring(realName.lastIndexOf("."));
+
+        String systemPath = request.getSession().getServletContext()
+                .getRealPath(File.separator + "resources" + File.separator + "society" + File.separator + "logo");
+        // 写入本地中
+        FileUtils.copyInputStreamToFile(logo.getInputStream(), new File(systemPath, fileName));
+
+        String relativePath = "/resources/society/logo/" + fileName;
+        mSocietyService.updateSocietyLogo(societyId, relativePath);
     }
 }

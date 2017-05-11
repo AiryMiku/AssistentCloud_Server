@@ -54,6 +54,15 @@
 </form>
 
 
+<div align="center">
+    <form action="/society/logo" method="post" enctype="multipart/form-data">
+        <br/>
+        上传社团头像:<input type="file" name="logo"/>
+        社团Id:<input type="text" name="societyId"/>
+        <input type="submit" value="upload"/>
+    </form>
+</div>
+
 </body>
 
 </html>

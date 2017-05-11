@@ -64,4 +64,12 @@ public class SocietyService implements ISocietyService {
     public List<Society> getSocietiesByUserId(String userId) {
         return mUserDao.getSocietiesByUserId(userId);
     }
+
+    @Override
+    public void updateSocietyLogo(int societyId, String relativePath) {
+        Society society = new Society();
+        society.setId(societyId);
+        society.setSocietyLogo(relativePath);
+        mSocietyDao.update(society);
+    }
 }
