@@ -18,4 +18,6 @@ public interface IUserService {
     User getUserByUserId(String userId) throws UserException;
 
     User update(User user);
+
+    void updateUserLogo(String userId, String relativePath);
 }

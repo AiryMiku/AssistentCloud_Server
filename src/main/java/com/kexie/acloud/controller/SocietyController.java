@@ -4,7 +4,9 @@ import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.SocietyException;
+import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.service.ISocietyService;
+import com.kexie.acloud.util.PathUtil;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
@@ -127,7 +129,8 @@ public class SocietyController {
      * 获取用户拥有的社团
      */
     @RequestMapping(value = "user", method = RequestMethod.GET)
-    public List<Society> getSocietyByUserId(@RequestAttribute("userId") String userId) {
+    public List<Society> getSocietyByUserId(@RequestAttribute("userId") String userId, HttpServletRequest request) {
+
         return mSocietyService.getSocietiesByUserId(userId);
     }
 
@@ -142,14 +145,31 @@ public class SocietyController {
                            @RequestParam("societyId") int societyId) throws IOException {
 
         String realName = logo.getOriginalFilename();
+        // UUID作为文件名
         String fileName = UUID.randomUUID().toString() + realName.substring(realName.lastIndexOf("."));
 
-        String systemPath = request.getSession().getServletContext()
-                .getRealPath(File.separator + "resources" + File.separator + "society" + File.separator + "logo");
         // 写入本地中
+        String systemPath = request.getSession().getServletContext()
+                .getRealPath(PathUtil.USER_LOGO_SYSTEM_PATH);
         FileUtils.copyInputStreamToFile(logo.getInputStream(), new File(systemPath, fileName));
 
-        String relativePath = "/resources/society/logo/" + fileName;
+        // 保存到数据库
+        String relativePath = PathUtil.USER_LOGO_PATH + fileName;
         mSocietyService.updateSocietyLogo(societyId, relativePath);
+    }
+
+    /**
+     * 社团负责人
+     *
+     * @param oldUserId
+     * @param newUserId
+     * @param societyId
+     */
+    @RequestMapping(value = "change", method = RequestMethod.POST)
+    public void changePrincipal(@RequestAttribute("userId") String oldUserId,
+                                @RequestParam("newUserId") String newUserId,
+                                @RequestParam("societyId") int societyId) throws UserException {
+
+        mSocietyService.changePrincipal(oldUserId, newUserId, societyId);
     }
 }

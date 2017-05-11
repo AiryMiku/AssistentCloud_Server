@@ -99,7 +99,6 @@ public class SecurityConfig {
 ////                // 原因是"/"这个路径没有被授权，然后就被重定向到"/"，一直循环下去了
 ////                .permitAll();
 //
-//        // TODO: 2017/5/6 登出操作没有看
 //
 //
 //        http.formLogin()
