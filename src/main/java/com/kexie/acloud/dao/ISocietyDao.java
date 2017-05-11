@@ -41,4 +41,6 @@ public interface ISocietyDao {
     List<Society> getSocietiesByCollegeId(int collegeId);
 
     void update(Society society);
+
+
 }

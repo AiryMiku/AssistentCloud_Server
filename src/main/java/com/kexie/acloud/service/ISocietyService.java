@@ -52,5 +52,7 @@ public interface ISocietyService {
     List<Society> getSoicetiesBySchoolId(int schoolId);
 
     List<Society> getSoicetiesByCollegeId(int collegeId);
+
+    List<Society> getSocietiesByUserId(String userId);
 }
 

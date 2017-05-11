@@ -59,4 +59,9 @@ public class SocietyService implements ISocietyService {
     public List<Society> getSoicetiesByCollegeId(int collegeId) {
         return mSocietyDao.getSocietiesByCollegeId(collegeId);
     }
+
+    @Override
+    public List<Society> getSocietiesByUserId(String userId) {
+        return mUserDao.getSocietiesByUserId(userId);
+    }
 }

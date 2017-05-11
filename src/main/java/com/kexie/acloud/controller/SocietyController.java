@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -82,7 +81,7 @@ public class SocietyController {
     /**
      * 一个社团的详细信息
      */
-    @RequestMapping(value = "{societyId}",method = RequestMethod.GET)
+    @RequestMapping(value = "{societyId}", method = RequestMethod.GET)
     public Society addSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
         return mSocietyService.getSocietyById(societyId);
     }
@@ -112,8 +111,16 @@ public class SocietyController {
     /**
      * 获取当前社团的所有用户
      */
-    @RequestMapping(value = "{societyId}/users",method = RequestMethod.GET)
+    @RequestMapping(value = "{societyId}/users", method = RequestMethod.GET)
     public List<User> getUser(@PathVariable("societyId") int societyId) {
         return mSocietyService.getUsersIn(societyId);
+    }
+
+    /**
+     * 获取用户拥有的社团
+     */
+    @RequestMapping(value = "user", method = RequestMethod.GET)
+    public List<Society> getSocietyByUserId(@RequestAttribute("userId") String userId) {
+        return mSocietyService.getSocietiesByUserId(userId);
     }
 }

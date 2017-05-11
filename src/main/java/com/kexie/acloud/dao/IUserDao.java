@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 
+import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 
 import java.util.List;
@@ -43,4 +44,12 @@ public interface IUserDao {
     void clear();
 
     List<User> getUserBySociety(int society_id);
+
+    /**
+     * 获取用户拥有的社团
+     *
+     * @param userId
+     * @return
+     */
+    List<Society> getSocietiesByUserId(String userId);
 }
