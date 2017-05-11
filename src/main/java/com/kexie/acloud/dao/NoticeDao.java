@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,14 +45,20 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public boolean updateNotice(Notice notice) {
-        try {
-            Notice newNotice = getCurrentSession().get(Notice.class,notice.getId());
-            BeanUtil.copyProperties(notice,newNotice);
-            getCurrentSession().save(newNotice);
-            return true;
+    public boolean updateNotice(int notice_id, Notice notice) {
+
+        Notice oldNotice = getCurrentSession().get(Notice.class,notice_id);
+        if(!notice.getPublisher().getUserId().equals(oldNotice.getPublisher().getUserId())){
+            //发布者信息不能修改
+            return false;
         }
-        catch (Exception e){
+        try {
+            notice.setId(oldNotice.getId());
+            notice.setTime(new Date());
+            getCurrentSession().evict(oldNotice);
+            getCurrentSession().update(notice);
+            return true;
+        }catch (Exception e){
             e.printStackTrace();
             return false;
         }

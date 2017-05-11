@@ -17,10 +17,11 @@ public interface INoticeService {
 
     /**
      * 更新公告
+     * @param notice_id
      * @param notice
      * @return
      */
-    public boolean updateNotice(Notice notice);
+    public boolean updateNotice(int notice_id, Notice newNotice);
 
     /**
      * 删除公告

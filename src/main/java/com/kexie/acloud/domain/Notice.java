@@ -6,8 +6,10 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -28,23 +30,27 @@ public class Notice {
     private int id;
 
     //公告标题
+    @NotBlank(message = "你忘记写公告标题了")
     @Column(name = "notice_title",nullable = false)
     @JSONField(ordinal = 1)
     private String title;
 
     //公告内容(TEXT)
+    @NotBlank(message = "你忘记写公告内容了")
     @Type(type = "text")
     @Column(name = "notice_content",nullable = false)
     @JSONField(ordinal = 2)
     private String content;
 
     //公告发布者
+    @NotNull(message = "缺少公告发布者信息")
     @ManyToOne
     @JoinColumn(name = "publisher_id", nullable = false)
     @JSONField(ordinal = 4,serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
     private User publisher;
 
     //公告所属社团
+    @NotNull(message = "缺少所属社团信息")
     @ManyToOne
     @JoinColumn(name = "society_id", nullable = false)
     @JSONField(ordinal = 3, serializeUsing = SocietySerializer.class, deserializeUsing = SocietyDeserializer.class)

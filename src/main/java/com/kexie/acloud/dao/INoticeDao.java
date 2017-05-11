@@ -19,9 +19,10 @@ public interface INoticeDao {
     /**
      * 更新公告
      * @param notice
+     * @param notice_id
      * @return
      */
-    public boolean updateNotice(Notice notice);
+    public boolean updateNotice(int notice_id, Notice notice);
 
     /**
      * 删除公告

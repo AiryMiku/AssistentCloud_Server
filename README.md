@@ -349,3 +349,25 @@ GET `http://localhost:8080/notices/user/zojian@qq.com/society/1/?page=1&pageSize
   }
 ]
 ```
+
+### 5.删除公告
+**URL： DELETE /notices/{notice_id}**
+
+### 6.更新公告
+**URL： PUT /notices/{notice_id}**
+
+PUT JSON格式
+
+```json
+[
+  {
+    "title": "标题666",
+    "content": "123内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+    "society": 1,
+    "publisher": "zojian@qq.com",
+    "executors": [
+      "admin@qq.com"
+    ]
+  }
+]
+```

@@ -1,8 +1,11 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.Notice;
+import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.INoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,13 +25,26 @@ public class NoticeController {
      * @return
      */
     @RequestMapping(method = RequestMethod.POST)
-    public String addNotice(@RequestBody Notice notice){
+    public String addNotice(@Validated @RequestBody Notice notice, BindingResult result)throws FormException{
+        if(result.hasErrors()){
+            throw new FormException(result);
+        }
         if(noticeService.addNotice(notice)){
             return "发布公告成功！";
         }
         else{
             return "发布公告失败";
         }
+    }
+
+    /**
+     * 根据公告ID获取公告详细信息
+     * @param notice_id
+     * @return
+     */
+    @RequestMapping(value = "/{notice_id}",method = RequestMethod.GET)
+    public Notice getNoticeByNoticeId(@PathVariable int notice_id){
+        return noticeService.getNoticeByNoticeId(notice_id);
     }
 
     /**
@@ -44,6 +60,29 @@ public class NoticeController {
         else{
             return "公告删除失败！";
         }
+    }
+
+    /**
+     * 根据公告ID更新公告
+     * @param notice
+     * @param result
+     * @return
+     * @throws FormException
+     */
+    @RequestMapping(value = "/{notice_id}",method = RequestMethod.PUT)
+    public String updateNotice(@PathVariable int notice_id,@RequestBody Notice notice, BindingResult result)throws FormException{
+        if(result.hasErrors()){
+            throw new FormException(result);
+        }
+        if(noticeService.updateNotice(notice_id, notice)){
+            return "更新公告成功";
+        }
+        else{
+            return "更新公告失败";
+        }
+//        System.out.println("=========");
+//        System.out.println(notice);
+//        return "123";
     }
 
     /**
