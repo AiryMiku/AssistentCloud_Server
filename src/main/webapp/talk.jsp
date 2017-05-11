@@ -144,7 +144,7 @@
 
         var websocket;
         if ('WebSocket' in window) {
-            websocket = new WebSocket("ws://" + path + "/ws?uid=" + uid);
+            websocket = new WebSocket("ws://" + path + "/ws?roomId=1");
         } else if ('MozWebSocket' in window) {
             websocket = new MozWebSocket("ws://" + path + "/ws" + uid);
         } else {
@@ -223,6 +223,7 @@
 
         function clearAll() {
             $("#content").empty();
+            websocket.onclose();
         }
     </script>
 </head>

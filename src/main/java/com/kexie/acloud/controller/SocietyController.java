@@ -5,6 +5,7 @@ import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
+import com.kexie.acloud.log.Log;
 import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
@@ -172,4 +174,5 @@ public class SocietyController {
 
         mSocietyService.changePrincipal(oldUserId, newUserId, societyId);
     }
+
 }
