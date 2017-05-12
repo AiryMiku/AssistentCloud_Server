@@ -176,10 +176,9 @@
                 return;
             } else {
                 var data = {};
-                data["from"] = from;
-                data["fromName"] = fromName;
-                data["to"] = to;
-                data["text"] = v;
+                data["roomId"] = 1;
+                data["userId"] = "helloworld.wen@gmail.com";
+                data["message"] = v;
                 // webSocket 发送一条信息
                 websocket.send(JSON.stringify(data));
                 $("#content").append("<div class='tmsg'><label class='name'>我&nbsp;" + new Date().Format("yyyy-MM-dd hh:mm:ss") + "</label><div class='tmsg_text'>" + data.text + "</div></div>");

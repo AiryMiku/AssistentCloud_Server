@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * Created : wen
@@ -17,9 +19,13 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int roomId;
+    private Integer roomId;
 
     private String name;
+
+    // 房主
+    @ManyToOne
+    private User master;
 
     @Override
     public String toString() {
@@ -28,8 +34,22 @@ public class Room {
                 .append(roomId);
         sb.append(",\"name\":\"")
                 .append(name).append('\"');
+        sb.append(",\"master\":")
+                .append(master);
         sb.append('}');
         return sb.toString();
+    }
+
+    public User getMaster() {
+        return master;
+    }
+
+    public void setMaster(User master) {
+        this.master = master;
+    }
+
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
     }
 
     public int getRoomId() {

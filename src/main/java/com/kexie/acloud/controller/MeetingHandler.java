@@ -17,11 +17,12 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
 
@@ -34,11 +35,11 @@ import javax.annotation.Resource;
 public class MeetingHandler implements WebSocketHandler {
 
     // 用户信息：userId - User
-    private static final Map<String, User> mUserCache = new HashMap<>();
+    private static final Map<String, User> mUserCache = new ConcurrentHashMap<>();
     // 正在房间里面的用户: roomId - User
-    private static final Map<Integer, List<User>> mRoom = new HashMap<>();
+    private static final Map<Integer, List<User>> mRoom = new ConcurrentHashMap<>();
     // 用户WebSocketSession: UserId - session
-    private static final Map<String, WebSocketSession> mUserWsSession = new HashMap<>();
+    private static final Map<String, WebSocketSession> mUserWsSession = new ConcurrentHashMap<>();
 
     @Resource
     private IUserService mUserService;
@@ -57,7 +58,7 @@ public class MeetingHandler implements WebSocketHandler {
 
         if (roomId == null) {
             // js可以在event中获取到错误信息
-            session.close(new CloseStatus(1007, "没有用户房间"));
+            session.close(new CloseStatus(1007, "没有携带房间号"));
             return;
         }
 
@@ -70,7 +71,9 @@ public class MeetingHandler implements WebSocketHandler {
             users.add(user);
             mRoom.put(roomId, users);
         } else {
-            mRoom.get(roomId).add(user);
+            if (!mRoom.get(roomId).contains(user)) {
+                mRoom.get(roomId).add(user);
+            }
         }
         // 保存这个Session
         mUserWsSession.putIfAbsent(userId, session);
@@ -85,6 +88,12 @@ public class MeetingHandler implements WebSocketHandler {
 
         int roomId = pushMessage.getRoomId();
         Room room = mIMService.getRoomInfo(roomId);
+
+        if (room == null) {
+            session.close(new CloseStatus(1007, "没有当前房间"));
+            return;
+        }
+
         User user = mUserCache.get(pushMessage.getUserId());
 
         Message result = new Message();
@@ -98,7 +107,8 @@ public class MeetingHandler implements WebSocketHandler {
         // 推送到其他用户上
         for (User item : users) {
             WebSocketSession targetSession = mUserWsSession.get(item.getUserId());
-            if (targetSession != null && targetSession.isOpen())
+
+            if (targetSession != null && targetSession.isOpen() && targetSession != session)
                 targetSession.sendMessage(new TextMessage(JSON.toJSONString(result)));
         }
     }
@@ -112,7 +122,21 @@ public class MeetingHandler implements WebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus closeStatus) throws Exception {
 
-        System.out.println(closeStatus);
+        String sessionId = session.getId();
+        System.out.println("关闭的id = " + sessionId + "  状态：" + closeStatus);
+
+        mUserWsSession.keySet().forEach(userId -> {
+            WebSocketSession s = mUserWsSession.get(userId);
+            // 通过id找到这个Session，然后remove
+            if (s.getId().equals(sessionId)) {
+                try {
+                    s.close(closeStatus);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mUserWsSession.remove(userId);
+            }
+        });
     }
 
     @Override
