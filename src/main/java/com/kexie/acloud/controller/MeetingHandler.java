@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Resource;
@@ -125,18 +126,19 @@ public class MeetingHandler implements WebSocketHandler {
         String sessionId = session.getId();
         System.out.println("关闭的id = " + sessionId + "  状态：" + closeStatus);
 
-        mUserWsSession.keySet().forEach(userId -> {
+
+        Set<String> keySet = mUserWsSession.keySet();
+        for (String userId : keySet) {
+
             WebSocketSession s = mUserWsSession.get(userId);
             // 通过id找到这个Session，然后remove
+
             if (s.getId().equals(sessionId)) {
-                try {
-                    s.close(closeStatus);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                s.close(closeStatus);
                 mUserWsSession.remove(userId);
+                return;
             }
-        });
+        }
     }
 
     @Override
