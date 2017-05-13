@@ -4,7 +4,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.kexie.acloud.domain.FormConvert.CollegeConvert;
 import com.kexie.acloud.domain.JsonSerializer.CollegeDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.CollegeSerializer;
-import com.kexie.acloud.domain.JsonSerializer.UserConvert;
 import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
@@ -73,7 +72,7 @@ public class Society {
 
     // 社团logo
     @Column(name = "society_logo")
-    private String society_logo;
+    private String societyLogo;
 
     public int getId() {
         return id;
@@ -115,12 +114,12 @@ public class Society {
         this.createTime = createTime;
     }
 
-    public String getSociety_logo() {
-        return society_logo;
+    public String getSocietyLogo() {
+        return societyLogo;
     }
 
-    public void setSociety_logo(String society_logo) {
-        this.society_logo = society_logo;
+    public void setSocietyLogo(String society_logo) {
+        this.societyLogo = society_logo;
     }
 
     public College getCollege() {
@@ -145,7 +144,7 @@ public class Society {
         sb.append(",\"createTime\":\"")
                 .append(createTime).append('\"');
         sb.append(",\"society_logo\":\"")
-                .append(society_logo).append('\"');
+                .append(societyLogo).append('\"');
         sb.append('}');
         return sb.toString();
     }

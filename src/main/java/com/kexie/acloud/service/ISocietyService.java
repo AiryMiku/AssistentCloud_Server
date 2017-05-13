@@ -3,6 +3,7 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.SocietyException;
+import com.kexie.acloud.exception.UserException;
 
 import java.util.List;
 
@@ -52,5 +53,11 @@ public interface ISocietyService {
     List<Society> getSoicetiesBySchoolId(int schoolId);
 
     List<Society> getSoicetiesByCollegeId(int collegeId);
+
+    List<Society> getSocietiesByUserId(String userId);
+
+    void updateSocietyLogo(int societyId, String relativePath);
+
+    void changePrincipal(String oldId, String newId, int societyId) throws UserException;
 }
 

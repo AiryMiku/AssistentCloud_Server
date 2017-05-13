@@ -5,6 +5,7 @@ import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.SocietyException;
+import com.kexie.acloud.exception.UserException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,5 +59,45 @@ public class SocietyService implements ISocietyService {
     @Override
     public List<Society> getSoicetiesByCollegeId(int collegeId) {
         return mSocietyDao.getSocietiesByCollegeId(collegeId);
+    }
+
+    @Override
+    public List<Society> getSocietiesByUserId(String userId) {
+        return mUserDao.getSocietiesByUserId(userId);
+    }
+
+    @Override
+    public void updateSocietyLogo(int societyId, String relativePath) {
+        Society society = new Society();
+        society.setId(societyId);
+        society.setSocietyLogo(relativePath);
+        mSocietyDao.update(society);
+    }
+
+    @Override
+    public void changePrincipal(String oldUserId, String newUserId, int societyId) throws UserException {
+
+        if (mUserDao.getUser(newUserId) == null)
+            throw new UserException("新负责人不存在");
+
+        List<Society> societies = mUserDao.getSocietiesByUserId(newUserId);
+
+        boolean exist = false;
+        for (Society society : societies) {
+            if (societyId == society.getId()) {
+                exist = true;
+                break;
+            }
+        }
+        if (!exist)
+            throw new UserException("新负责人不存在这个社团中");
+
+        Society society = new Society();
+        User newPrincipal = new User();
+
+        newPrincipal.setUserId(newUserId);
+        society.setId(societyId);
+        society.setPrincipal(newPrincipal);
+        mSocietyDao.update(society);
     }
 }

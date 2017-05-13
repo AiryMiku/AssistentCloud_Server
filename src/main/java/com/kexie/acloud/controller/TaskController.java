@@ -32,9 +32,14 @@ public class TaskController {
     private ITaskService mTaskService;
 
     /**
-     * 添加一个Task
+     * 添加任务
+     *
+     * @param task
+     * @param result
+     * @param userId
+     * @throws FormException
      */
-    @RequestMapping(value = "/add")
+    @RequestMapping(method = RequestMethod.POST)
     public void addTask(@Validated @RequestBody Task task, BindingResult result,
                         @RequestAttribute("userId") String userId) throws FormException {
 
@@ -46,17 +51,27 @@ public class TaskController {
 
     /**
      * 更新任务
+     *
+     * @param task
+     * @param result
+     * @return
+     * @throws FormException
      */
-    @RequestMapping(value = "/update")
+    @RequestMapping(method = RequestMethod.PUT)
     public Task updateTask(@RequestBody Task task, BindingResult result) throws FormException {
         if (result.hasErrors()) throw new FormException(result);
         return mTaskService.update(task);
     }
 
     /**
-     * 完成一条任务
+     * 归档
+     *
+     * @param userId
+     * @param taskId
+     * @deprecated 使用更新接口就好啦
      */
-    @RequestMapping(value = "/archive")
+    @RequestMapping(value = "/archive", method = RequestMethod.PUT)
+    @Deprecated
     public void archive(@RequestAttribute("userId") String userId,
                         @RequestParam("taskId") String taskId) {
         mTaskService.archive(taskId);
@@ -64,15 +79,20 @@ public class TaskController {
 
     /**
      * 删除一条任务
+     *
+     * @param taskId
+     * @throws FormException
      */
-    @RequestMapping(value = "/delete")
-    public void delete(@RequestAttribute("userId") String userId,
-                       @RequestParam("taskId") String taskId) throws FormException {
+    @RequestMapping(method = RequestMethod.DELETE)
+    public void delete(@RequestParam("taskId") String taskId) throws FormException {
         mTaskService.delete(taskId);
     }
 
     /**
-     * 根据发布者Id获取任务
+     * 获取发布者发布的全部任务
+     *
+     * @param userId
+     * @return
      */
     @RequestMapping(value = "/publisher", method = RequestMethod.GET)
     public List<Task> getTaskByPublisherId(@RequestParam("publishId") String userId) {
@@ -80,25 +100,34 @@ public class TaskController {
     }
 
     /**
-     * 根据用户Id获取任务
+     * 用户拥有的所有任务
+     *
+     * @param userId
+     * @return
      */
-    @RequestMapping(value = "/user")
+    @RequestMapping(value = "user", method = RequestMethod.GET)
     public List<Task> getTaskByUserId(@RequestParam("userId") String userId) {
         return mTaskService.getTaskByUserId(userId);
     }
 
     /**
-     * 根据任务Id获取任务
+     * 任务详情
+     *
+     * @param taskId
+     * @return
      */
-    @RequestMapping(value = "/task")
-    public Task getTaskByTaskId(@RequestParam("taskId") String taskId) {
+    @RequestMapping(value = "{taskId}", method = RequestMethod.GET)
+    public Task getTaskByTaskId(@PathVariable("taskId") String taskId) {
         return mTaskService.getTaskByTaskId(taskId);
     }
 
     /**
-     * 根据社团Id获取任务
+     * 获取社团的所有任务
+     *
+     * @param societyId
+     * @return
      */
-    @RequestMapping(value = "/society")
+    @RequestMapping(value = "/society", method = RequestMethod.GET)
     public List<Task> getTaskBySocietyId(@RequestParam("societyId") int societyId) {
         return mTaskService.getTaskBySocietyId(societyId);
     }

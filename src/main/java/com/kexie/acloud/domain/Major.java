@@ -35,11 +35,13 @@ public class Major {
 
     @Override
     public String toString() {
-        return "Major{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", college=" + college +
-                '}';
+        final StringBuilder sb = new StringBuilder("{");
+        sb.append("\"id\":")
+                .append(id);
+        sb.append(",\"name\":\"")
+                .append(name).append('\"');
+        sb.append('}');
+        return sb.toString();
     }
 
     public int getId() {

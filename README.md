@@ -124,6 +124,129 @@ url：POST /colleges/{college_id}/majors
 }
 ```
 
+## 社团模块
+
+### 添加一个社团
+
+- url : /society
+- method: PUT
+- ContentType: application/json;
+- Json:
+```json
+{
+	"name":"社团名字",
+	"summary":"社团介绍",
+	"principal":"helloworld.wen@gmail.com",//社团负责人UserId
+	"createTime":2354353254352,// 创建时间，转换成long
+	"college":1, // 学院Id
+	"society_logo":"http://i.niupic.com/images/2017/05/10/qamWL3.jpg" // 社团logo，现在只能上传个URL
+}
+```
+
+### 更新一个社团信息
+
+- url : /society
+- method: POST
+- ContentType: application/json;
+- Json:
+```json
+{
+	"name":"社团名字",
+	"summary":"社团介绍",
+	"principal":"helloworld.wen@gmail.com",//社团负责人UserId
+	"createTime":2354353254352,// 创建时间，转换成long
+	"college":1, // 学院Id
+	"society_logo":"http://i.niupic.com/images/2017/05/10/qamWL3.jpg" // 社团logo，现在只能上传个URL
+}
+```
+
+### 获取学校的社团
+
+- url : /society/school/{schoolId}
+- method: GET
+- 返回值：
+```json
+[
+	{
+	"id": 2,
+	"name": "不甘社",
+	"society_logo": "http://i.niupic.com/images/2017/05/10/qamWL3.jpg",
+	"summary": "这个社团很懒，什么都没有说"
+	},
+	{
+	"id": 3,
+	"name": "更新名字",
+	"summary": "这个社团很懒，什么都没有说"
+	}
+]
+```
+
+### 获取专业拥有的社团
+
+- url : /society/college/{collegeId}
+- method: GET
+- 返回值：
+```json
+[
+	{
+	"id": 2,
+	"name": "不甘社",
+	"society_logo": "http://i.niupic.com/images/2017/05/10/qamWL3.jpg",
+	"summary": "这个社团很懒，什么都没有说"
+	},
+	{
+	"id": 3,
+	"name": "更新名字",
+	"summary": "这个社团很懒，什么都没有说"
+	}
+]
+```
+
+### 获取社团拥有的所有用户
+
+- url : /society/{societyId}/users
+- method: GET
+- Json:
+```json
+[
+	{
+		"gender": 1,
+		"phone": 123,
+		"societyPositions": [],
+		"userId": "abc"
+	}
+]
+```
+
+### 获取用户拥有的所有社团
+
+- url : /society/user
+- method: GET
+- Json:
+```json
+[
+	{
+		"id": 1,
+		"name": "科协",
+		"society_logo": "http://i.niupic.com/images/2017/05/10/qamWL3.jpg"
+	}
+]
+```
+
+### 获取社团的详细信息
+- url : /society/{societyId}
+- method: GET
+- 返回值：
+```json
+{
+	"college": 1,
+	"createTime": 1494453191312,
+	"id": 2,
+	"name": "不甘社",
+	"society_logo": "http://i.niupic.com/images/2017/05/10/qamWL3.jpg"
+}
+```
+
 ## 用户模块
 
 ### 登录

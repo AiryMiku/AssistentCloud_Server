@@ -144,7 +144,7 @@
 
         var websocket;
         if ('WebSocket' in window) {
-            websocket = new WebSocket("ws://" + path + "/ws?uid=" + uid);
+            websocket = new WebSocket("ws://" + path + "/ws?roomId=1");
         } else if ('MozWebSocket' in window) {
             websocket = new MozWebSocket("ws://" + path + "/ws" + uid);
         } else {
@@ -176,10 +176,9 @@
                 return;
             } else {
                 var data = {};
-                data["from"] = from;
-                data["fromName"] = fromName;
-                data["to"] = to;
-                data["text"] = v;
+                data["roomId"] = 1;
+                data["userId"] = "helloworld.wen@gmail.com";
+                data["message"] = v;
                 // webSocket 发送一条信息
                 websocket.send(JSON.stringify(data));
                 $("#content").append("<div class='tmsg'><label class='name'>我&nbsp;" + new Date().Format("yyyy-MM-dd hh:mm:ss") + "</label><div class='tmsg_text'>" + data.text + "</div></div>");
@@ -223,6 +222,7 @@
 
         function clearAll() {
             $("#content").empty();
+            websocket.onclose();
         }
     </script>
 </head>

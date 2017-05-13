@@ -72,4 +72,12 @@ public class UserService implements IUserService {
         mUserDao.updateUser(u);
         return u;
     }
+
+    @Override
+    public void updateUserLogo(String userId, String relativePath) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setLogoUrl(relativePath);
+        update(user);
+    }
 }

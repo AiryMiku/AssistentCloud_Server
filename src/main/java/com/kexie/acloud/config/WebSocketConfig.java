@@ -1,6 +1,6 @@
-package com.kexie.acloud.websocket;
+package com.kexie.acloud.config;
 
-import com.kexie.acloud.log.Log;
+import com.kexie.acloud.interceptor.MeetingHandShake;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -13,8 +13,8 @@ import javax.annotation.Resource;
 
 /**
  * Created : wen
- * DateTime : 2017/4/28 11:01
- * Description : WebSocket 配置文件，定义全局的配置信息
+ * DateTime : 2017/5/11 23:09
+ * Description :
  */
 @Service
 @EnableWebSocket
@@ -23,22 +23,16 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
     @Resource
     WebSocketHandler handler;
 
-    /**
-     * @param registry
-     */
+    @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-
-        Log.debug("配置WebSocket");
-
         // 表示添加了一个/socket端点，客户端就可以通过这个端点来进行连接。
         registry.addHandler(handler, "/ws")
-                .addInterceptors(new HandShake());
+                .addInterceptors(new MeetingHandShake());
 
         registry.addHandler(handler, "/ws/sockjs")
                 // 添加一个拦截器
-                .addInterceptors(new HandShake())
-                // 开启sockJs的支持
+                .addInterceptors(new MeetingHandShake())
+                // 开启sockJs的支持 , 什么是sockJs
                 .withSockJS();
     }
-
 }
