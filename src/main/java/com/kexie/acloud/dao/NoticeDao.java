@@ -45,10 +45,11 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public boolean updateNotice(int notice_id, Notice notice) {
+    public boolean updateNotice(int notice_id, Notice notice, String user_id) {
 
         Notice oldNotice = getCurrentSession().get(Notice.class,notice_id);
-        if(!notice.getPublisher().getUserId().equals(oldNotice.getPublisher().getUserId())){
+        if(!notice.getPublisher().getUserId().equals(oldNotice.getPublisher().getUserId())
+                || !notice.getPublisher().getUserId().equals(user_id)){
             //发布者信息不能修改
             return false;
         }
@@ -65,12 +66,17 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public boolean deleteNotice(int notice_id) {
+    public boolean deleteNotice(int notice_id, String user_id) {
         try{
             Notice notice = getNoticeByNoticeId(notice_id);
-            notice.setStatus((short)1);
-            getCurrentSession().update(notice);
-            return true;
+            if(notice.getPublisher().getUserId().equals(user_id)) {
+                notice.setStatus((short) 1);
+                getCurrentSession().update(notice);
+                return true;
+            }
+            else{
+                return false;
+            }
         }catch (Exception e){
             e.printStackTrace();
             return false;

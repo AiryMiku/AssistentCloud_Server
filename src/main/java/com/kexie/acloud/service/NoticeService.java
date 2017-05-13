@@ -21,13 +21,13 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public boolean updateNotice(int notice_id,Notice newNotice) {
-        return noticeDao.updateNotice(notice_id,newNotice);
+    public boolean updateNotice(int notice_id,Notice newNotice, String user_id) {
+        return noticeDao.updateNotice(notice_id,newNotice,user_id);
     }
 
     @Override
-    public boolean deleteNotice(int notice_id) {
-        return noticeDao.deleteNotice(notice_id);
+    public boolean deleteNotice(int notice_id, String user_id) {
+        return noticeDao.deleteNotice(notice_id, user_id);
     }
 
     @Override
