@@ -53,4 +53,32 @@ public class NoticeTest extends com.kexie.acloud.dao.BaseTest {
     public void getNoticesByUserIdAndSocietyId(){
         System.out.println(JSON.toJSONString(noticeDao.getNoticesByUserIdAndSocietyId("zojian@qq.com",2,1,10)));
     }
+
+    @Test
+    public void getNoticeByNoticeId(){
+        System.out.println(JSON.toJSONString(noticeDao.getNoticeByNoticeId(4)));
+    }
+
+    @Test
+    public void deleteNotice(){
+        noticeDao.deleteNotice(32);
+        getNoticeByNoticeId();
+    }
+
+    @Test
+    public void updateNotice(){
+        String json = "{\n" +
+                "    \"title\": \"标题77\",\n" +
+                "    \"content\": \"内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容\",\n" +
+                "    \"society\": 1,\n" +
+                "    \"publisher\": \"zojian@qq.com\",\n" +
+                "    \"executors\": [\n" +
+                "      \"admin123@qq.com\"\n" +
+                "    ]\n" +
+                " }";
+        Notice notice = JSON.parseObject(json,Notice.class);
+        System.out.println(notice);
+       assert noticeDao.updateNotice(35,notice)==true;
+    }
+
 }

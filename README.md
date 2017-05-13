@@ -387,7 +387,6 @@ POST JSON 格式
     "content": "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
     "society": 1, //社团ID
     "publisher": "zojian@qq.com",
-    "time": 1494251950565,
     "executors": [ //哪些用户可见
       "admin@qq.com"
     ]
@@ -395,11 +394,9 @@ POST JSON 格式
 ```
 
 ### 2.分页获取当前用户发布的公告（不区分社团,按时间降序）
-**URL：GET `/notices/publisher/{publisher_id}/?page=1&pageSize=10`**
+**URL：GET `/notices/publisher/?page=1&pageSize=10`**
 
 返回 JSON 格式
-
-GET `/notices/publisher/zojian@qq.com/?page=1&pageSize=10`
 
 ```json
 [
@@ -419,9 +416,7 @@ GET `/notices/publisher/zojian@qq.com/?page=1&pageSize=10`
 
 ### 3.分页获取该用户可见的所有公告（按时间降序）
 
-**URL: GET `/notices/user/{user_id}/?page=1&pageSize=10`**
-
-GET `/notices/user/zojian@qq.com/?page=1&pageSize=10`
+**URL: GET `/notices/user/?page=1&pageSize=10`**
 
 返回的JSON格式
 ```json
@@ -441,9 +436,8 @@ GET `/notices/user/zojian@qq.com/?page=1&pageSize=10`
 ```
 
 ### 4.分页获取该用户在某个社团内可见的公告（按时间降序）
-**URL: GET `/notices/user/{user_id}/society/{society_id}/?page=1&pageSize=10`**
+**URL: GET `/notices/user/society/{society_id}/?page=1&pageSize=10`**
 
-GET `http://localhost:8080/notices/user/zojian@qq.com/society/1/?page=1&pageSize=5`
 
 返回的JSON格式
 ```json
@@ -466,6 +460,28 @@ GET `http://localhost:8080/notices/user/zojian@qq.com/society/1/?page=1&pageSize
     "society": 1,
     "publisher": "zojian@qq.com",
     "time": 1494251950565,
+    "executors": [
+      "admin@qq.com"
+    ]
+  }
+]
+```
+
+### 5.删除公告
+**URL： DELETE /notices/{notice_id}**
+
+### 6.更新公告
+**URL： PUT /notices/{notice_id}**
+
+PUT JSON格式
+
+```json
+[
+  {
+    "title": "标题666",
+    "content": "123内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+    "society": 1,
+    "publisher": "zojian@qq.com",
     "executors": [
       "admin@qq.com"
     ]
