@@ -36,6 +36,7 @@ public class MeetingService implements IMeetingService {
         Room room = new Room();
         room.setName(meeting.getName());
         room.setMaster(master);
+        room.setMember(meeting.getMembers());
 
         // 创建一个房间
         int roomId = mRoomDao.addRoom(room);

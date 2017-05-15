@@ -2,9 +2,7 @@ package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.Meeting;
 import com.kexie.acloud.domain.Room;
-import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.FormException;
-import com.kexie.acloud.service.IIMService;
 import com.kexie.acloud.service.IMeetingService;
 
 import org.springframework.validation.BindingResult;
@@ -22,7 +20,7 @@ import javax.annotation.Resource;
  * Description :
  */
 @RestController
-@RequestMapping(value = "meet", produces = {"application/json;charset=UTF-8"})
+@RequestMapping(value = "meeting", produces = {"application/json;charset=UTF-8"})
 public class MeetingController {
 
     @Resource

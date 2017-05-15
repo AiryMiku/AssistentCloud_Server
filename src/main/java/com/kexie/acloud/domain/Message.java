@@ -5,11 +5,11 @@ import java.util.Date;
 /**
  * Created : wen
  * DateTime : 2017/5/12 1:38
- * Description :
+ * Description : 会议消息实体
  */
 public class Message {
 
-
+    // 消息属于哪个房间
     private Room room;
 
     // 发布者
