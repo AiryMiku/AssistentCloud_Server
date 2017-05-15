@@ -35,7 +35,7 @@ public interface ISocietyService {
      * @param society_id 社团ID
      * @return
      */
-    Society getSocietyById(int society_id);
+    Society getSocietyById(int society_id) throws SocietyException;
 
     /**
      * 获取当前社团的所有成员
@@ -59,5 +59,7 @@ public interface ISocietyService {
     void updateSocietyLogo(int societyId, String relativePath);
 
     void changePrincipal(String oldId, String newId, int societyId) throws UserException;
+
+    List<Society> searchSocietyByName(String query);
 }
 

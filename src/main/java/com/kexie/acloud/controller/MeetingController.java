@@ -26,9 +26,6 @@ import javax.annotation.Resource;
 public class MeetingController {
 
     @Resource
-    private IIMService mIMService;
-
-    @Resource
     private IMeetingService mMeetingService;
 
     /**
@@ -42,13 +39,5 @@ public class MeetingController {
         // 创建会议
         return mMeetingService.createMeeting(meeting);
     }
-
-    /**
-     * 查询房间号
-     */
-
-    /**
-     * 查询用户拥有的房间号
-     */
 
 }

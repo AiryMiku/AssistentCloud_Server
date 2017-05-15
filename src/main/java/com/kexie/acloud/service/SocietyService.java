@@ -30,6 +30,7 @@ public class SocietyService implements ISocietyService {
 
     @Override
     public void add(Society society) throws SocietyException {
+        // 学院是否有同名
         if (!mSocietyDao.hasSociety(society.getName(), society.getCollege().getId()))
             mSocietyDao.add(society);
         else
@@ -42,8 +43,11 @@ public class SocietyService implements ISocietyService {
     }
 
     @Override
-    public Society getSocietyById(int society_id) {
-        return mSocietyDao.getSocietyById(society_id);
+    public Society getSocietyById(int society_id) throws SocietyException {
+        Society society = mSocietyDao.getSocietyById(society_id);
+        if (society == null)
+            throw new SocietyException("社团不存在");
+        return society;
     }
 
     @Override
@@ -99,5 +103,10 @@ public class SocietyService implements ISocietyService {
         society.setId(societyId);
         society.setPrincipal(newPrincipal);
         mSocietyDao.update(society);
+    }
+
+    @Override
+    public List<Society> searchSocietyByName(String query) {
+        return mSocietyDao.getSocietiesByName(query);
     }
 }

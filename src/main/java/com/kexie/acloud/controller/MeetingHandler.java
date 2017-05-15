@@ -126,7 +126,6 @@ public class MeetingHandler implements WebSocketHandler {
         String sessionId = session.getId();
         System.out.println("关闭的id = " + sessionId + "  状态：" + closeStatus);
 
-
         Set<String> keySet = mUserWsSession.keySet();
         for (String userId : keySet) {
 

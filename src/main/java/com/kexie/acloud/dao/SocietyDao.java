@@ -48,6 +48,11 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
+    public List<Society> getSocietiesByName(String query) {
+        return (List<Society>) getHibernateTemplate().find("from Society  where name like ?", "%" + query + "%");
+    }
+
+    @Override
     public boolean hasSociety(String societyName, int collegeId) {
         return getHibernateTemplate()
                 .find("from Society where name = ? and college.id = ?",
@@ -59,5 +64,6 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     public void add(Society society) {
         getHibernateTemplate().save(society);
     }
+
 
 }

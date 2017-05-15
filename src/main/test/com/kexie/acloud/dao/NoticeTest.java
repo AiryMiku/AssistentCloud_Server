@@ -61,7 +61,7 @@ public class NoticeTest extends com.kexie.acloud.dao.BaseTest {
 
     @Test
     public void deleteNotice(){
-        noticeDao.deleteNotice(32);
+//        noticeDao.deleteNotice(32);
         getNoticeByNoticeId();
     }
 
@@ -78,7 +78,7 @@ public class NoticeTest extends com.kexie.acloud.dao.BaseTest {
                 " }";
         Notice notice = JSON.parseObject(json,Notice.class);
         System.out.println(notice);
-       assert noticeDao.updateNotice(35,notice)==true;
+//       assert noticeDao.updateNotice(35,notice)==true;
     }
 
 }

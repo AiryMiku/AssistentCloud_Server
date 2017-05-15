@@ -8,6 +8,7 @@ import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.log.Log;
 import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
+import com.sun.org.apache.regexp.internal.RE;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -45,9 +47,13 @@ public class SocietyController {
 
     /**
      * 获取学校所有社团的信息
+     *
+     * @param schoolId
+     * @return
      */
     @RequestMapping(value = "school/{schoolId}", method = RequestMethod.GET)
     public List<Society> allSchoolSociety(@PathVariable("schoolId") int schoolId) {
+
         List<Society> societies = mSocietyService.getSoicetiesBySchoolId(schoolId);
 
         if (societies == null)
@@ -67,6 +73,12 @@ public class SocietyController {
         return result;
     }
 
+    /**
+     * 获取学院所有社团的信息
+     *
+     * @param collegeId
+     * @return
+     */
     @RequestMapping(value = "college/{collegeId}", method = RequestMethod.GET)
     public List<Society> allCollegeSociety(@PathVariable("collegeId") Integer collegeId) {
 
@@ -91,14 +103,24 @@ public class SocietyController {
 
     /**
      * 一个社团的详细信息
+     *
+     * @param societyId
+     * @return
+     * @throws FormException
+     * @throws SocietyException
      */
     @RequestMapping(value = "{societyId}", method = RequestMethod.GET)
-    public Society addSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
+    public Society getSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
         return mSocietyService.getSocietyById(societyId);
     }
 
     /**
      * 添加一个社团
+     *
+     * @param society
+     * @param form
+     * @throws FormException
+     * @throws SocietyException
      */
     @RequestMapping(method = RequestMethod.POST)
     public void addSociety(@Validated(Society.Create.class) @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
@@ -110,6 +132,11 @@ public class SocietyController {
 
     /**
      * 更新社团
+     *
+     * @param society
+     * @param form
+     * @throws FormException
+     * @throws SocietyException
      */
     @RequestMapping(method = RequestMethod.PUT)
     public void updateSociety(@Validated(Society.Update.class) @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
@@ -121,6 +148,9 @@ public class SocietyController {
 
     /**
      * 获取当前社团的所有用户
+     *
+     * @param societyId
+     * @return
      */
     @RequestMapping(value = "{societyId}/users", method = RequestMethod.GET)
     public List<User> getUser(@PathVariable("societyId") int societyId) {
@@ -129,6 +159,10 @@ public class SocietyController {
 
     /**
      * 获取用户拥有的社团
+     *
+     * @param userId
+     * @param request
+     * @return
      */
     @RequestMapping(value = "user", method = RequestMethod.GET)
     public List<Society> getSocietyByUserId(@RequestAttribute("userId") String userId, HttpServletRequest request) {
@@ -175,4 +209,13 @@ public class SocietyController {
         mSocietyService.changePrincipal(oldUserId, newUserId, societyId);
     }
 
+    /**
+     * 搜索社团，模糊查询
+     *
+     * @param query
+     */
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public void search(@RequestPart("query") String query) {
+        mSocietyService.searchSocietyByName(query);
+    }
 }

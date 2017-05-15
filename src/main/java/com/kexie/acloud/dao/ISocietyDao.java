@@ -42,5 +42,5 @@ public interface ISocietyDao {
 
     void update(Society society);
 
-
+    List<Society> getSocietiesByName(String query);
 }
