@@ -74,5 +74,12 @@ public interface INoticeDao {
      */
     public Set<String> getNoticeVisitorByNoticeId(int notice_id);
 
+    /**
+     * 判断user_id是否有权查看公告
+     * @param notice_id
+     * @param user_id
+     * @return
+     */
+    public boolean getPermission(int notice_id,String user_id);
 
 }

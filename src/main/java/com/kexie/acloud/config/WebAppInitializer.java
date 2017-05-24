@@ -13,7 +13,8 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
                 // Spring 基本配置
                 AppConfig.class,
                 // Spring Security 配置
-                SecurityConfig.class};
+                SecurityConfig.class
+                , RedisConfig.class};
     }
 
     @Override

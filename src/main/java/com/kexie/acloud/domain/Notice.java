@@ -72,6 +72,10 @@ public class Notice {
     @Column(name = "notice_status")
     private short status;
 
+    // 公告查看状态(0:未被所有公告可见者查看  1： 被所有可见者查看)
+    @Column
+    private short visitor_status;
+
     public int getId() {
         return id;
     }
@@ -134,6 +138,14 @@ public class Notice {
 
     public void setStatus(short status) {
         this.status = status;
+    }
+
+    public short getVisitor_status() {
+        return visitor_status;
+    }
+
+    public void setVisitor_status(short visitor_status) {
+        this.visitor_status = visitor_status;
     }
 
     @Override
