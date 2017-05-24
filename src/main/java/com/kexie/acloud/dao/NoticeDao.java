@@ -2,20 +2,20 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
-import com.kexie.acloud.util.BeanUtil;
-import org.hibernate.HibernateException;
+import com.kexie.acloud.websocket.TextMessageHandler;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate4.HibernateCallback;
-import org.springframework.orm.hibernate4.support.HibernateDaoSupport;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.socket.TextMessage;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zojian on 2017/5/8.
@@ -23,10 +23,13 @@ import java.util.List;
 @Repository
 @Transactional
 public class NoticeDao implements INoticeDao {
-//    @Autowired
-//    public void setSuperSessionFactory(SessionFactory sessionFactory) {
-//        super.setSessionFactory(sessionFactory);
-//    }
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
+
+    @Autowired
+    TextMessageHandler textMessageHandler;
+
     @Autowired
     SessionFactory sessionFactory;
     public Session getCurrentSession(){
@@ -37,6 +40,17 @@ public class NoticeDao implements INoticeDao {
     public boolean addNotice(Notice notice) {
         try {
             getCurrentSession().save(notice);
+            //获取去掉@的userId
+            List<String> executorList = new ArrayList<>();
+            for (User u:notice.getExecutors()) {
+               // executorList.add(FormatName.withOutEmailSuffix(u.getUserId()));
+                executorList.add(u.getUserId());
+            }
+            //向每个公告可见者发送新公告消息
+            TextMessage message = new TextMessage("你有一条新公告");
+            for (String username:executorList) {
+                textMessageHandler.sendMessageToUser(username, message);
+            }
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -68,7 +82,7 @@ public class NoticeDao implements INoticeDao {
     @Override
     public boolean deleteNotice(int notice_id, String user_id) {
         try{
-            Notice notice = getNoticeByNoticeId(notice_id);
+            Notice notice = getNoticeByNoticeId(notice_id,user_id);
             if(notice.getPublisher().getUserId().equals(user_id)) {
                 notice.setStatus((short) 1);
                 getCurrentSession().update(notice);
@@ -121,7 +135,16 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id) {
+    public Notice getNoticeByNoticeId(int notice_id,String user_id) {
+
+        String notice_visitor = "notice:visitor:"+notice_id;
+        redisTemplate.boundSetOps(notice_visitor).add(user_id);
         return getCurrentSession().get(Notice.class,notice_id);
+    }
+
+    @Override
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id) {
+        String notice_visitor = "notice:visitor:"+notice_id;
+        return redisTemplate.boundSetOps(notice_visitor).members();
     }
 }

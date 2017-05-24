@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zojian on 2017/5/8.
@@ -49,8 +50,9 @@ public class NoticeController {
      * @return
      */
     @RequestMapping(value = "/{notice_id}",method = RequestMethod.GET)
-    public Notice getNoticeByNoticeId(@PathVariable int notice_id){
-        return noticeService.getNoticeByNoticeId(notice_id);
+    public Notice getNoticeByNoticeId(@PathVariable int notice_id
+            ,@RequestAttribute("userId") String userId){
+        return noticeService.getNoticeByNoticeId(notice_id,userId);
     }
 
     /**
@@ -136,4 +138,15 @@ public class NoticeController {
         return noticeService.getNoticesByUserIdAndSocietyId(userId,society_id,page,pageSize);
     }
 
+    /**
+     * 获取该公告的浏览者列表
+     * @param notice_id 公告ID
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/visitor/{notice_id}",method = RequestMethod.GET)
+    public Set<String> getVisitor(@PathVariable int notice_id,
+                                  @RequestAttribute("userId") String userId){
+        return noticeService.getNoticeVisitorByNoticeId(notice_id);
+    }
 }

@@ -211,6 +211,12 @@
             <version>RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-redis</artifactId>
+            <version>1.8.3.RELEASE</version>
+        </dependency>
+
         <!--测试框架-->
         <dependency>
             <groupId>junit</groupId>
@@ -225,6 +231,12 @@
             <version>5.4.1.Final</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.alibaba.rocketmq/rocketmq-client -->
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.6.2.Final</version>
+        </dependency>
     </dependencies>
 
 

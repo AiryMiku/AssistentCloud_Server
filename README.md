@@ -488,3 +488,15 @@ PUT JSON格式
   }
 ]
 ```
+
+### 7.获取公告浏览者列表
+
+**URL： GET /notices/visitor/{notice_id}**
+
+返回的JSON格式
+```json
+[
+"admin@qq.com",
+"zojian@qq.com"
+]
+```

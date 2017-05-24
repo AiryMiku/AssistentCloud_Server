@@ -43,7 +43,6 @@ public class Notice {
     private String content;
 
     //公告发布者
-    @NotNull(message = "缺少公告发布者信息")
     @ManyToOne
     @JoinColumn(name = "publisher_id", nullable = false)
     @JSONField(ordinal = 4,serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
@@ -64,7 +63,7 @@ public class Notice {
     @JoinTable(name = "notice_user_permission",
             joinColumns = {@JoinColumn(name = "notice_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(ordinal = 6, serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> executors;
