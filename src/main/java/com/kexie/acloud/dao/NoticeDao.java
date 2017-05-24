@@ -154,7 +154,7 @@ public class NoticeDao implements INoticeDao {
                 notice.setVisitor_status((short) 1);
                 updateNotice(notice.getId(),notice,notice.getPublisher().getUserId());
                 // 设置键过期时间（5天）
-                redisTemplate.boundSetOps(notice_visitor).expire(20,TimeUnit.SECONDS);
+                redisTemplate.boundSetOps(notice_visitor).expire(5,TimeUnit.DAYS);
             }
         }
         return notice;
