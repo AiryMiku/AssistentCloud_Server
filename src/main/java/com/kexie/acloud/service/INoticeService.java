@@ -3,6 +3,7 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.domain.Notice;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zojian on 2017/5/8.
@@ -63,5 +64,7 @@ public interface INoticeService {
      * @param notice_id 公告ID
      * @return
      */
-    public Notice getNoticeByNoticeId(int notice_id);
+    public Notice getNoticeByNoticeId(int notice_id,String user_id);
+
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id);
 }

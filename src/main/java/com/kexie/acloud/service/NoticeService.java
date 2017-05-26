@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by zojian on 2017/5/8.
@@ -46,7 +47,12 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id) {
-        return null;
+    public Notice getNoticeByNoticeId(int notice_id,String user_id) {
+        return noticeDao.getNoticeByNoticeId(notice_id,user_id);
+    }
+
+    @Override
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id) {
+        return noticeDao.getNoticeVisitorByNoticeId(notice_id);
     }
 }

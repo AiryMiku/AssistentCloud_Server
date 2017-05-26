@@ -43,7 +43,6 @@ public class Notice {
     private String content;
 
     //公告发布者
-    @NotNull(message = "缺少公告发布者信息")
     @ManyToOne
     @JoinColumn(name = "publisher_id", nullable = false)
     @JSONField(ordinal = 4,serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
@@ -64,7 +63,7 @@ public class Notice {
     @JoinTable(name = "notice_user_permission",
             joinColumns = {@JoinColumn(name = "notice_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(ordinal = 6, serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> executors;
@@ -72,6 +71,10 @@ public class Notice {
     //公告状态 (0:可显示   1： 已删除)
     @Column(name = "notice_status")
     private short status;
+
+    // 公告查看状态(0:未被所有公告可见者查看  1： 被所有可见者查看)
+    @Column
+    private short visitor_status;
 
     public int getId() {
         return id;
@@ -135,6 +138,14 @@ public class Notice {
 
     public void setStatus(short status) {
         this.status = status;
+    }
+
+    public short getVisitor_status() {
+        return visitor_status;
+    }
+
+    public void setVisitor_status(short visitor_status) {
+        this.visitor_status = visitor_status;
     }
 
     @Override
