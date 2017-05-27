@@ -1,10 +1,15 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
-import com.kexie.acloud.domain.Task;
+import com.kexie.acloud.domain.SocietyPosition;
+import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.BeanUtil;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -50,6 +55,26 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     @Override
     public List<Society> getSocietiesByName(String query) {
         return (List<Society>) getHibernateTemplate().find("from Society  where name like ?", "%" + query + "%");
+    }
+
+    @Override
+    public SocietyPosition getSocietyPositionByUserId(User user, Society society) {
+        User u = getHibernateTemplate().get(User.class, user.getUserId());
+        for (SocietyPosition position : u.getSocietyPositions()) {
+            if (position.getSociety().getId() == society.getId())
+                return position;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isInSociety(Society society, User member) {
+        User u = getHibernateTemplate().get(User.class, member.getUserId());
+        for (SocietyPosition position : u.getSocietyPositions()) {
+            if (position.getSociety().getId() == society.getId())
+                return true;
+        }
+        return false;
     }
 
     @Override

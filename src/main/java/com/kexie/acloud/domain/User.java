@@ -106,6 +106,10 @@ public class User {
     public User() {
     }
 
+    public User(String userId) {
+        this.userId = userId;
+    }
+
     public User(String userId, String password) {
         this.userId = userId;
         this.password = password;

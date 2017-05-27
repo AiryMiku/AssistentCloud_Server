@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class Room {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer roomId;
@@ -45,7 +46,7 @@ public class Room {
     @JoinTable(name = "room_member",
             joinColumns = {@JoinColumn(name = "room_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> member;

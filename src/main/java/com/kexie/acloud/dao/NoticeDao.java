@@ -2,20 +2,16 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
-import com.kexie.acloud.websocket.TextMessageHandler;
-import com.sun.org.apache.regexp.internal.RE;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
-import redis.clients.jedis.Jedis;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,8 +28,8 @@ public class NoticeDao implements INoticeDao {
     @Autowired
     StringRedisTemplate redisTemplate;
 
-    @Autowired
-    TextMessageHandler textMessageHandler;
+//    @Autowired
+//    TextMessageHandler textMessageHandler;
 
     @Autowired
     SessionFactory sessionFactory;
@@ -55,7 +51,7 @@ public class NoticeDao implements INoticeDao {
             //向每个公告可见者发送新公告消息
             TextMessage message = new TextMessage("你有一条新公告");
             for (String username : executorList) {
-                textMessageHandler.sendMessageToUser(username, message);
+//                textMessageHandler.sendMessageToUser(username, message);
             }
             return true;
         } catch (Exception e) {

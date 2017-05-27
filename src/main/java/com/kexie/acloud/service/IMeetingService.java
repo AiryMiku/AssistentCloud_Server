@@ -2,6 +2,8 @@ package com.kexie.acloud.service;
 
 import com.kexie.acloud.domain.Meeting;
 import com.kexie.acloud.domain.Room;
+import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 
 /**
  * Created : wen
@@ -9,5 +11,5 @@ import com.kexie.acloud.domain.Room;
  * Description :
  */
 public interface IMeetingService {
-    Room createMeeting(Meeting meeting);
+    Room createMeeting(Meeting meeting, User creator) throws AuthorizedException;
 }

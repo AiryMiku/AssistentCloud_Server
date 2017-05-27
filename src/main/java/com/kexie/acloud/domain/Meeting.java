@@ -1,6 +1,8 @@
 package com.kexie.acloud.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.kexie.acloud.domain.JsonSerializer.SocietyDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.SocietySerializer;
 import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserIdListDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserIdListSerializer;
@@ -46,6 +48,7 @@ public class Meeting {
 
     // 所属社团
     @ManyToOne
+    @JSONField(serializeUsing = SocietySerializer.class, deserializeUsing = SocietyDeserializer.class)
     private Society society;
 
     // 会议发起者
@@ -62,7 +65,7 @@ public class Meeting {
     private Room room;
 
     // 开会成员,间接保存
-    @JSONField(serialize = false , deserializeUsing = UserIdListDeserializer.class)
+    @JSONField(serialize = false, deserializeUsing = UserIdListDeserializer.class)
     @Transient
     private List<User> members;
 

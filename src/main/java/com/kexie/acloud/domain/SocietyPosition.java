@@ -12,7 +12,7 @@ import javax.persistence.ManyToOne;
  * DateTime : 2017/5/6 12:39
  * Description : 社团职位
  */
-@Entity
+@Entity(name = "society_position")
 public class SocietyPosition {
 
     @Id

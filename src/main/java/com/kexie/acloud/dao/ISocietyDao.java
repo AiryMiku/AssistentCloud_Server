@@ -1,6 +1,8 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SocietyPosition;
+import com.kexie.acloud.domain.User;
 
 import java.util.List;
 
@@ -43,4 +45,8 @@ public interface ISocietyDao {
     void update(Society society);
 
     List<Society> getSocietiesByName(String query);
+
+    SocietyPosition getSocietyPositionByUserId(User user, Society society);
+
+    boolean isInSociety(Society society, User member);
 }
