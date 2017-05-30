@@ -1,7 +1,9 @@
 package com.kexie.acloud.service;
 
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 
@@ -61,5 +63,23 @@ public interface ISocietyService {
     void changePrincipal(String oldId, String newId, int societyId) throws UserException;
 
     List<Society> searchSocietyByName(String query);
+
+    void applyJoinSociety(SocietyApply apply) throws SocietyException;
+
+    /**
+     * 获取社团所有的申请请求
+     *
+     * @param societyId
+     * @param userId
+     * @return
+     */
+    List<SocietyApply> getSocietyApplyIn(String societyId, String userId) throws SocietyException, AuthorizedException;
+
+    /**
+     * 处理一个社团请求
+     */
+    void handleSocietyApple(String applyId, boolean isAllow, String userId) throws SocietyException, AuthorizedException;
+
+    void quitSociety(String societyId, String userId);
 }
 

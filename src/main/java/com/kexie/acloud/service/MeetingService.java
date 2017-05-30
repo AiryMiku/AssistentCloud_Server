@@ -46,7 +46,7 @@ public class MeetingService implements IMeetingService {
     public Room createMeeting(Meeting meeting, User creator) throws AuthorizedException {
 
         // 创建者是否有权限创建会议
-        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(creator, meeting.getSociety());
+        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(creator.getUserId(), meeting.getSociety().getId());
         if (!hasCreateMeetingPermission(position)) {
             throw new AuthorizedException("当前用户没有权限创建会议（他的职位没有主席两个字）");
         }

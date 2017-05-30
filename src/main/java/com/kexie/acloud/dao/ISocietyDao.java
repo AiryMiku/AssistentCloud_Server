@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 
@@ -21,6 +22,8 @@ public interface ISocietyDao {
      * @return
      */
     boolean hasSociety(String societyName, int collegeId);
+
+    boolean hasSociety(int societyId);
 
     /**
      * 添加社团
@@ -46,7 +49,17 @@ public interface ISocietyDao {
 
     List<Society> getSocietiesByName(String query);
 
-    SocietyPosition getSocietyPositionByUserId(User user, Society society);
+    SocietyPosition getSocietyPositionByUserId(String userId, int societyId);
 
     boolean isInSociety(Society society, User member);
+
+    void addMember(int societyId, String userId);
+
+    void addApply(SocietyApply apply);
+
+    List<SocietyApply> getAllSocietyApply(Integer societyId);
+
+    SocietyApply getSocietyApply(int applyId);
+
+    void deleteSocietyApply(int applyId);
 }

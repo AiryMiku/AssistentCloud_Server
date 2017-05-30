@@ -3,7 +3,10 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 
@@ -108,5 +111,75 @@ public class SocietyService implements ISocietyService {
     @Override
     public List<Society> searchSocietyByName(String query) {
         return mSocietyDao.getSocietiesByName(query);
+    }
+
+    /**
+     * 添加社团
+     *
+     * @param apply
+     */
+    @Override
+    public void applyJoinSociety(SocietyApply apply) throws SocietyException {
+
+        if (!mSocietyDao.hasSociety(apply.getSociety().getId()))
+            throw new SocietyException("社团不存在");
+
+        // 添加一条申请记录
+        mSocietyDao.addApply(apply);
+    }
+
+    /**
+     * 获取社团所有的申请请求
+     *
+     * @param societyId
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<SocietyApply> getSocietyApplyIn(String societyId, String userId) throws SocietyException, AuthorizedException {
+
+        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(userId, new Integer(societyId));
+
+        if (position == null)
+            throw new SocietyException("用户社团职位为空");
+
+        if (!position.getName().contains("主席"))
+            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+
+        if (!mSocietyDao.hasSociety(new Integer(societyId)))
+            throw new SocietyException("社团不存在");
+
+        return mSocietyDao.getAllSocietyApply(new Integer(societyId));
+    }
+
+    @Override
+    public void handleSocietyApple(String applyId, boolean isAllow, String userId) throws SocietyException, AuthorizedException {
+
+        SocietyApply societyApply = mSocietyDao.getSocietyApply(new Integer(applyId));
+
+        if (societyApply == null)
+            throw new SocietyException("当前申请 不存在");
+
+        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(userId, societyApply.getSociety().getId());
+
+        if (position == null)
+            throw new SocietyException("用户社团职位为空");
+
+        if (!position.getName().contains("主席"))
+            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+        if (isAllow) {
+            mSocietyDao.addMember(societyApply.getSociety().getId(), societyApply.getUser().getUserId());
+            // TODO: 2017/5/30 推送到用户中
+        } else {
+            // TODO: 2017/5/30 推送到用户中
+        }
+
+        // 删除这条申请
+        mSocietyDao.deleteSocietyApply(new Integer(applyId));
+    }
+
+    @Override
+    public void quitSociety(String societyId, String userId) {
+
     }
 }
