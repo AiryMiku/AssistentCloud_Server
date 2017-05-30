@@ -39,7 +39,7 @@ public class Room {
     private String name;
 
     // 房主
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User master;
 
     // 群成员

@@ -1,5 +1,7 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.kexie.acloud.domain.Meeting;
 import com.kexie.acloud.domain.Room;
 import com.kexie.acloud.domain.User;
@@ -14,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -30,13 +36,24 @@ public class MeetingController {
     private IMeetingService mMeetingService;
 
     @RequestMapping(method = RequestMethod.POST)
-    public Room createMeeting(@Validated @RequestBody Meeting meeting, BindingResult form,
-                              @RequestAttribute("userId") String userId) throws FormException, AuthorizedException {
+    public JSONObject createMeeting(@Validated @RequestBody Meeting meeting, BindingResult form,
+                                    @RequestAttribute("userId") String userId) throws FormException, AuthorizedException {
 
         if (form.hasErrors()) throw new FormException(form);
 
         // 创建会议
-        return mMeetingService.createMeeting(meeting, new User(userId));
+        Room room = mMeetingService.createMeeting(meeting, new User(userId));
+
+        // 构造json
+        JSONObject user = new JSONObject();
+        JSONObject json = new JSONObject();
+        user.put("userId", room.getMaster().getUserId());
+        user.put("logoUrl", room.getMaster().getLogoUrl());
+        json.put("roomId", room.getRoomId());
+        json.put("name", room.getName());
+        json.put("master", user);
+        json.put("type", room.getType());
+        return json;
     }
 
 }

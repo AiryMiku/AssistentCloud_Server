@@ -33,7 +33,6 @@ public class MeetingDao extends HibernateDaoSupport implements IMeetingDao {
     @Override
     public void addMeeting(Meeting meeting) {
         Serializable s = getHibernateTemplate().save(meeting);
-        System.out.println(s);
     }
 
     @Override

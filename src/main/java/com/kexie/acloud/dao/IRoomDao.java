@@ -15,4 +15,7 @@ public interface IRoomDao {
     void updateRoom(Room room);
 
     void deleteRoom(int roomId);
+
+    void clearSession();
+
 }

@@ -4,32 +4,33 @@ import com.kexie.acloud.config.AppConfig;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 
 import static org.junit.Assert.*;
 
 /**
  * Created : wen
- * DateTime : 2017/5/6 13:04
+ * DateTime : 2017/5/30 13:44
  * Description :
  */
-
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
-public class UserDaoTest {
+// 添加事务处理懒加载问题
+@Transactional
+public class RoomDaoTest {
 
-    @Autowired
-    IUserDao userDao;
+    @Resource
+    IRoomDao mRoomDao;
 
     @Test
-    public void getUser() throws Exception {
-        System.out.println(
-                userDao.getUser("helloworld.wen@gmail.com")
-        );
+    public void getRoom() throws Exception {
+        System.out.println(mRoomDao.getRoom(7));
     }
 
 }

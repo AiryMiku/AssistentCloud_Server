@@ -25,6 +25,7 @@ public class RoomDao extends HibernateDaoSupport implements IRoomDao {
 
     @Override
     public Room getRoom(int roomId) {
+
         return getHibernateTemplate().get(Room.class, roomId);
     }
 
@@ -44,5 +45,10 @@ public class RoomDao extends HibernateDaoSupport implements IRoomDao {
         Room room = new Room();
         room.setRoomId(roomId);
         getHibernateTemplate().delete(room);
+    }
+
+    @Override
+    public void clearSession() {
+        getHibernateTemplate().getSessionFactory().getCurrentSession().clear();
     }
 }

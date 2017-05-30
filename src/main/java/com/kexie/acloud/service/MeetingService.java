@@ -75,7 +75,10 @@ public class MeetingService implements IMeetingService {
         meeting.setRoom(room);
         mMeetingDao.addMeeting(meeting);
 
-        return room;
+        // 清除session，不然得到的user数据为空
+        mRoomDao.clearSession();
+
+        return mRoomDao.getRoom(room.getRoomId());
     }
 
     @Override
