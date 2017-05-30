@@ -265,6 +265,7 @@ public class SocietyController {
 
     /**
      * 处理一个加入社团的请求
+     * // FIXME: 2017/5/30 这里还要一个SocietyPositionId,用于保存职位的。
      */
     @RequestMapping(value = "handle", method = RequestMethod.POST)
     public void handleSociety(@RequestParam("applyId") String applyId,
