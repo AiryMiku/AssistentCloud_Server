@@ -95,6 +95,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     @Override
     public void addMember(int societyId, String userId) {
+        // FIXME: 2017/5/30 这里写错了
         // 添加成员
         User user = new User(userId);
         // 懒加载
