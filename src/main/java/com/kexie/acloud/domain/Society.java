@@ -10,6 +10,7 @@ import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -18,6 +19,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -68,7 +71,15 @@ public class Society {
     @JSONField(serializeUsing = CollegeSerializer.class, deserializeUsing = CollegeDeserializer.class)
     @Convert(converter = CollegeConvert.class)
     @NotNull(groups = {Create.class}, message = "学院不能为空")
+    @JoinColumn(name = "college_id")
     private College college;
+
+    // 社团成员
+    @ManyToMany
+    @JoinTable(name = "society_member",
+            joinColumns = {@JoinColumn(name = "society_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
+    private List<User> members;
 
     // 社团logo
     @Column(name = "society_logo")
@@ -80,6 +91,14 @@ public class Society {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<User> members) {
+        this.members = members;
     }
 
     public String getName() {
@@ -143,7 +162,11 @@ public class Society {
                 .append(principal);
         sb.append(",\"createTime\":\"")
                 .append(createTime).append('\"');
-        sb.append(",\"society_logo\":\"")
+        sb.append(",\"college\":")
+                .append(college);
+        sb.append(",\"members\":")
+                .append(members);
+        sb.append(",\"societyLogo\":\"")
                 .append(societyLogo).append('\"');
         sb.append('}');
         return sb.toString();

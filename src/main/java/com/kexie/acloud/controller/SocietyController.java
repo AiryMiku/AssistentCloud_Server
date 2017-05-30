@@ -1,14 +1,17 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.kexie.acloud.controller.entity.ApplyEntity;
 import com.kexie.acloud.domain.Society;
+import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
-import com.kexie.acloud.log.Log;
 import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
-import com.sun.org.apache.regexp.internal.RE;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
@@ -218,4 +220,58 @@ public class SocietyController {
     public void search(@RequestPart("query") String query) {
         mSocietyService.searchSocietyByName(query);
     }
+
+    /**
+     * 申请加入社团
+     *
+     * @param body
+     * @param form
+     * @param userId
+     * @throws SocietyException
+     * @throws FormException
+     */
+    @RequestMapping(value = "join", method = RequestMethod.POST)
+    public void joinSociety(@Validated @RequestBody ApplyEntity body, BindingResult form,
+                            @RequestAttribute("userId") String userId) throws SocietyException, FormException {
+
+        if (form.hasErrors()) throw new FormException(form);
+
+        SocietyApply apply = new SocietyApply(userId, body.getSocietyId(), body.getReason());
+
+        mSocietyService.applyJoinSociety(apply);
+    }
+
+    /**
+     * 查询社团的申请请求
+     */
+    @RequestMapping(value = "join", method = RequestMethod.GET)
+    public JSONArray getApplyInfo(@RequestParam("societyId") String societyId,
+                                  @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
+
+        List<SocietyApply> applys = mSocietyService.getSocietyApplyIn(societyId, userId);
+
+        JSONArray array = new JSONArray();
+
+        applys.forEach(apply -> {
+            JSONObject json = new JSONObject();
+            json.put("applyId", apply.getId());
+            json.put("applierId", apply.getUser().getUserId());
+            json.put("reason", apply.getReason());
+            array.add(json);
+        });
+
+        return array;
+    }
+
+    /**
+     * 处理一个加入社团的请求
+     * // FIXME: 2017/5/30 这里还要一个SocietyPositionId,用于保存职位的。
+     */
+    @RequestMapping(value = "handle", method = RequestMethod.POST)
+    public void handleSociety(@RequestParam("applyId") String applyId,
+                              @RequestParam("isAllow") boolean isAllow,
+                              @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
+        mSocietyService.handleSocietyApple(applyId, isAllow, userId);
+    }
+
 }
