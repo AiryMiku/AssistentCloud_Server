@@ -35,7 +35,6 @@ public class MeetingController {
 
         if (form.hasErrors()) throw new FormException(form);
 
-
         // 创建会议
         return mMeetingService.createMeeting(meeting, new User(userId));
     }

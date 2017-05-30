@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class NoticeDao implements INoticeDao {
 
-    @Autowired
+    @Autowired(required = false)
     StringRedisTemplate redisTemplate;
 
 //    @Autowired

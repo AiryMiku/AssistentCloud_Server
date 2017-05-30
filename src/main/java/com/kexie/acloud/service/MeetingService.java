@@ -78,6 +78,11 @@ public class MeetingService implements IMeetingService {
         return room;
     }
 
+    @Override
+    public List<Meeting> getCurrentUserNotStartMeeting(String userId) {
+        return mMeetingDao.getCurrentUserNotStartMeeting(userId);
+    }
+
     /**
      * 当前社团职位是否有权利去创建会议
      *

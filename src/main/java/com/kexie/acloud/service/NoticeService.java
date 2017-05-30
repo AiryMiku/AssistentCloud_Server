@@ -13,7 +13,7 @@ import java.util.Set;
  */
 @Service
 public class NoticeService implements INoticeService {
-    @Autowired
+    @Autowired(required = false)
     INoticeDao noticeDao;
 
     @Override

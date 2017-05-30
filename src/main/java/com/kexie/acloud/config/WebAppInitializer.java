@@ -4,7 +4,10 @@ package com.kexie.acloud.config;
  * Created by zojian on 2017/4/25.
  */
 
+import org.springframework.orm.hibernate5.support.OpenSessionInViewFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import javax.servlet.Filter;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
     @Override
@@ -15,6 +18,13 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
                 // Spring Security 配置
                 SecurityConfig.class
                 , RedisConfig.class};
+    }
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[]{
+                new OpenSessionInViewFilter()
+        };
     }
 
     @Override

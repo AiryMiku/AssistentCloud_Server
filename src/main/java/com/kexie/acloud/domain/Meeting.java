@@ -10,6 +10,8 @@ import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.Date;
 import java.util.List;
@@ -26,6 +28,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /**
  * Created : wen
@@ -41,18 +44,20 @@ public class Meeting {
     private int meetingId;
 
     // 会议名字
+    @Length(min = 1, message = "会议名字不能为空")
     private String name;
 
     // 会议主题
+    @Length(min = 1, message = "会议主题不能为空")
     private String theme;
 
     // 所属社团
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JSONField(serializeUsing = SocietySerializer.class, deserializeUsing = SocietyDeserializer.class)
     private Society society;
 
     // 会议发起者
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "publisher_id", nullable = false)
     @JSONField(serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
     private User publisher;
@@ -61,7 +66,7 @@ public class Meeting {
     private Date meetingTime;
 
     // 聊天室房间,包括干事
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Room room;
 
     // 开会成员,间接保存
@@ -73,10 +78,14 @@ public class Meeting {
     @JoinTable(name = "meeting_querys",
             joinColumns = {@JoinColumn(name = "meeting_id")},
             inverseJoinColumns = @JoinColumn(name = "question_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<MeetingQuestion> questions;
+
+    // 会议是否结束
+    private boolean isEnd = false;
+
 
     public List<User> getMembers() {
         return members;

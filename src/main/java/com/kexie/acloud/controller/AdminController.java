@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
+    @Autowired(required = false)
     StringRedisTemplate redisTemplate;
 
     //管理员后台界面

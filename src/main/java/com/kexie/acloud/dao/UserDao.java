@@ -65,7 +65,7 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
     @Override
     public List<User> getUserBySociety(int society_id) {
         return (List<User>) getHibernateTemplate()
-                .find("from User where (from SocietyPosition where society.id = ?) in elements(societyPositions)", society_id);
+                .find("from User where (from society_position where society.id = ?) in elements(societyPositions)", society_id);
     }
 
     @Override
