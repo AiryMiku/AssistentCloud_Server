@@ -3,8 +3,11 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 
 import java.util.List;
+
+import javax.naming.AuthenticationException;
 
 /**
  * Created : wen
@@ -48,7 +51,7 @@ public interface ITaskService {
      * @param task
      * @param userId
      */
-    void create(Task task, String userId);
+    void create(Task task, String userId) throws AuthenticationException;
 
     /**
      * 更新task信息
@@ -85,10 +88,11 @@ public interface ITaskService {
 
     /**
      * 归档一个Task
-     *  @param taskId
+     * @param taskId
+     * @param userId
      *
      */
-    void archive(String taskId);
+    void archive(String taskId, String userId) throws AuthorizedException;
 
     /**
      * 删除一个Task

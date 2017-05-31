@@ -55,7 +55,7 @@ public class MeetingService implements IMeetingService {
         List<User> members = meeting.getMembers();
         Society society = meeting.getSociety();
         for (User member : members) {
-            if (!mSocietyDao.isInSociety(society, member)) {
+            if (!mSocietyDao.isInSociety(society.getId(), member.getUserId())) {
                 throw new AuthorizedException("用户 = " + member.getUserId() + " 不在社团 = " + society.getId() + " 中");
             }
         }

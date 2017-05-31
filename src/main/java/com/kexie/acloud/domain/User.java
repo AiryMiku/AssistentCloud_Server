@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Convert;
@@ -75,11 +76,10 @@ public class User {
     private String stuId;
 
     // 拥有的社团职位
-    @JoinTable(name = "user_society_position",
-            joinColumns = {@JoinColumn(name = "userId")},
-            inverseJoinColumns = @JoinColumn(name = "positionId"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    @Fetch(value = FetchMode.SUBSELECT)
+    @ManyToMany
+    @JoinTable(name = "relation_user_position",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = @JoinColumn(name = "position_id"))
     private List<SocietyPosition> societyPositions;
 
     // 专业
@@ -100,8 +100,8 @@ public class User {
 //    @NotNull(message = "你是男还是女啊", groups = RegisterForm.class)
     private int gender;
 
-    // 图片Url TODO: 2017/4/30 设置默认值
-    private String logoUrl;
+    // 图片Url
+    private String logoUrl = "https://i.screenshot.net/lje2wtm";
 
     public User() {
     }

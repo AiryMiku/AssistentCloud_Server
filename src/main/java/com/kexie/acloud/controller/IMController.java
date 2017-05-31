@@ -1,5 +1,7 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.kexie.acloud.domain.Room;
 import com.kexie.acloud.service.IIMService;
 
@@ -25,10 +27,32 @@ public class IMController {
     private IIMService mIMService;
 
     /**
-     * todo 查询用户拥有的房间号
+     * 获取当前登录用户拥有的房间
+     *
+     * @param userId 登录用户的Id
+     * @return 所有房间
      */
     @RequestMapping(method = RequestMethod.GET)
-    public List<Room> getRooms(@RequestAttribute("userId") String userId) {
-        return mIMService.getRoomsByUserId(userId);
+    public JSONArray getRooms(@RequestAttribute("userId") String userId) {
+        List<Room> rooms = mIMService.getRoomsByUserId(userId);
+
+        JSONArray result = new JSONArray();
+        rooms.forEach(room -> {
+            JSONObject object = new JSONObject();
+            JSONObject master = new JSONObject();
+
+            master.put("userId", room.getMaster().getUserId());
+            master.put("nickName", room.getMaster().getNickName());
+            master.put("logo", room.getMaster().getLogoUrl());
+
+            object.put("roomId", room.getRoomId());
+            object.put("name", room.getName());
+            object.put("master", master);
+            object.put("type", room.getRoomType());
+
+            result.add(object);
+        });
+
+        return result;
     }
 }

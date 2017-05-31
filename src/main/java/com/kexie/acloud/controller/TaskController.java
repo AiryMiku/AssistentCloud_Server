@@ -1,6 +1,7 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.Task;
+import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.ITaskService;
 
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.naming.AuthenticationException;
 
 /**
  * Created : wen
@@ -41,7 +42,7 @@ public class TaskController {
      */
     @RequestMapping(method = RequestMethod.POST)
     public void addTask(@Validated @RequestBody Task task, BindingResult result,
-                        @RequestAttribute("userId") String userId) throws FormException {
+                        @RequestAttribute("userId") String userId) throws FormException, AuthenticationException {
 
         if (result.hasErrors())
             throw new FormException(result);
@@ -73,8 +74,8 @@ public class TaskController {
     @RequestMapping(value = "/archive", method = RequestMethod.PUT)
     @Deprecated
     public void archive(@RequestAttribute("userId") String userId,
-                        @RequestParam("taskId") String taskId) {
-        mTaskService.archive(taskId);
+                        @RequestParam("taskId") String taskId) throws AuthorizedException {
+        mTaskService.archive(taskId, userId);
     }
 
     /**

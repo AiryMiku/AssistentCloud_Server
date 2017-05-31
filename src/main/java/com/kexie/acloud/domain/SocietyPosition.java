@@ -19,11 +19,22 @@ public class SocietyPosition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    // 职位名称
     private String name;
+
+    // 职位高低 （ 0为最低
+    private int grade = 0;
 
     @ManyToOne
     @JoinColumn(name = "society_id", nullable = false)
     private Society society;
+
+    public SocietyPosition() {
+    }
+
+    public SocietyPosition(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;
@@ -49,6 +60,14 @@ public class SocietyPosition {
         this.society = society;
     }
 
+    public int getGrade() {
+        return grade;
+    }
+
+    public void setGrade(int grade) {
+        this.grade = grade;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
@@ -56,6 +75,8 @@ public class SocietyPosition {
                 .append(id);
         sb.append(",\"name\":\"")
                 .append(name).append('\"');
+        sb.append(",\"grade\":")
+                .append(grade);
         sb.append(",\"society\":")
                 .append(society);
         sb.append('}');

@@ -5,19 +5,12 @@ import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.BeanUtil;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -81,6 +74,22 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     public List<Task> getTasksBySocietyId(int societyId) {
         return (List<Task>) getHibernateTemplate()
                 .find("from Task where society.id = ?", societyId);
+    }
+
+    @Override
+    public boolean isInExecutor(String taskId, String userId) {
+        Task task = getHibernateTemplate().get(Task.class, taskId);
+
+        if (userId.equals(task.getPublisher().getUserId()))
+            return true;
+
+        List<User> users = task.getExecutors();
+        for (User user : users) {
+            if (userId.equals(user.getUserId()))
+                return true;
+        }
+
+        return false;
     }
 
     //    @Override

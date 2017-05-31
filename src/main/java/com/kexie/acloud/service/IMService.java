@@ -34,6 +34,6 @@ public class IMService implements IIMService {
 
     @Override
     public List<Room> getRoomsByUserId(String userId) {
-        return null;
+        return mRoomDao.getRoomsByUserId(userId);
     }
 }

@@ -26,8 +26,8 @@ public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
 
     @Test
     public void addMember() throws Exception {
-        societyDao.addMember(1, "123");
-        System.out.println(societyDao.getSocietyById(1));
+        societyDao.addNewMember(1, "123");
+        System.out.println(userDao.getUser("123"));
     }
 
     @Test
@@ -39,12 +39,6 @@ public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
     public void getSocietiesByName() throws Exception {
         System.out.println(societyDao.getSocietiesByName("社团"));
     }
-
-    @Autowired
-    ISocietyDao societyDao;
-
-    @Autowired
-    IUserDao userDao;
 
     @Test
     public void addSociety() {

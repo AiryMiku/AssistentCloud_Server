@@ -2,6 +2,8 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Room;
 
+import java.util.List;
+
 /**
  * Created : wen
  * DateTime : 2017/5/12 10:40
@@ -18,4 +20,5 @@ public interface IRoomDao {
 
     void clearSession();
 
+    List<Room> getRoomsByUserId(String userId);
 }

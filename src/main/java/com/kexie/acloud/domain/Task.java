@@ -38,7 +38,7 @@ public class Task {
     // 自增
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid",strategy = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
     @Column(name = "task_id")
     private String id;
 
@@ -50,7 +50,6 @@ public class Task {
     @JSONField(serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
     private User publisher;
 
-    // FIXME: 2017/4/28 用户不属于这个社团的也可以插入,应该怎么做约束
     // 所属社团
     @ManyToOne
     @JoinColumn(name = "society_id", nullable = false)

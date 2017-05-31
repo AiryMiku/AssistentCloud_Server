@@ -2,6 +2,7 @@ package com.kexie.acloud.service;
 
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.SocietyException;
@@ -81,5 +82,7 @@ public interface ISocietyService {
     void handleSocietyApple(String applyId, boolean isAllow, String userId) throws SocietyException, AuthorizedException;
 
     void quitSociety(String societyId, String userId);
+
+    List<SocietyPosition> getSocietyPosition(int societyId) throws SocietyException;
 }
 
