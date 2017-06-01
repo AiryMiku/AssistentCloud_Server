@@ -58,9 +58,15 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Override
     public Task update(Task task) {
-        Task t = getHibernateTemplate().get(Task.class, task.getId());
+
+        Task t = getHibernateTemplate().load(Task.class, task.getId());
+
+        // 清除
+        getHibernateTemplate().clear();
+
         BeanUtil.copyProperties(task, t);
         getHibernateTemplate().update(t);
+
         return getHibernateTemplate().get(Task.class, task.getId());
     }
 
@@ -91,25 +97,4 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
         return false;
     }
-
-    //    @Override
-//    public void active(String taskId) {
-//        Task task = getHibernateTemplate().get(Task.class, taskId);
-//        task.setTaskType(1);
-//        getHibernateTemplate().update(task);
-//    }
-//
-//    @Override
-//    public void archive(String taskId) {
-//        Task task = getHibernateTemplate().get(Task.class, taskId);
-//        task.setTaskType(2);
-//        getHibernateTemplate().update(task);
-//    }
-//
-//    @Override
-//    public void delete(String taskId) {
-//        Task task = getHibernateTemplate().get(Task.class, taskId);
-//        task.setTaskType(3);
-//        getHibernateTemplate().update(task);
-//    }
 }

@@ -374,6 +374,34 @@ Content-Type : application/x-www-form-urlencoded
 }
 ```
 
+### 更新任务
+
+Method: PUT
+URL: /task/add
+Content-Type: application/json
+
+上传一个Json:
+```json
+{
+	"id":"40280e815c62e6c1015c62e718ae0000",
+	"taskType":"1",
+	"executors":[
+		"userId","helloworld.wen@gmail.com"
+	],
+	"subTask":[
+		{
+			"id":"15",
+			"process":"1",
+			"question":"又带上了id"
+		},
+		{
+			"process":"1",
+			"question":"添加"
+		}
+	]
+}
+```
+
 
 ### 获取任务
 

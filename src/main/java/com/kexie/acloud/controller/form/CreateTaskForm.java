@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * Created : wen
@@ -30,9 +31,11 @@ public class CreateTaskForm {
     private int societyId;
 
     @NotNull(message = "有谁参与这个任务啊，难道就你自己一个人吗")
+    @Size(min = 1,message = "有谁参与这个任务啊，难道就你自己一个人吗")
     private List<String> executors;
 
-    @NotNull(message = "你需要细分任务吧，需要有子任务")
+    @NotNull(message = "你需看要细分任务吧，需要有子任务")
+    @Size(min = 1,message = "你需看要细分任务吧，需要有子任务")
     private List<String> subTask;
 
     /**

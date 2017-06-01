@@ -1,6 +1,7 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.controller.form.CreateTaskForm;
+import com.kexie.acloud.controller.form.UpdateTaskForm;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
@@ -58,15 +59,23 @@ public class TaskController {
     /**
      * 更新任务
      *
-     * @param task
-     * @param result
+     * @param taskForm
+     * @param form
      * @return
      * @throws FormException
      */
     @RequestMapping(method = RequestMethod.PUT)
-    public Task updateTask(@RequestBody Task task, BindingResult result) throws FormException {
-        if (result.hasErrors()) throw new FormException(result);
-        return mTaskService.update(task);
+    public Task updateTask(@Validated @RequestBody UpdateTaskForm taskForm, BindingResult form) throws FormException {
+
+        if (form.hasErrors())
+            throw new FormException(form);
+
+        Task task = taskForm.toTask();
+
+        // 更新
+        Task result = mTaskService.update(task);
+
+        return result;
     }
 
     /**
