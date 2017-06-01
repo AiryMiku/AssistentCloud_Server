@@ -77,6 +77,7 @@ public class Society {
     private Date createTime;
 
     // 学院
+    // FIXME: 2017/6/1 不能为空
     @ManyToOne
     @JSONField(serializeUsing = CollegeSerializer.class, deserializeUsing = CollegeDeserializer.class)
     @Convert(converter = CollegeConvert.class)
