@@ -2,6 +2,7 @@ package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.INoticeDao;
 import com.kexie.acloud.domain.Notice;
+import com.kexie.acloud.exception.NoticeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,12 +48,12 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id,String user_id) {
+    public Notice getNoticeByNoticeId(int notice_id,String user_id) throws NoticeException {
         return noticeDao.getNoticeByNoticeId(notice_id,user_id);
     }
 
     @Override
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id) {
-        return noticeDao.getNoticeVisitorByNoticeId(notice_id);
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id) throws NoticeException {
+        return noticeDao.getNoticeVisitorByNoticeId(notice_id,user_id);
     }
 }

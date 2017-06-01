@@ -3,6 +3,7 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 
+import com.kexie.acloud.exception.NoticeException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -136,7 +137,10 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id, String user_id) {
+    public Notice getNoticeByNoticeId(int notice_id, String user_id) throws NoticeException {
+        if(!getPermission(notice_id,user_id))
+            throw new NoticeException("没有权限");
+
         String notice_visitor = "notice:visitor:" + notice_id;
         Notice notice = getCurrentSession().get(Notice.class, notice_id);
         if(notice.getVisitor_status()==0){
@@ -157,7 +161,11 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id) {
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id) throws NoticeException {
+
+        if(!getPermission(notice_id,user_id))
+            throw new NoticeException("没有权限");
+
         String notice_visitor = "notice:visitor:" + notice_id;
         if(redisTemplate.boundSetOps(notice_visitor).members().size()==0){
             // 缓存未命中,将MySQL中数据载入redis
@@ -173,15 +181,17 @@ public class NoticeDao implements INoticeDao {
 
     @Override
     public boolean getPermission(int notice_id, String user_id) {
-        String hql = "from notice_user_permission where notice_id=? and user_id=?";
-        Query query = getCurrentSession().createQuery(hql);
-        query.setParameter(0, notice_id);
-        query.setParameter(1,user_id);
-
-        // 判断是否是该公告的参与者或发布者
-        if(query.list().size()>0 ||
-                getCurrentSession().get(Notice.class,notice_id).getPublisher().getUserId().equals(user_id)) {
+        Notice notice = getCurrentSession().get(Notice.class, notice_id);
+        // 是否公告发布者
+        if(notice.getPublisher().getUserId().equals(user_id))
             return true;
+
+        // 判断是否该公告的参与者
+        List<User> userList = notice.getExecutors();
+
+        for (User user: userList) {
+            if(user.getUserId().equals(user_id))
+                return true;
         }
         return false;
     }

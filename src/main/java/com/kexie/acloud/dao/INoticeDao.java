@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
+import com.kexie.acloud.exception.NoticeException;
 
 import java.util.List;
 import java.util.Set;
@@ -65,14 +66,14 @@ public interface INoticeDao {
      * @param notice_id 公告ID
      * @return
      */
-    public Notice getNoticeByNoticeId(int notice_id,String user_id);
+    public Notice getNoticeByNoticeId(int notice_id,String user_id) throws NoticeException;
 
     /**
      * 获取公告的浏览者
      * @param notice_id
      * @return
      */
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id);
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id,String user_id) throws NoticeException;
 
     /**
      * 判断user_id是否有权查看公告
