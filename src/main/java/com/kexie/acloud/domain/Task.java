@@ -69,7 +69,7 @@ public class Task {
     private double sumProgress;
 
     // 涉及的干事
-    @JoinTable(name = "task_user_permission",
+    @JoinTable(name = "relation_task_user",
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
     @ManyToMany
