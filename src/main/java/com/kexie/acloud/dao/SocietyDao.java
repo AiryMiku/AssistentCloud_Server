@@ -6,10 +6,7 @@ import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.BeanUtil;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -79,6 +76,15 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
+    public boolean isInSociety(int societyId, List<User> users) {
+        for (User user : users) {
+            if (!isInSociety(societyId, user.getUserId()))
+                return false;
+        }
+        return true;
+    }
+
+    @Override
     public boolean hasSociety(String societyName, int collegeId) {
         return getHibernateTemplate()
                 .find("from Society where name = ? and college.id = ?",
@@ -141,7 +147,14 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public void deleteMember(String societyId, String userId) {
-        // TODO: 2017/5/31 退出社团
+    public void deleteMember(int societyId, String userId) {
+        User user = getHibernateTemplate().load(User.class, userId);
+        List<SocietyPosition> positions = user.getSocietyPositions();
+        for (int i = 0; i < positions.size(); i++) {
+            if (positions.get(i).getSociety().getId() == societyId) {
+                positions.remove(i);
+                break;
+            }
+        }
     }
 }

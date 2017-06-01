@@ -2,7 +2,7 @@ package com.kexie.acloud.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.kexie.acloud.controller.entity.ApplyEntity;
+import com.kexie.acloud.controller.form.ApplyEntity;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.SocietyPosition;

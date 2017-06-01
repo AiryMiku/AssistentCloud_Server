@@ -72,7 +72,7 @@ public class Task {
     @JoinTable(name = "task_user_permission",
             joinColumns = {@JoinColumn(name = "task_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> executors;

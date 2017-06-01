@@ -61,18 +61,18 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void create(Task task, String userId) throws AuthenticationException {
+    public void create(Task task) throws AuthenticationException {
 
         Society society = task.getSociety();
+        User publisher = task.getPublisher();
 
-        if (!mSocietyDao.isInSociety(society.getId(), userId)) {
-            throw new AuthenticationException("用户 " + userId + " 不在当前社团 " + society.getId() + " 中");
+        if (!mSocietyDao.isInSociety(society.getId(), publisher.getUserId())) {
+            throw new AuthenticationException("用户 " + publisher.getUserId() + " 不在当前社团 " + society.getId() + " 中");
         }
 
-        User user = new User();
-        user.setUserId(userId);
-
-        task.setPublisher(user);
+        if (!mSocietyDao.isInSociety(society.getId(), task.getExecutors())) {
+            throw new AuthenticationException("有一些执行者不在当前社团 " + society.getId() + " 中");
+        }
 
         mTaskDao.add(task);
     }

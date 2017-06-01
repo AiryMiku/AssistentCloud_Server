@@ -10,10 +10,10 @@ import java.util.Date;
 public class Message {
 
     // 消息属于哪个房间
-    private Room room;
+    private int room;
 
     // 发布者
-    private User mPublisher;
+    private String mPublisher;
 
     // 发送时间
     private Date time;
@@ -21,19 +21,19 @@ public class Message {
     // 发送的内容
     private String message;
 
-    public Room getRoom() {
+    public int getRoom() {
         return room;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(int room) {
         this.room = room;
     }
 
-    public User getPublisher() {
+    public String getPublisher() {
         return mPublisher;
     }
 
-    public void setPublisher(User publisher) {
+    public void setPublisher(String publisher) {
         mPublisher = publisher;
     }
 

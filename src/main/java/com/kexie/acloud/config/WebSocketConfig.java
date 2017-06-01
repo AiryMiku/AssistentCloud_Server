@@ -27,11 +27,14 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // 表示添加了一个/socket端点，客户端就可以通过这个端点来进行连接。
         registry.addHandler(handler, "/ws")
-                .addInterceptors(new MeetingHandShake());
+                .addInterceptors(new MeetingHandShake())
+                .setAllowedOrigins("*");
+
 
         registry.addHandler(handler, "/ws/sockjs")
                 // 添加一个拦截器
                 .addInterceptors(new MeetingHandShake())
+                .setAllowedOrigins("*")
                 // 开启sockJs的支持 , 什么是sockJs
                 .withSockJS();
     }

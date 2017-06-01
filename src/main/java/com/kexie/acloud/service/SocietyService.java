@@ -193,7 +193,7 @@ public class SocietyService implements ISocietyService {
     }
 
     @Override
-    public void quitSociety(String societyId, String userId) {
+    public void quitSociety(int societyId, String userId) {
         mSocietyDao.deleteMember(societyId, userId);
     }
 

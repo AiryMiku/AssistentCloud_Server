@@ -1,6 +1,8 @@
 package com.kexie.acloud.controller;
 
+import com.kexie.acloud.controller.form.CreateTaskForm;
 import com.kexie.acloud.domain.Task;
+import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.ITaskService;
@@ -35,19 +37,22 @@ public class TaskController {
     /**
      * 添加任务
      *
-     * @param task
+     * @param taskForm
      * @param result
      * @param userId
      * @throws FormException
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void addTask(@Validated @RequestBody Task task, BindingResult result,
+    public void addTask(@Validated @RequestBody CreateTaskForm taskForm, BindingResult result,
                         @RequestAttribute("userId") String userId) throws FormException, AuthenticationException {
 
         if (result.hasErrors())
             throw new FormException(result);
 
-        mTaskService.create(task, userId);
+        Task task = taskForm.toTask();
+        task.setPublisher(new User(userId));
+
+        mTaskService.create(task);
     }
 
     /**

@@ -47,11 +47,10 @@ public interface ITaskService {
 
     /**
      * 创建一个任务
+     *  @param task
      *
-     * @param task
-     * @param userId
      */
-    void create(Task task, String userId) throws AuthenticationException;
+    void create(Task task) throws AuthenticationException;
 
     /**
      * 更新task信息

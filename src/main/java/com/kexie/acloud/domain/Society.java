@@ -88,6 +88,14 @@ public class Society {
     @Column(name = "society_logo")
     private String societyLogo;
 
+    public Society() {
+
+    }
+
+    public Society(int id) {
+        this.id = id;
+    }
+
     public int getId() {
         return id;
     }

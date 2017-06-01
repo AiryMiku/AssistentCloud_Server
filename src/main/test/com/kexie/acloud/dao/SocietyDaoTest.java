@@ -20,6 +20,11 @@ import java.util.Date;
 @Rollback(false)
 public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
     @Test
+    public void deleteMember() throws Exception {
+        societyDao.deleteMember(1, "123");
+    }
+
+    @Test
     public void addAddApply() throws Exception {
         societyDao.addApply(new SocietyApply("123", 1, "测试申请"));
     }

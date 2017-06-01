@@ -3,6 +3,7 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.SocietyPosition;
+import com.kexie.acloud.domain.User;
 
 import java.util.List;
 
@@ -59,6 +60,8 @@ public interface ISocietyDao {
      */
     boolean isInSociety(int societyId, String userId);
 
+    boolean isInSociety(int societyId, List<User> users);
+
     void addNewMember(int positionId, String userId);
 
     void addApply(SocietyApply apply);
@@ -73,5 +76,5 @@ public interface ISocietyDao {
 
     List<SocietyPosition> getSocietyPosition(int societyId);
 
-    void deleteMember(String societyId, String userId);
+    void deleteMember(int societyId, String userId);
 }
