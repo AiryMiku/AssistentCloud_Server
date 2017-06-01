@@ -5,6 +5,60 @@
 
 [toc]
 
+## 用户模块
+
+### 登录
+
+url : /login/web
+
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| userId    | Email| true| 用户登录Id(还没有做邮箱验证啊)  |
+| password    | string| true|密码，长度大于6  |
+
+### 注册
+
+url : /register
+
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| userId    | Email| true| 用户登录Id  |
+| password    | string| true|密码，长度大于6  |
+
+### 获取当前用户的详细信息
+
+url: /user/info 
+method : GET
+
+返回格式：
+```json
+{
+	"gender": 0,
+	"major": 1,
+	"nickName": "丿灬文丶少",
+	"phone": 123,
+	"realName": "赖远文",
+	"stuId": "140202021006",
+	"userId": "helloworld.wen@gmail.com"
+}
+```
+
+### 更新用户信息（暂时不能更新密码
+
+url: /user/update
+method : POST
+
+需要什么，更新什么
+| 字段      | 类型|必须|   含义 |
+| :--------: |:---:|:------: |:--------:|
+| realName | string | false | 真实姓名 |
+| nickName | string |  | 昵称 |
+| stuId | string | false | 学号|
+| major | string | false | 专业id |
+| classNum | string | false | 班级 |  
+| phone | long | false | 电话号码|
+| gender | int | false | 性别 | 
+
 ## 学校/学院/专业 模块
 前缀url：/admin
 
@@ -126,7 +180,7 @@ url：POST /colleges/{college_id}/majors
 
 ## 社团模块
 
-### 添加一个社团
+### 创建一个社团
 
 - url : /society
 - method: PUT
@@ -247,59 +301,57 @@ url：POST /colleges/{college_id}/majors
 }
 ```
 
-## 用户模块
+### 申请加入一个社团
 
-### 登录
+- URL ： /society/join
+- Method：POST
+- Content-Type : application/json
 
-url : /login/web
-
-| 字段      | 类型|必须|   含义 |
-| :--------: |:---:|:------: |:--------:|
-| userId    | Email| true| 用户登录Id(还没有做邮箱验证啊)  |
-| password    | string| true|密码，长度大于6  |
-
-### 注册
-
-url : /register
-
-| 字段      | 类型|必须|   含义 |
-| :--------: |:---:|:------: |:--------:|
-| userId    | Email| true| 用户登录Id  |
-| password    | string| true|密码，长度大于6  |
-
-### 获取当前用户的详细信息
-
-url: /user/info 
-method : GET
-
-返回格式：
 ```json
 {
-	"gender": 0,
-	"major": 1,
-	"nickName": "丿灬文丶少",
-	"phone": 123,
-	"realName": "赖远文",
-	"stuId": "140202021006",
-	"userId": "helloworld.wen@gmail.com"
+	"societyId":1,
+	"reason": "申请理由"
 }
 ```
+添加成功返回HTTP Code 200，不返回任何信息
 
-### 更新用户信息（暂时不能更新密码
+### 查询社团所有的申请请求
 
-url: /user/update
-method : POST
+- URL ： /society/join
+- Method：GET
 
-需要什么，更新什么
-| 字段      | 类型|必须|   含义 |
-| :--------: |:---:|:------: |:--------:|
-| realName | string | false | 真实姓名 |
-| nickName | string |  | 昵称 |
-| stuId | string | false | 学号|
-| major | string | false | 专业id |
-| classNum | string | false | 班级 |  
-| phone | long | false | 电话号码|
-| gender | int | false | 性别 | 
+**需要登录**，请求参数：
+| 字段      |     类型 |   备注   |
+| :-------- | --------:| :------: |
+| societyId   |   String |  社团Id  |
+
+返回的Json数据：
+```json
+[
+	{
+		"applyId":1,
+		"applierId": "helloworld.wen@gmail.com",
+		"reason": "申请理由"
+	}
+]
+```
+
+### 处理加入社团的请求
+
+URL ： /society/handle
+Method：POST
+Content-Type : application/x-www-form-urlencoded
+
+请求体：
+
+| 字段      |     类型 |   备注   |
+| :--------: | :--------:| :------: |
+|  appleId   |   String |  申请加入社团的申请Id  |
+| isAllow    |   Boolean |  是否同意加入  |
+
+
+------
+
  
 
 ## 任务模块
@@ -311,22 +363,14 @@ method : POST
 上传一个Json:
 ```json
 {
-    "executors":[  // 执行者id
-        "admin",
-        "wen"
-    ],
-    "publisher":"wen", // 发布者id
-    "society":1,  // 所属社团id
-    "subTask":[  // 子任务
-        {
-            "progress":0.1, // 任务进度
-            "question":"问题1" // 子任务的问题
-        }
-    ],
-    "sumProgress":0, // 总进度
-    "taskNum":0, // 任务数量
-    "taskType":1, // 任务类型 ：1:活动，2:已经归档，3:删除
-    "time":1493479530484 // 创建时间
+	"title":"任务名字",
+	"societyId":"1",
+	"executors":[
+		"userId","helloworld.wen@gmail.com"
+	],
+	"subTask":[
+		"子任务1","子任务2"
+	]
 }
 ```
 
@@ -500,3 +544,7 @@ PUT JSON格式
 "zojian@qq.com"
 ]
 ```
+
+
+## 会议模块
+

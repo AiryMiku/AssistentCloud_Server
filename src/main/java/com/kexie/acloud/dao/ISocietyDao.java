@@ -51,9 +51,18 @@ public interface ISocietyDao {
 
     SocietyPosition getSocietyPositionByUserId(String userId, int societyId);
 
-    boolean isInSociety(Society society, User member);
+    /**
+     * 用户是否在社团中
+     *
+     * @param societyId
+     * @param userId
+     * @return
+     */
+    boolean isInSociety(int societyId, String userId);
 
-    void addMember(int societyId, String userId);
+    boolean isInSociety(int societyId, List<User> users);
+
+    void addNewMember(int positionId, String userId);
 
     void addApply(SocietyApply apply);
 
@@ -62,4 +71,10 @@ public interface ISocietyDao {
     SocietyApply getSocietyApply(int applyId);
 
     void deleteSocietyApply(int applyId);
+
+    SocietyPosition getLowestPosition(Society society);
+
+    List<SocietyPosition> getSocietyPosition(int societyId);
+
+    void deleteMember(int societyId, String userId);
 }

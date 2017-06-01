@@ -152,26 +152,40 @@ public class SocietyService implements ISocietyService {
         return mSocietyDao.getAllSocietyApply(new Integer(societyId));
     }
 
+    /**
+     * 处理社团申请
+     *
+     * @param applyId 申请号
+     * @param isAllow 是否通过
+     * @param userId  处理人
+     * @throws SocietyException    申请号不存在，处理人社团职位为空"
+     * @throws AuthorizedException 处理人没有权限处理社团申请(职位没有包含主席"
+     */
     @Override
     public void handleSocietyApple(String applyId, boolean isAllow, String userId) throws SocietyException, AuthorizedException {
 
         SocietyApply societyApply = mSocietyDao.getSocietyApply(new Integer(applyId));
 
         if (societyApply == null)
-            throw new SocietyException("当前申请 不存在");
+            throw new SocietyException("当前申请不存在");
 
+        // 处理人职位
         SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(userId, societyApply.getSociety().getId());
 
         if (position == null)
-            throw new SocietyException("用户社团职位为空");
+            throw new SocietyException("处理人社团职位为空");
 
         if (!position.getName().contains("主席"))
-            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+            if (!position.getName().contains("会长"))
+                throw new AuthorizedException("处理人没有权限处理社团申请(职位没有包含主席");
+
+        // TODO: 2017/5/30 推送到用户中
         if (isAllow) {
-            mSocietyDao.addMember(societyApply.getSociety().getId(), societyApply.getUser().getUserId());
-            // TODO: 2017/5/30 推送到用户中
+
+            SocietyPosition lowestPosition = mSocietyDao.getLowestPosition(societyApply.getSociety());
+
+            mSocietyDao.addNewMember(lowestPosition.getId(), societyApply.getUser().getUserId());
         } else {
-            // TODO: 2017/5/30 推送到用户中
         }
 
         // 删除这条申请
@@ -179,7 +193,16 @@ public class SocietyService implements ISocietyService {
     }
 
     @Override
-    public void quitSociety(String societyId, String userId) {
+    public void quitSociety(int societyId, String userId) {
+        mSocietyDao.deleteMember(societyId, userId);
+    }
 
+    @Override
+    public List<SocietyPosition> getSocietyPosition(int societyId) throws SocietyException {
+
+        if (!mSocietyDao.hasSociety(societyId))
+            throw new SocietyException("社团不存在");
+
+        return mSocietyDao.getSocietyPosition(societyId);
     }
 }

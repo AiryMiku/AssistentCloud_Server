@@ -112,8 +112,8 @@ public class MeetingHandler implements WebSocketHandler {
         User user = mUserCache.get(sessionId);
 
         Message result = new Message();
-        result.setRoom(room);
-        result.setPublisher(user);
+        result.setRoom(room.getRoomId());
+        result.setPublisher(user.getUserId());
         result.setTime(new Date());
         result.setMessage(pushMessage.getMessage());
 
@@ -123,6 +123,12 @@ public class MeetingHandler implements WebSocketHandler {
         // 推送到其他用户上
         for (User item : users) {
             WebSocketSession targetSession = mUserWsSession.get(item.getUserId());
+
+            try {
+                System.out.println(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             if (targetSession != null && targetSession.isOpen() && targetSession != session)
                 targetSession.sendMessage(new TextMessage(JSON.toJSONString(result)));

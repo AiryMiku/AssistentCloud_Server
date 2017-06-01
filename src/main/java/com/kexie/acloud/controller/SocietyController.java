@@ -2,9 +2,10 @@ package com.kexie.acloud.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.kexie.acloud.controller.entity.ApplyEntity;
+import com.kexie.acloud.controller.form.ApplyEntity;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
@@ -265,7 +266,6 @@ public class SocietyController {
 
     /**
      * 处理一个加入社团的请求
-     * // FIXME: 2017/5/30 这里还要一个SocietyPositionId,用于保存职位的。
      */
     @RequestMapping(value = "handle", method = RequestMethod.POST)
     public void handleSociety(@RequestParam("applyId") String applyId,
@@ -274,4 +274,27 @@ public class SocietyController {
         mSocietyService.handleSocietyApple(applyId, isAllow, userId);
     }
 
+    /**
+     * 获取社团的职位
+     *
+     * @param societyId 需要查询的社团Id
+     * @return 社团所有的职位
+     */
+    @RequestMapping(value = "position", method = RequestMethod.GET)
+    public JSONArray getPosition(@RequestParam("societyId") int societyId) throws SocietyException {
+
+        List<SocietyPosition> positions = mSocietyService.getSocietyPosition(societyId);
+
+        JSONArray result = new JSONArray();
+        positions.forEach(position -> {
+            JSONObject object = new JSONObject();
+            object.put("id", position.getId());
+            object.put("name", position.getName());
+            object.put("grade", position.getGrade());
+
+            result.add(object);
+        });
+
+        return result;
+    }
 }

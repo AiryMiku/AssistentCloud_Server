@@ -43,4 +43,6 @@ public interface ITaskDao {
     void updateSubTask(SubTask subTask);
 
     List<Task> getTasksBySocietyId(int societyId);
+
+    boolean isInExecutor(String id, String userId);
 }

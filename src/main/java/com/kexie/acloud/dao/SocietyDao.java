@@ -66,13 +66,22 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public boolean isInSociety(Society society, User member) {
-        User u = getHibernateTemplate().get(User.class, member.getUserId());
+    public boolean isInSociety(int societyId, String userId) {
+        User u = getHibernateTemplate().get(User.class, userId);
         for (SocietyPosition position : u.getSocietyPositions()) {
-            if (position.getSociety().getId() == society.getId())
+            if (position.getSociety().getId() == societyId)
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean isInSociety(int societyId, List<User> users) {
+        for (User user : users) {
+            if (!isInSociety(societyId, user.getUserId()))
+                return false;
+        }
+        return true;
     }
 
     @Override
@@ -94,13 +103,10 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public void addMember(int societyId, String userId) {
-        // FIXME: 2017/5/30 这里写错了
-        // 添加成员
-        User user = new User(userId);
-        // 懒加载
-        Society society = getHibernateTemplate().load(Society.class, societyId);
-        society.getMembers().add(user);
+    public void addNewMember(int positionId, String userId) {
+        User user = getHibernateTemplate().load(User.class, userId);
+        SocietyPosition societyPosition = new SocietyPosition(positionId);
+        user.getSocietyPositions().add(societyPosition);
     }
 
     @Override
@@ -125,5 +131,30 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         SocietyApply societyApply = new SocietyApply();
         societyApply.setId(applyId);
         getHibernateTemplate().delete(societyApply);
+    }
+
+    @Override
+    public SocietyPosition getLowestPosition(Society society) {
+        return (SocietyPosition) getHibernateTemplate()
+                .find("from society_position sp where sp.society = ? and sp.grade = 0", society)
+                .get(0);
+    }
+
+    @Override
+    public List<SocietyPosition> getSocietyPosition(int societyId) {
+        return (List<SocietyPosition>) getHibernateTemplate()
+                .find("from society_position sp where sp.society.id = ?", societyId);
+    }
+
+    @Override
+    public void deleteMember(int societyId, String userId) {
+        User user = getHibernateTemplate().load(User.class, userId);
+        List<SocietyPosition> positions = user.getSocietyPositions();
+        for (int i = 0; i < positions.size(); i++) {
+            if (positions.get(i).getSociety().getId() == societyId) {
+                positions.remove(i);
+                break;
+            }
+        }
     }
 }

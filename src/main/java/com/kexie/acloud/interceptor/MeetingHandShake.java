@@ -1,6 +1,7 @@
 package com.kexie.acloud.interceptor;
 
 import com.kexie.acloud.exception.AuthorizedException;
+import com.kexie.acloud.exception.RoomException;
 import com.kexie.acloud.util.TokenManager;
 
 import org.springframework.http.server.ServerHttpRequest;
@@ -48,6 +49,11 @@ public class MeetingHandShake implements HandshakeInterceptor {
 
             if (!TokenManager.checkToken(token))
                 throw new AuthorizedException("用户未登录，token验证失败");
+
+            String roomId = req.getParameter("roomId");
+
+            if (roomId == null || roomId.equals(""))
+                throw new RoomException("没用RoomId这个参数哦");
 
             String userId = TokenManager.getTokenValue(token);
 

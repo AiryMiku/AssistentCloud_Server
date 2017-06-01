@@ -1,9 +1,12 @@
 package com.kexie.acloud.service;
 
+import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.dao.ITaskDao;
+import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.TaskException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+import javax.naming.AuthenticationException;
 import javax.transaction.Transactional;
 
 /**
@@ -25,6 +30,9 @@ public class TaskService implements ITaskService {
 
     @Autowired
     ITaskDao mTaskDao;
+
+    @Resource
+    ISocietyDao mSocietyDao;
 
     @Override
     public Task getTaskByTaskId(String taskId) {
@@ -53,12 +61,18 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void create(Task task, String userId) {
+    public void create(Task task) throws AuthenticationException {
 
-        User user = new User();
-        user.setUserId(userId);
+        Society society = task.getSociety();
+        User publisher = task.getPublisher();
 
-        task.setPublisher(user);
+        if (!mSocietyDao.isInSociety(society.getId(), publisher.getUserId())) {
+            throw new AuthenticationException("用户 " + publisher.getUserId() + " 不在当前社团 " + society.getId() + " 中");
+        }
+
+        if (!mSocietyDao.isInSociety(society.getId(), task.getExecutors())) {
+            throw new AuthenticationException("有一些执行者不在当前社团 " + society.getId() + " 中");
+        }
 
         mTaskDao.add(task);
     }
@@ -99,14 +113,16 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void archive(String taskId) {
+    public void archive(String taskId, String userId) throws AuthorizedException {
 
         Task task = mTaskDao.getTasksByTaskId(taskId);
 
         if (task == null)
             throw new TaskException("没有这条数据");
 
-        // TODO: 2017/5/8 需要判断userId是否有权修改这个任务吗
+        // 判断处理人是否在执行者中
+        if (!mTaskDao.isInExecutor(userId, taskId))
+            throw new AuthorizedException("当前用户不在任务中，没有权限操作当前任务");
 
         task.setTaskType(2);
         mTaskDao.update(task);

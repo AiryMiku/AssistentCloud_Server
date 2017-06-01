@@ -1,12 +1,14 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Room;
+import com.kexie.acloud.domain.User;
 
 import org.hibernate.SessionFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -50,5 +52,12 @@ public class RoomDao extends HibernateDaoSupport implements IRoomDao {
     @Override
     public void clearSession() {
         getHibernateTemplate().getSessionFactory().getCurrentSession().clear();
+    }
+
+    @Override
+    public List<Room> getRoomsByUserId(String userId) {
+        User user = new User(userId);
+        return (List<Room>) getHibernateTemplate()
+                .find("from Room r where ? in elements(r.member) or r.master.id = ?", user, userId);
     }
 }

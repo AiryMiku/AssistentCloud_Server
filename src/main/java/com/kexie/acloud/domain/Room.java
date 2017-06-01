@@ -4,15 +4,10 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.kexie.acloud.domain.JsonSerializer.UserIdListDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserIdListSerializer;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
-
 import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +15,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 /**
  * Created : wen
@@ -33,26 +27,26 @@ public class Room {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
     private Integer roomId;
 
     // 名字
     private String name;
 
     // 房主
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User master;
 
     // 群成员
-    @JoinTable(name = "room_member",
+    @ManyToMany
+    @JoinTable(name = "relation_room_member",
             joinColumns = {@JoinColumn(name = "room_id")},
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @ManyToMany(fetch = FetchType.EAGER)
-    @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
     private List<User> member;
 
     // 房间类型（-1:未指定 , 0：会议房间，1：多人聊天）
-    private int type = -1;
+    private int roomType = -1;
 
     public Integer getRoomId() {
         return roomId;
@@ -86,12 +80,12 @@ public class Room {
         this.member = member;
     }
 
-    public int getType() {
-        return type;
+    public int getRoomType() {
+        return roomType;
     }
 
-    public void setType(int type) {
-        this.type = type;
+    public void setRoomType(int type) {
+        this.roomType = type;
     }
 
     @Override
@@ -106,7 +100,7 @@ public class Room {
         sb.append(",\"member\":")
                 .append(member);
         sb.append(",\"type\":")
-                .append(type);
+                .append(roomType);
         sb.append('}');
         return sb.toString();
     }

@@ -7,21 +7,31 @@ import com.kexie.acloud.domain.JsonSerializer.CollegeSerializer;
 import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
 
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.MapKeyClass;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.MapKeyJoinColumns;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -74,16 +84,17 @@ public class Society {
     @JoinColumn(name = "college_id")
     private College college;
 
-    // 社团成员
-    @ManyToMany
-    @JoinTable(name = "society_member",
-            joinColumns = {@JoinColumn(name = "society_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    private List<User> members;
-
     // 社团logo
     @Column(name = "society_logo")
     private String societyLogo;
+
+    public Society() {
+
+    }
+
+    public Society(int id) {
+        this.id = id;
+    }
 
     public int getId() {
         return id;
@@ -94,11 +105,11 @@ public class Society {
     }
 
     public List<User> getMembers() {
-        return members;
+        return null;
     }
 
     public void setMembers(List<User> members) {
-        this.members = members;
+//        this.members = members;
     }
 
     public String getName() {
@@ -149,6 +160,7 @@ public class Society {
         this.college = college;
     }
 
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
@@ -164,8 +176,6 @@ public class Society {
                 .append(createTime).append('\"');
         sb.append(",\"college\":")
                 .append(college);
-        sb.append(",\"members\":")
-                .append(members);
         sb.append(",\"societyLogo\":\"")
                 .append(societyLogo).append('\"');
         sb.append('}');
