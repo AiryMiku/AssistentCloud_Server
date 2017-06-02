@@ -7,29 +7,20 @@ package com.kexie.acloud.config;
 import com.alibaba.fastjson.parser.Feature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
-import com.kexie.acloud.domain.College;
 import com.kexie.acloud.domain.FormConvert.CollegeConvert;
 import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
 import com.kexie.acloud.domain.JsonSerializer.UserConvert;
 import com.kexie.acloud.exception.GlobalHandlerExceptionResolver;
 import com.kexie.acloud.interceptor.CorsInterceptor;
 import com.kexie.acloud.interceptor.TokenInterceptor;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.*;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.io.IOException;
@@ -72,7 +63,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/**");
         registry.addInterceptor(tokenInterceptor())
                 .addPathPatterns("/user/**", "/task/**","/society/user",
-                        "/notices/**","/meeting/**","/society/join","/society/handle");
+                        "/notices/**","/meeting/**","/society/join","/society/handle","/message/**");
     }
 
     @Override
@@ -127,4 +118,17 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         return new GlobalHandlerExceptionResolver();
     }
 
+    @Bean
+    public ThreadPoolTaskExecutor taskExecutor(){
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        // 核心线程数
+        taskExecutor.setCorePoolSize(50);
+        // 最大线程数
+        taskExecutor.setMaxPoolSize(200);
+        // 队列最大长度
+        taskExecutor.setQueueCapacity(50);
+        // 线程池维护线程所允许的空闲时间
+        taskExecutor.setKeepAliveSeconds(60);
+        return taskExecutor;
+    }
 }

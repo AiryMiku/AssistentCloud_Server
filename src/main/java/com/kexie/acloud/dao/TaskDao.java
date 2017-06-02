@@ -4,15 +4,15 @@ import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.BeanUtil;
-
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.RedisUtil;
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created : wen
@@ -22,6 +22,9 @@ import javax.annotation.Resource;
 @Repository
 
 public class TaskDao extends HibernateDaoSupport implements ITaskDao {
+
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
 
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {
@@ -54,6 +57,8 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     public void add(Task task) {
         getHibernateTemplate().save(task);
+        // 向所有任务参与者发送新任务通知
+        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),task.getExecutors(),"task",task.getTitle());
     }
 
     @Override

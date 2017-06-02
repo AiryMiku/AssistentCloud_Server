@@ -51,9 +51,10 @@ public class NoticeController {
      * @return
      */
     @RequestMapping(value = "/{notice_id}",method = RequestMethod.GET)
-    public Notice getNoticeByNoticeId(@PathVariable int notice_id
-            ,@RequestAttribute("userId") String userId) throws NoticeException {
-        return noticeService.getNoticeByNoticeId(notice_id,userId);
+    public Notice getNoticeByNoticeId(@PathVariable int notice_id,
+                                      @RequestAttribute("userId") String userId,
+                                      @RequestParam(value = "identifier",required = false) String identifier) throws NoticeException {
+        return noticeService.getNoticeByNoticeId(notice_id,userId,identifier);
     }
 
     /**

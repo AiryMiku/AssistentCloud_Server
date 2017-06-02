@@ -48,8 +48,8 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id,String user_id) throws NoticeException {
-        return noticeDao.getNoticeByNoticeId(notice_id,user_id);
+    public Notice getNoticeByNoticeId(int notice_id,String user_id,String identifier) throws NoticeException {
+        return noticeDao.getNoticeByNoticeId(notice_id,user_id,identifier);
     }
 
     @Override

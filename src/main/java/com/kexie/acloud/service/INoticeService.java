@@ -15,7 +15,7 @@ public interface INoticeService {
      * @param notice 公告对象
      * @return
      */
-    public boolean addNotice(Notice notice);
+    boolean addNotice(Notice notice);
 
     /**
      * 更新公告
@@ -23,7 +23,7 @@ public interface INoticeService {
      * @param notice
      * @return
      */
-    public boolean updateNotice(int notice_id, Notice newNotice, String user_id);
+    boolean updateNotice(int notice_id, Notice newNotice, String user_id);
 
     /**
      * 删除公告
@@ -31,7 +31,7 @@ public interface INoticeService {
      * @param user_id
      * @return
      */
-    public boolean deleteNotice(int notice_id, String user_id);
+    boolean deleteNotice(int notice_id, String user_id);
 
     /**
      * 根据用户ID分页获取所以用户可见的公告列表
@@ -39,7 +39,7 @@ public interface INoticeService {
      * @param page 页数
      * @return
      */
-    public List<Notice> getNoticesByUserId(String user_id, int page,int pageSize);
+    List<Notice> getNoticesByUserId(String user_id, int page,int pageSize);
 
     /**
      * 根据发布者ID分页获取由用户发布的公告
@@ -48,7 +48,7 @@ public interface INoticeService {
      * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByPublisherId(String publisher_id,int page, int pageSize);
+    List<Notice> getNoticesByPublisherId(String publisher_id,int page, int pageSize);
 
     /**
      * 根据用户ID和社团ID分页获取公告列表
@@ -58,14 +58,14 @@ public interface INoticeService {
      * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize);
+    List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize);
 
     /**
      * 根据公告ID获取公告详细信息
      * @param notice_id 公告ID
      * @return
      */
-    public Notice getNoticeByNoticeId(int notice_id,String user_id) throws NoticeException;
+    Notice getNoticeByNoticeId(int notice_id,String user_id,String identifier) throws NoticeException;
 
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id,String user_id) throws NoticeException;
+    Set<String> getNoticeVisitorByNoticeId(int notice_id,String user_id) throws NoticeException;
 }
