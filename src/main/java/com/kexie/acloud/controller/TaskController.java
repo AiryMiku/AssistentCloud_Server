@@ -1,5 +1,7 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.kexie.acloud.controller.form.CreateTaskForm;
 import com.kexie.acloud.controller.form.UpdateTaskForm;
 import com.kexie.acloud.domain.Task;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -143,8 +146,22 @@ public class TaskController {
      * @return
      */
     @RequestMapping(value = "/society", method = RequestMethod.GET)
-    public List<Task> getTaskBySocietyId(@RequestParam("societyId") int societyId) {
-        return mTaskService.getTaskBySocietyId(societyId);
+    public JSONArray getTaskBySocietyId(@RequestParam("societyId") int societyId) {
+
+        List<Task> tasks = mTaskService.getTaskBySocietyId(societyId);
+
+        JSONArray result = new JSONArray();
+        tasks.forEach(task -> {
+            JSONObject object = new JSONObject();
+
+            object.put("id", task.getId());
+            object.put("title", task.getTitle());
+            object.put("msg", "你还要什么字段啊");
+
+            result.add(object);
+        });
+
+        return result;
     }
 
 

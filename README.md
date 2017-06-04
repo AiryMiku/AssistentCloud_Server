@@ -349,6 +349,26 @@ Content-Type : application/x-www-form-urlencoded
 |  appleId   |   String |  申请加入社团的申请Id  |
 | isAllow    |   Boolean |  是否同意加入  |
 
+### 获取社团的拥有的职位
+
+URL ： /society/position
+
+Method：GET
+
+```json
+[
+  {
+    "grade": 1,
+    "name": "副主席",
+    "id": 1
+  },
+  {
+    "grade": 0,
+    "name": "干事",
+    "id": 2
+  }
+]
+```
 
 ------
 

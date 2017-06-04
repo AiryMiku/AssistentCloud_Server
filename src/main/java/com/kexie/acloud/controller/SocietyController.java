@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.PathParam;
 
 /**
  * Created : wen
@@ -275,13 +276,13 @@ public class SocietyController {
     }
 
     /**
-     * 获取社团的职位
+     * 获取社团的拥有的职位
      *
      * @param societyId 需要查询的社团Id
      * @return 社团所有的职位
      */
-    @RequestMapping(value = "position", method = RequestMethod.GET)
-    public JSONArray getPosition(@RequestParam("societyId") int societyId) throws SocietyException {
+    @RequestMapping(value = "{societyId}/position", method = RequestMethod.GET)
+    public JSONArray getPosition(@PathVariable("societyId") Integer societyId) throws SocietyException {
 
         List<SocietyPosition> positions = mSocietyService.getSocietyPosition(societyId);
 
