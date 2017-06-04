@@ -2,20 +2,17 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Meeting;
 import com.kexie.acloud.domain.User;
-
-import org.hibernate.Hibernate;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.RedisUtil;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
-import org.springframework.orm.hibernate5.HibernateCallback;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
-
-import javax.annotation.Resource;
 
 /**
  * Created : wen
@@ -25,6 +22,9 @@ import javax.annotation.Resource;
 @Repository
 public class MeetingDao extends HibernateDaoSupport implements IMeetingDao {
 
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
+
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {
         super.setSessionFactory(sessionFactory);
@@ -33,6 +33,8 @@ public class MeetingDao extends HibernateDaoSupport implements IMeetingDao {
     @Override
     public void addMeeting(Meeting meeting) {
         Serializable s = getHibernateTemplate().save(meeting);
+        // 向所有会议参与者发送会议通知
+        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),meeting.getMembers(),"meeting",meeting.getName());
     }
 
     @Override

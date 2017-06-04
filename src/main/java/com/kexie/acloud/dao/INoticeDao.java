@@ -1,6 +1,7 @@
 package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
+import com.kexie.acloud.exception.NoticeException;
 
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,7 @@ public interface INoticeDao {
      * @param notice 公告对象
      * @return
      */
-    public boolean addNotice(Notice notice);
+    boolean addNotice(Notice notice);
 
     /**
      * 更新公告
@@ -23,7 +24,7 @@ public interface INoticeDao {
      * @param notice_id
      * @return
      */
-    public boolean updateNotice(int notice_id, Notice notice, String user_id);
+    boolean updateNotice(int notice_id, Notice notice, String user_id);
 
     /**
      * 删除公告
@@ -31,7 +32,7 @@ public interface INoticeDao {
      * @param user_id
      * @return
      */
-    public boolean deleteNotice(int notice_id, String user_id);
+    boolean deleteNotice(int notice_id, String user_id);
 
     /**
      * 根据用户ID分页获取所以用户可见的公告列表
@@ -39,7 +40,7 @@ public interface INoticeDao {
      * @param page 页数
      * @return
      */
-    public List<Notice> getNoticesByUserId(String user_id, int page,int pageSize);
+    List<Notice> getNoticesByUserId(String user_id, int page,int pageSize);
 
     /**
      * 根据发布者ID分页获取由用户发布的公告
@@ -48,7 +49,7 @@ public interface INoticeDao {
      * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByPublisherId(String publisher_id,int page, int pageSize);
+    List<Notice> getNoticesByPublisherId(String publisher_id,int page, int pageSize);
 
     /**
      * 根据用户ID和社团ID分页获取公告列表
@@ -58,21 +59,21 @@ public interface INoticeDao {
      * @param pageSize
      * @return
      */
-    public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize);
+    List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page,int pageSize);
 
     /**
      * 根据公告ID获取公告详细信息
      * @param notice_id 公告ID
      * @return
      */
-    public Notice getNoticeByNoticeId(int notice_id,String user_id);
+    Notice getNoticeByNoticeId(int notice_id,String user_id,String identifier) throws NoticeException;
 
     /**
      * 获取公告的浏览者
      * @param notice_id
      * @return
      */
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id);
+    Set<String> getNoticeVisitorByNoticeId(int notice_id,String user_id) throws NoticeException;
 
     /**
      * 判断user_id是否有权查看公告
@@ -80,6 +81,6 @@ public interface INoticeDao {
      * @param user_id
      * @return
      */
-    public boolean getPermission(int notice_id,String user_id);
+    boolean getPermission(int notice_id,String user_id);
 
 }

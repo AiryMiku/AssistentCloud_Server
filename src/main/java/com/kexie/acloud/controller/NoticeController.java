@@ -3,6 +3,7 @@ package com.kexie.acloud.controller;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.FormException;
+import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.service.INoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -50,9 +51,10 @@ public class NoticeController {
      * @return
      */
     @RequestMapping(value = "/{notice_id}",method = RequestMethod.GET)
-    public Notice getNoticeByNoticeId(@PathVariable int notice_id
-            ,@RequestAttribute("userId") String userId){
-        return noticeService.getNoticeByNoticeId(notice_id,userId);
+    public Notice getNoticeByNoticeId(@PathVariable int notice_id,
+                                      @RequestAttribute("userId") String userId,
+                                      @RequestParam(value = "identifier",required = false) String identifier) throws NoticeException {
+        return noticeService.getNoticeByNoticeId(notice_id,userId,identifier);
     }
 
     /**
@@ -146,7 +148,7 @@ public class NoticeController {
      */
     @RequestMapping(value = "/visitor/{notice_id}",method = RequestMethod.GET)
     public Set<String> getVisitor(@PathVariable int notice_id,
-                                  @RequestAttribute("userId") String userId){
-        return noticeService.getNoticeVisitorByNoticeId(notice_id);
+                                  @RequestAttribute("userId") String userId) throws NoticeException {
+        return noticeService.getNoticeVisitorByNoticeId(notice_id,userId);
     }
 }

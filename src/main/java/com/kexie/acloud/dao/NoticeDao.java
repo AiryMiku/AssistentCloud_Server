@@ -3,19 +3,24 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 
+import com.kexie.acloud.exception.NoticeException;
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.RedisUtil;
+import com.kexie.acloud.util.SendMsgThread;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.socket.TextMessage;
+import sun.jvm.hotspot.runtime.Thread;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,11 +30,14 @@ import java.util.concurrent.TimeUnit;
 @Transactional
 public class NoticeDao implements INoticeDao {
 
+    @Autowired
+    TaskExecutor taskExecutor;
+
     @Autowired(required = false)
     StringRedisTemplate redisTemplate;
 
-//    @Autowired
-//    TextMessageHandler textMessageHandler;
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
 
     @Autowired
     SessionFactory sessionFactory;
@@ -42,17 +50,8 @@ public class NoticeDao implements INoticeDao {
     public boolean addNotice(Notice notice) {
         try {
             getCurrentSession().save(notice);
-            //获取去掉@的userId
-            List<String> executorList = new ArrayList<>();
-            for (User u : notice.getExecutors()) {
-                // executorList.add(FormatName.withOutEmailSuffix(u.getUserId()));
-                executorList.add(u.getUserId());
-            }
-            //向每个公告可见者发送新公告消息
-            TextMessage message = new TextMessage("你有一条新公告");
-            for (String username : executorList) {
-//                textMessageHandler.sendMessageToUser(username, message);
-            }
+            // 向所有参与者发送新公告通知
+            taskExecutor.execute(new SendMsgThread(jedisConnectionFactory.getJedis(),notice.getTitle(),"notice", notice.getExecutors()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +73,8 @@ public class NoticeDao implements INoticeDao {
             notice.setTime(new Date());
             getCurrentSession().evict(oldNotice);
             getCurrentSession().update(notice);
+            // 向所有参与者发送新公告通知
+            taskExecutor.execute(new SendMsgThread(jedisConnectionFactory.getJedis(),notice.getTitle(),"notice", notice.getExecutors()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,7 +85,7 @@ public class NoticeDao implements INoticeDao {
     @Override
     public boolean deleteNotice(int notice_id, String user_id) {
         try {
-            Notice notice = getNoticeByNoticeId(notice_id, user_id);
+            Notice notice = getNoticeByNoticeId(notice_id, user_id,null);
             if (notice.getPublisher().getUserId().equals(user_id)) {
                 notice.setStatus((short) 1);
                 getCurrentSession().update(notice);
@@ -98,6 +99,7 @@ public class NoticeDao implements INoticeDao {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Notice> getNoticesByUserId(String user_id, int page, int pageSize) {
         String hql = "FROM Notice WHERE (publisher_id = ? AND notice_status = 0)OR ? in elements(executors) ORDER BY time DESC";
@@ -111,6 +113,7 @@ public class NoticeDao implements INoticeDao {
         return query.list();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Notice> getNoticesByUserIdAndSocietyId(String user_id, int society_id, int page, int pageSize) {
         String hql = "FROM Notice WHERE (publisher_id = ? AND society_id = ? AND notice_status = 0) OR ? in elements(executors) ORDER BY time DESC";
@@ -124,7 +127,7 @@ public class NoticeDao implements INoticeDao {
         query.setMaxResults(pageSize);
         return query.list();
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public List<Notice> getNoticesByPublisherId(String publisher_id, int page, int pageSize) {
         String hql = "FROM Notice WHERE publisher_id = ? AND notice_status = 0 ORDER BY time DESC";
@@ -136,14 +139,17 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id, String user_id) {
-        String notice_visitor = "notice:visitor:" + notice_id;
-        Notice notice = getCurrentSession().get(Notice.class, notice_id);
+    public Notice getNoticeByNoticeId(int noticeId, String userId, String identifier) throws NoticeException {
+        if(!getPermission(noticeId,userId))
+            throw new NoticeException("没有权限");
+        RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(),userId,identifier,"notice");
+        String notice_visitor = "notice:visitor:" + noticeId;
+        Notice notice = getCurrentSession().get(Notice.class, noticeId);
         if(notice.getVisitor_status()==0){
             // 未被所有人查看
-            if(!user_id.equals(notice.getPublisher().getUserId())) {
+            if(!userId.equals(notice.getPublisher().getUserId())) {
                 // 不记录发布者的查看记录
-                redisTemplate.boundSetOps(notice_visitor).add(user_id);
+                redisTemplate.boundSetOps(notice_visitor).add(userId);
             }
             if(redisTemplate.boundSetOps(notice_visitor).size()==notice.getExecutors().size()){
                 // 公告可见者都查看了公告,将状态持久化到MySQL
@@ -157,31 +163,40 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id) {
-        String notice_visitor = "notice:visitor:" + notice_id;
-        if(redisTemplate.boundSetOps(notice_visitor).members().size()==0){
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id) throws NoticeException {
+
+        if (!getPermission(notice_id, user_id))
+            throw new NoticeException("没有权限");
+
+        Set<String> result = RedisUtil.getNoticeVisitor(jedisConnectionFactory.getJedis(), notice_id);
+        if (result.size() == 0) {
             // 缓存未命中,将MySQL中数据载入redis
-            Notice notice = getCurrentSession().get(Notice.class,notice_id);
-            if(notice.getVisitor_status()==1) {
+            Notice notice = getCurrentSession().get(Notice.class, notice_id);
+
+            // 已经被所有人浏览过（即已经将状态持久化到MySQL）
+            if (notice.getVisitor_status() == 1) {
+                RedisUtil.loadNoticeVisitorByMySQL(jedisConnectionFactory.getJedis(),notice_id, notice.getExecutors());
                 for (User user : notice.getExecutors()) {
-                    redisTemplate.boundSetOps(notice_visitor).add(user.getUserId());
+                    result.add(user.getUserId());
                 }
             }
         }
-        return redisTemplate.boundSetOps(notice_visitor).members();
+            return result;
     }
 
     @Override
-    public boolean getPermission(int notice_id, String user_id) {
-        String hql = "from notice_user_permission where notice_id=? and user_id=?";
-        Query query = getCurrentSession().createQuery(hql);
-        query.setParameter(0, notice_id);
-        query.setParameter(1,user_id);
-
-        // 判断是否是该公告的参与者或发布者
-        if(query.list().size()>0 ||
-                getCurrentSession().get(Notice.class,notice_id).getPublisher().getUserId().equals(user_id)) {
+    public boolean getPermission(int notice_id,String user_id) {
+        Notice notice = getCurrentSession().get(Notice.class, notice_id);
+        // 是否公告发布者
+        if(notice.getPublisher().getUserId().equals(user_id))
             return true;
+
+        // 判断是否该公告的参与者
+        List<User> userList = notice.getExecutors();
+
+        for (User user: userList) {
+            if(user.getUserId().equals(user_id))
+                return true;
         }
         return false;
     }
