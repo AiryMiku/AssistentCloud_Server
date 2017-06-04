@@ -21,6 +21,17 @@ public class Message {
     // 发送的内容
     private String message;
 
+    // 消息类型
+    private int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
     public int getRoom() {
         return room;
     }

@@ -2,25 +2,23 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
-
 import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 import com.kexie.acloud.util.SendMsgThread;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.socket.TextMessage;
-import sun.jvm.hotspot.runtime.Thread;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
