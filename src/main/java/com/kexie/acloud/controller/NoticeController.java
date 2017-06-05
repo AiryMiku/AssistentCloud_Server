@@ -1,7 +1,6 @@
 package com.kexie.acloud.controller;
 
 import com.kexie.acloud.domain.Notice;
-import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.service.INoticeService;
@@ -34,10 +33,7 @@ public class NoticeController {
         if(result.hasErrors()){
             throw new FormException(result);
         }
-        User user = new User();
-        user.setUserId(userId);
-        notice.setPublisher(user);
-        if(noticeService.addNotice(notice)){
+        if(noticeService.addNotice(notice,userId)){
             return "发布公告成功！";
         }
         else{

@@ -1,6 +1,6 @@
 package com.kexie.acloud.controller;
 
-import com.kexie.acloud.util.Message;
+import com.kexie.acloud.util.PushMessage;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import java.util.Set;
  */
 @RestController()
 @RequestMapping(value = "/message", produces = {"application/json;charset=UTF-8"})
-public class MessageController {
+public class PushController {
     @Autowired
     MyJedisConnectionFactory jedisConnectionFactory;
 
@@ -26,7 +26,7 @@ public class MessageController {
      * @return
      */
     @RequestMapping(value = "/notice",method = RequestMethod.GET)
-    public Set<Message> getNoticeMsg(@RequestAttribute("userId") String userId){
+    public Set<PushMessage> getNoticeMsg(@RequestAttribute("userId") String userId){
         return RedisUtil.getMsg(jedisConnectionFactory.getJedis(),userId,"notice");
     }
 

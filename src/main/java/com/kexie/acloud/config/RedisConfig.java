@@ -15,7 +15,7 @@ import redis.clients.jedis.JedisPoolConfig;
 @Configuration
 public class RedisConfig extends CachingConfigurerSupport {
 
-    // 连接池
+    // 连接池配置
     @Bean
     public JedisPoolConfig jedisPoolConfig(){
         JedisPoolConfig config = new JedisPoolConfig();

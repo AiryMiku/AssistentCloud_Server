@@ -1,10 +1,11 @@
 package com.kexie.acloud.config;
 
+import com.kexie.acloud.controller.MeetingHandler;
+import com.kexie.acloud.controller.PushHandler;
 import com.kexie.acloud.interceptor.MeetingHandShake;
-
+import com.kexie.acloud.interceptor.PushHandShake;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -21,7 +22,10 @@ import javax.annotation.Resource;
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
     @Resource
-    WebSocketHandler handler;
+    MeetingHandler handler;
+
+    @Resource(name = "PushHandler")
+    PushHandler pushHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
@@ -36,6 +40,15 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
                 .addInterceptors(new MeetingHandShake())
                 .setAllowedOrigins("*")
                 // 开启sockJs的支持 , 什么是sockJs
+                .withSockJS();
+
+        registry.addHandler(pushHandler,"/push")
+                .addInterceptors(new PushHandShake())
+                .setAllowedOrigins("*");
+
+        registry.addHandler(pushHandler,"/push/sockjs")
+                .addInterceptors(new PushHandShake())
+                .setAllowedOrigins("*")
                 .withSockJS();
     }
 }

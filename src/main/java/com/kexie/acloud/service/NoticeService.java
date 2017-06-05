@@ -18,8 +18,8 @@ public class NoticeService implements INoticeService {
     INoticeDao noticeDao;
 
     @Override
-    public boolean addNotice(Notice notice) {
-        return noticeDao.addNotice(notice);
+    public boolean addNotice(Notice notice,String userId) {
+        return noticeDao.addNotice(notice,userId);
     }
 
     @Override
