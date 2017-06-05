@@ -20,8 +20,8 @@ import javax.annotation.Resource;
  * Description :
  */
 @RestController
-@RequestMapping(value = "chat")
-public class IMController {
+@RequestMapping(value = "room", produces = {"application/json;charset=UTF-8"})
+public class RoomController {
 
     @Resource
     private IIMService mIMService;
@@ -34,6 +34,7 @@ public class IMController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public JSONArray getRooms(@RequestAttribute("userId") String userId) {
+
         List<Room> rooms = mIMService.getRoomsByUserId(userId);
 
         JSONArray result = new JSONArray();

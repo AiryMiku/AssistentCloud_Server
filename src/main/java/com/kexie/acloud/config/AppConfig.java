@@ -62,8 +62,15 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(corsInterceptor())
                 .addPathPatterns("/**");
         registry.addInterceptor(tokenInterceptor())
-                .addPathPatterns("/user/**", "/task/**","/society/user",
-                        "/notices/**","/meeting/**","/society/join","/society/handle","/message/**");
+                .addPathPatterns("/user/**",
+                        "/task/**",
+                        "/society/user",
+                        "/room/**",
+                        "/notices/**",
+                        "/meeting/**",
+                        "/society/join",
+                        "/society/handle",
+                        "/message/**");
     }
 
     @Override
