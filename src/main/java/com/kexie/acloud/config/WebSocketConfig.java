@@ -30,7 +30,6 @@ public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocke
                 .addInterceptors(new MeetingHandShake())
                 .setAllowedOrigins("*");
 
-
         registry.addHandler(handler, "/ws/sockjs")
                 // 添加一个拦截器
                 .addInterceptors(new MeetingHandShake())

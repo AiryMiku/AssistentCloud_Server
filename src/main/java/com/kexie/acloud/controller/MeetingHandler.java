@@ -13,6 +13,7 @@ import com.kexie.acloud.service.IIMService;
 import com.kexie.acloud.service.IMeetingService;
 import com.kexie.acloud.service.IUserService;
 
+import org.apache.poi.ss.formula.functions.Roman;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -63,11 +64,16 @@ public class MeetingHandler implements WebSocketHandler {
         // 缓存房间信息
         Integer roomId = new Integer(id);
         Room room = mIMService.getRoomInfo(roomId);
-        // TODO: 2017/6/4 房间权限，是否有权进入这个房间
+        // TODO: 2017/6/5 如何将这些逻辑抽离到拦截器上啊
         if (room == null) {
             session.close(new CloseStatus(1007, "房间号" + roomId + "不存在"));
             return;
         }
+        if (!checkRoomPermission(room, userId)) {
+            session.close(new CloseStatus(1007, "你没有权限进入当前房间"));
+            return;
+        }
+
         mRoomCache.putIfAbsent(session.getId(), room);
         // 每次请求缓存用户信息
         User user = mUserService.getUserByUserId(userId);
@@ -78,6 +84,22 @@ public class MeetingHandler implements WebSocketHandler {
         mUserWsSession.putIfAbsent(userId, session);
         // 通知有新成员加入
         notifyRoomMemberHasNewMember(roomId, user, session);
+    }
+
+    /**
+     * 检查是否有权限进入房间
+     *
+     * @param room
+     * @param userId
+     * @return
+     */
+    private boolean checkRoomPermission(Room room, String userId) {
+        if (room.getMaster().getUserId().equals(userId)) return true;
+
+        for (User user : room.getMember())
+            if (user.getUserId().equals(userId))
+                return true;
+        return false;
     }
 
     /**
@@ -126,8 +148,8 @@ public class MeetingHandler implements WebSocketHandler {
         }
 
         JSONObject json = new JSONObject();
-        json.put("type",3);
-        json.put("data",array);
+        json.put("type", 3);
+        json.put("data", array);
         newMemberSession.sendMessage(new TextMessage(json.toJSONString()));
     }
 
@@ -214,19 +236,30 @@ public class MeetingHandler implements WebSocketHandler {
 
                 // 移除对应的房间成员
                 Room room = mRoomCache.get(sessionId);
-                User u = mUserCache.get(sessionId);
-                List<String> users = mRoomMember.get(room.getRoomId());
-                for (int i = 0; i < users.size(); i++) {
-                    if (users.get(i).equals(u.getUserId())) {
-                        users.remove(i);
+                List<String> roomMember = mRoomMember.get(room.getRoomId());
+
+                for (int i = 0; i < roomMember.size(); i++) {
+                    if (roomMember.get(i).equals(userId)) {
+                        roomMember.remove(i);
                         break;
                     }
                 }
+                // 推送到房间用户，用户退出了
+                pushExitMember(userId, roomMember);
                 return;
             }
         }
 
+    }
 
+    private void pushExitMember(String userId, List<String> members) throws IOException {
+        for (String member : members) {
+            WebSocketSession session = mUserWsSession.get(member);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("userId", userId);
+            jsonObject.put("type", 4);
+            session.sendMessage(new TextMessage(jsonObject.toJSONString()));
+        }
     }
 
     @Override
