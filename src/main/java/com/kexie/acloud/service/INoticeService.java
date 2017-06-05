@@ -15,12 +15,11 @@ public interface INoticeService {
      * @param notice 公告对象
      * @return
      */
-    boolean addNotice(Notice notice);
+    boolean addNotice(Notice notice,String userId);
 
     /**
      * 更新公告
      * @param notice_id
-     * @param notice
      * @return
      */
     boolean updateNotice(int notice_id, Notice newNotice, String user_id);

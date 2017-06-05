@@ -5,8 +5,9 @@ import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
-import com.kexie.acloud.util.SendMsgThread;
 
+import com.kexie.acloud.util.SendPushMsgRunnable;
+import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -45,11 +46,26 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public boolean addNotice(Notice notice) {
+    public boolean addNotice(Notice notice,String userId) {
         try {
-            getCurrentSession().save(notice);
+//            if(notice.getPublisher()==null) {
+//                User user = new User();
+//                user.setUserId(userId);
+//                notice.setPublisher(user);
+//            }
+//            getCurrentSession().save(notice);
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    notice.getId(),
+                    notice.getTitle(),
+                    notice.getExecutors()));
             // 向所有参与者发送新公告通知
-            taskExecutor.execute(new SendMsgThread(jedisConnectionFactory.getJedis(),notice.getTitle(),"notice", notice.getExecutors()));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    notice.getId(),
+                    notice.getTitle(),
+                    notice.getExecutors()));
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,8 +87,6 @@ public class NoticeDao implements INoticeDao {
             notice.setTime(new Date());
             getCurrentSession().evict(oldNotice);
             getCurrentSession().update(notice);
-            // 向所有参与者发送新公告通知
-            taskExecutor.execute(new SendMsgThread(jedisConnectionFactory.getJedis(),notice.getTitle(),"notice", notice.getExecutors()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();

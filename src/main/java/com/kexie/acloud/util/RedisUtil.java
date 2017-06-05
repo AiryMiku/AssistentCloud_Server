@@ -11,32 +11,54 @@ import java.util.*;
  * Created by zojian on 2017/6/1.
  */
 public class RedisUtil {
+
+    /**
+     * 生成消息
+     * @param msgType
+     * @param id
+     * @param info
+     * @param recipients
+     * @return
+     */
+
+    public static Map<String,Object> generateMessage(String msgType, int id, String info, List<User>recipients){
+        String type="";
+
+        if(msgType.equals("notice")) type="公告通知";
+        else if(msgType.equals("meeting")) type="会议通知";
+        else if(msgType.equals("task")) type="任务通知";
+
+        String identifier = UUID.randomUUID().toString();
+        HashMap<String,Object> values = new HashMap<String,Object>();
+
+        values.put("id",id);
+        values.put("title","你有一条新的"+type);
+        values.put("info",info);
+        values.put("time",System.currentTimeMillis());
+        values.put("identifier",identifier);
+        return values;
+    }
+
     /**
      * 发送新通知
-     * @param conn
+     * @param conn redis连接
+     * @param msgType 消息类型
+     * @param id 消息在MySQL表中的id
+     * @param info 消息粗略内容
      * @param recipients
-     * @param msgType
-     * @param msg
      */
-   public static void sendMsg(Jedis conn,List<User> recipients, String msgType, String msg){
+   public static void sendPushMsg(Jedis conn,String msgType, int id, String info,List<User> recipients){
 
        Set<String>reci = FormatUtil.formatUserId(recipients);
-       String type="";
-       if(msgType.equals("notice")) type="公告通知";
-       else if(msgType.equals("meeting")) type="会议通知";
-       else if(msgType.equals("task")) type="任务通知";
+       Map<String,Object> message = generateMessage(msgType, id, info, recipients);
        Transaction transaction = conn.multi();
        for (String user_id:reci) {
-           // 获取消息ID
-           // long messageId = conn.incr(("ids:"+msgType+":"+user_id));
-           String identifier = UUID.randomUUID().toString();
-           HashMap<String,Object> values = new HashMap<String,Object>();
-           values.put("id",identifier);
-           values.put("time",System.currentTimeMillis());
-           values.put("title","你有一条新"+type);
-           values.put("message",msg);
-           String packed = JSON.toJSONString(values);
-           transaction.hset(("msg:"+msgType+":"+user_id),identifier,packed);
+
+           String packed = JSON.toJSONString(message);
+           transaction.hset(("msg:"+msgType+":"+user_id),
+                   message.get("identifier").toString(),// key
+                   packed                               // value
+           );
        }
        transaction.exec();
    }
@@ -60,12 +82,12 @@ public class RedisUtil {
      * @param msgType
      * @return
      */
-   public static Set<Message> getMsg(Jedis conn,String userId, String msgType){
+   public static Set<PushMessage> getMsg(Jedis conn,String userId, String msgType){
        String msgKey = "msg:"+msgType+":"+userId;
-       Set<Message> msg = new HashSet<>();
+       Set<PushMessage> msg = new HashSet<>();
        Map<String, String>result = conn.hgetAll(msgKey);
        for (Map.Entry<String, String> entry:result.entrySet()){
-            msg.add(JSON.parseObject(entry.getValue().toString(),Message.class));
+            msg.add(JSON.parseObject(entry.getValue().toString(),PushMessage.class));
        }
        return msg;
    }
@@ -85,10 +107,43 @@ public class RedisUtil {
    }
 
     /**
+     * 添加离线通知
+     * @param conn
+     * @param userId
+     * @param message
+     */
+   public static void addOfflineMsg(Jedis conn,String userId,Map<String,Object>message){
+       String identifier = message.get("identifier").toString();
+       String offlineMsgKey = "offline:"+userId;
+       conn.hset(offlineMsgKey,identifier, JSON.toJSONString(message));
+   }
+
+   public static boolean hasOfflineMsg(Jedis conn,String userId){
+       String offlineMsgKey = "offline:"+userId;
+       return conn.hlen(offlineMsgKey)==0?false:true;
+   }
+
+    /**
+     * 获取所有离线通知
+     * @param conn
+     * @param userId
+     * @return
+     */
+   public static Set<PushMessage> getAllOfflineMsg(Jedis conn,String userId){
+       String offlineMsgKey = "offline:"+userId;
+       Set<PushMessage> msg = new HashSet<>();
+       Map<String, String>result = conn.hgetAll(offlineMsgKey);
+       for (Map.Entry<String, String> entry:result.entrySet()){
+           msg.add(JSON.parseObject(entry.getValue().toString(),PushMessage.class));
+       }
+       conn.del(offlineMsgKey);
+       return msg;
+   }
+
+    /**
      * 获取公告浏览者列表
      * @param conn
      * @param noticeId
-     * @param userId
      * @return
      */
    public static Set<String> getNoticeVisitor(Jedis conn, int noticeId) {
@@ -99,7 +154,6 @@ public class RedisUtil {
     /**
      * 从MySQL加载公告浏览者数据到redis
      * @param conn
-     * @param notice_id
      * @param users
      */
    public static void loadNoticeVisitorByMySQL(Jedis conn,int noticeId, List<User>users){

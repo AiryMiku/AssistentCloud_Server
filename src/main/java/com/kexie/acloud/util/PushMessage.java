@@ -5,27 +5,29 @@ import java.util.Date;
 /**
  * Created by zojian on 2017/6/2.
  */
-public class Message {
-    private String id;
+public class PushMessage {
+    private int id;
+    private String identifier;
     private Date time;
     private String title;
     private String message;
 
-    public Message(String id, Date time, String title, String message) {
+    public PushMessage(String identifier,int id, Date time, String title, String message) {
         this.id = id;
         this.time = time;
         this.title = title;
         this.message = message;
+        this.identifier = identifier;
     }
 
-    public Message() {
+    public PushMessage() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -51,5 +53,13 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }

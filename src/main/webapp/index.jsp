@@ -62,7 +62,7 @@
         <input type="submit" value="upload"/>
     </form>
 </div>
-
+<a href="push.jsp"><button>push</button></a>
 </body>
 
 </html>
