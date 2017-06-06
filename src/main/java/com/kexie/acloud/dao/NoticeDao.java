@@ -10,6 +10,7 @@ import com.kexie.acloud.util.SendPushMsgRunnable;
 import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -48,12 +49,17 @@ public class NoticeDao implements INoticeDao {
     @Override
     public boolean addNotice(Notice notice,String userId) {
         try {
-//            if(notice.getPublisher()==null) {
-//                User user = new User();
-//                user.setUserId(userId);
-//                notice.setPublisher(user);
-//            }
-//            getCurrentSession().save(notice);
+            if(notice.getPublisher()==null) {
+                User user = new User();
+                user.setUserId(userId);
+                notice.setPublisher(user);
+            }
+            Session session = getCurrentSession();
+            //Transaction transaction = session.beginTransaction();
+            session.save(notice);
+           // transaction.commit();
+
+
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),

@@ -593,6 +593,49 @@ PUT JSON格式
 ]
 ```
 
+## 消息推送模块
+
+### 1.分类获取所有未读消息
+**URL： GET /message/{type}**
+
+例如： 获取所有未读的公告通知
+
+GET /message/notice
+
+JSON 格式
+```json
+[
+  {
+    "id": 39, // 公告ID
+    "identifier": "b5de015f-98bd-4233-9c92-a983abfe34d0",// 标识符（用于删除已读消息）
+    "info": "测试", // 通知粗略内容
+    "time": 1496647542777,
+    "title": "你有一条新的公告通知" // 通知标题
+  }
+]
+```
+
+### 2.分类获取未读消息
+
+**URL： GET /message/count/{type}**
+
+例如： 获取所有未读的公告通知的数量
+
+GET /message/count/notice
+
+返回格式
+```json
+2
+```
+
+### 3.获取详细的通知消息
+通过返回未读通知的json中的id，访问相应的url，并带上identifier查询参数（作用：清除未读通知）
+
+比如： 获取到上面的公告通知id为39，则当用户点击未读通知时，访问`/notice/39?identifier=b5de015f-98bd-4233-9c92-a983abfe34d0`
+这样就返回了公告详细信息的json了
+
+### 4.获取离线通知
+当建立websocket连接时，服务器会自动发送该用户的所有未读通知
 
 ## 会议模块
 

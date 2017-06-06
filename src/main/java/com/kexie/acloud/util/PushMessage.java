@@ -10,13 +10,13 @@ public class PushMessage {
     private String identifier;
     private Date time;
     private String title;
-    private String message;
+    private String info;
 
     public PushMessage(String identifier,int id, Date time, String title, String message) {
         this.id = id;
         this.time = time;
         this.title = title;
-        this.message = message;
+        this.info = info;
         this.identifier = identifier;
     }
 
@@ -47,12 +47,12 @@ public class PushMessage {
         this.title = title;
     }
 
-    public String getMessage() {
-        return message;
+    public String getInfo() {
+        return info;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public String getIdentifier() {

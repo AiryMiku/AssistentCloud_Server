@@ -19,9 +19,15 @@ public class RedisConfig extends CachingConfigurerSupport {
     @Bean
     public JedisPoolConfig jedisPoolConfig(){
         JedisPoolConfig config = new JedisPoolConfig();
+        // 最大空闲连接数
         config.setMaxIdle(100);
+        // 初始化连接数
+        config.setMinIdle(50);
+        // 最大等待时间
         config.setMaxWaitMillis(1000);
-        config.setMaxTotal(300);
+        // 最大连接数
+        config.setMaxTotal(500);
+        // borrow的时候执行validateObject检验
         config.setTestOnBorrow(true);
         return config;
     }

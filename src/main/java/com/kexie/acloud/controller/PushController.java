@@ -4,10 +4,7 @@ import com.kexie.acloud.util.PushMessage;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -25,9 +22,10 @@ public class PushController {
      * @param userId
      * @return
      */
-    @RequestMapping(value = "/notice",method = RequestMethod.GET)
-    public Set<PushMessage> getNoticeMsg(@RequestAttribute("userId") String userId){
-        return RedisUtil.getMsg(jedisConnectionFactory.getJedis(),userId,"notice");
+    @RequestMapping(value = "/{type}",method = RequestMethod.GET)
+    public Set<PushMessage> getNoticeMsg(@RequestAttribute("userId") String userId,
+                                         @PathVariable("type") String type){
+        return RedisUtil.getMsg(jedisConnectionFactory.getJedis(),userId,type);
     }
 
     /**
@@ -35,8 +33,9 @@ public class PushController {
      * @param userId
      * @return
      */
-    @RequestMapping(value = "/count/notice",method = RequestMethod.GET)
-    public Long getNoticeMsgCount(@RequestAttribute("userId") String userId){
-        return RedisUtil.getMsgCount(jedisConnectionFactory.getJedis(),userId,"notice");
+    @RequestMapping(value = "/count/{type}",method = RequestMethod.GET)
+    public Long getNoticeMsgCount(@RequestAttribute("userId") String userId,
+                                  @PathVariable("type") String type){
+        return RedisUtil.getMsgCount(jedisConnectionFactory.getJedis(),userId,type);
     }
 }
