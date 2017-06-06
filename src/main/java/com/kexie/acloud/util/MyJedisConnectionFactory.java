@@ -5,6 +5,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.*;
 import org.springframework.data.redis.connection.jedis.JedisConnection;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.stereotype.Component;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.JedisPoolConfig;
@@ -14,6 +16,7 @@ import redis.clients.util.Pool;
 /**
  * Created by zojian on 2017/6/2.
  */
+@Component
 public class MyJedisConnectionFactory extends JedisConnectionFactory {
     public Jedis getJedis(){
         return this.fetchJedisConnector();

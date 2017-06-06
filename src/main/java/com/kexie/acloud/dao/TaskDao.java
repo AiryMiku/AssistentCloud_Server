@@ -58,7 +58,7 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     public void add(Task task) {
         getHibernateTemplate().save(task);
         // 向所有任务参与者发送新任务通知
-        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),task.getExecutors(),"task",task.getTitle());
+//        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),task.getExecutors(),"task",task.getTitle());
     }
 
     @Override

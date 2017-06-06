@@ -51,6 +51,7 @@ public class RoomDao extends HibernateDaoSupport implements IRoomDao {
 
     @Override
     public void clearSession() {
+        getHibernateTemplate().getSessionFactory().getCurrentSession().flush();
         getHibernateTemplate().getSessionFactory().getCurrentSession().clear();
     }
 

@@ -101,7 +101,7 @@ public class User {
     private int gender;
 
     // 图片Url
-    private String logoUrl = "https://i.screenshot.net/lje2wtm";
+    private String logoUrl = "http://i.niupic.com/images/2017/06/06/9q1wfr.jpg";
 
     public User() {
     }

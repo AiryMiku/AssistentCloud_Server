@@ -1,5 +1,6 @@
 package com.kexie.acloud.domain.JsonSerializer;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.JSONSerializable;
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
@@ -22,6 +23,11 @@ public class UserSerializer implements ObjectSerializer {
         User value = (User) object;
         if (value == null)
             return;
+
+        out.append("{ \"userId\":");
         out.writeString(value.getUserId());
+        out.writeFieldValue(',', "userLogo", value.getLogoUrl());
+        out.writeFieldValue(',', "nickName", value.getNickName());
+        out.append("}");
     }
 }

@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 @EnableWebSocket
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
-    @Resource
+    @Resource(name = "MeetingHandler")
     MeetingHandler handler;
 
     @Resource(name = "PushHandler")

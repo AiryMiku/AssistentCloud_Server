@@ -93,7 +93,9 @@ public class MeetingService implements IMeetingService {
      * @return
      */
     private boolean hasCreateMeetingPermission(SocietyPosition position) {
-        return position.getName().contains("主席");
+        if (position != null)
+            return position.getName().contains("主席");
+        return false;
     }
 
 

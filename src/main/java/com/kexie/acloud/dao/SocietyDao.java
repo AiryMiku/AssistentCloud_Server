@@ -127,6 +127,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     @Override
     public void deleteSocietyApply(int applyId) {
+        getHibernateTemplate().flush();
         getHibernateTemplate().clear();
         SocietyApply societyApply = new SocietyApply();
         societyApply.setId(applyId);

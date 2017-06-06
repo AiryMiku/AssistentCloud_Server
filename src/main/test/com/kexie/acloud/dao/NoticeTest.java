@@ -36,7 +36,7 @@ public class NoticeTest extends com.kexie.acloud.dao.BaseTest {
         list.add(userDao.getUser("admin@qq.com"));
         notice.setExecutors(list);
         System.out.println(JSON.toJSONString(notice));
-        noticeDao.addNotice(notice);
+//        noticeDao.addNotice(notice);
     }
 
     @Test

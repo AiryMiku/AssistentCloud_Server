@@ -23,8 +23,6 @@ public class AdminController {
        return "admin-index";
     }
 
-
-
     @RequestMapping(value = "/test",method = RequestMethod.GET)
     public void test(){
         String key = "spring-test";

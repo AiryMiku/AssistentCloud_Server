@@ -45,7 +45,7 @@ public class College {
         return "College{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", school=" + school +
+//                ", school=" + school +
                 ", majors=" + majors +
                 '}';
     }

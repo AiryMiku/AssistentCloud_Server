@@ -57,7 +57,10 @@ public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
 
     @Test
     public void getSocietyById() {
-        System.out.println(societyDao.getSocietyById(1));
+//        System.out.println(societyDao.getSocietyById(1));
+
+//        System.out.println(userDao.getSocietiesByUserId("helloworld.wen@gmail.com"));
+        System.out.println(userDao.getUserBySociety(1));
     }
 
 }

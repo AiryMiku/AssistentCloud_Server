@@ -4,6 +4,7 @@ import com.kexie.acloud.domain.Meeting;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -34,7 +36,7 @@ public class MeetingDao extends HibernateDaoSupport implements IMeetingDao {
     public void addMeeting(Meeting meeting) {
         Serializable s = getHibernateTemplate().save(meeting);
         // 向所有会议参与者发送会议通知
-        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),meeting.getMembers(),"meeting",meeting.getName());
+//        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),meeting.getMembers(),"meeting",meeting.getName());
     }
 
     @Override
@@ -43,8 +45,10 @@ public class MeetingDao extends HibernateDaoSupport implements IMeetingDao {
         User user = new User(userId);
 
         List<Meeting> meetings = getHibernateTemplate().execute(session -> {
-            Query<Meeting> query = session.createQuery("from Meeting where ? in elements(room.member) ");
+            Query<Meeting> query = session.createQuery("from Meeting where ? in elements(room.member) or room.master.id = ? or publisher.id = ?");
             query.setParameter(0, user);
+            query.setParameter(1, user.getUserId());
+            query.setParameter(2, user.getUserId());
 
             List<Meeting> list = query.list();
 

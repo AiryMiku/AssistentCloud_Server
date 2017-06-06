@@ -219,8 +219,9 @@ public class SocietyController {
      * @param query
      */
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    public void search(@RequestPart("query") String query) {
-        mSocietyService.searchSocietyByName(query);
+    public List<Society> search(@RequestParam("query") String query) {
+        System.out.println(query);
+        return mSocietyService.searchSocietyByName(query);
     }
 
     /**
