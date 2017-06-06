@@ -3,11 +3,13 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.NoticeException;
+import com.kexie.acloud.log.Log;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 
 import com.kexie.acloud.util.SendPushMsgRunnable;
 import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -29,6 +31,9 @@ import java.util.concurrent.TimeUnit;
 @Repository
 @Transactional
 public class NoticeDao implements INoticeDao {
+
+    @Autowired
+    ISocietyDao societyDao;
 
     @Autowired
     TaskExecutor taskExecutor;
@@ -54,12 +59,13 @@ public class NoticeDao implements INoticeDao {
                 user.setUserId(userId);
                 notice.setPublisher(user);
             }
+
+            notice.getSociety().setName(societyDao.getSocietyById(notice.getSociety().getId()).getName());
+
             Session session = getCurrentSession();
-            //Transaction transaction = session.beginTransaction();
             session.save(notice);
-           // transaction.commit();
 
-
+            // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
@@ -93,6 +99,18 @@ public class NoticeDao implements INoticeDao {
             notice.setTime(new Date());
             getCurrentSession().evict(oldNotice);
             getCurrentSession().update(notice);
+            // 向所有在线的参与者发送新公告通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    notice.getId(),
+                    notice.getTitle(),
+                    notice.getExecutors()));
+            // 向所有参与者发送新公告通知
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    notice.getId(),
+                    notice.getTitle(),
+                    notice.getExecutors()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,7 +178,9 @@ public class NoticeDao implements INoticeDao {
     public Notice getNoticeByNoticeId(int noticeId, String userId, String identifier) throws NoticeException {
         if(!getPermission(noticeId,userId))
             throw new NoticeException("没有权限");
-        RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(),userId,identifier,"notice");
+        if(identifier!=null) {
+            RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(), userId, identifier, "notice");
+        }
         String notice_visitor = "notice:visitor:" + noticeId;
         Notice notice = getCurrentSession().get(Notice.class, noticeId);
         if(notice.getVisitor_status()==0){

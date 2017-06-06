@@ -1,11 +1,14 @@
 package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.INoticeDao;
+import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.exception.NoticeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Set;
 
@@ -14,21 +17,36 @@ import java.util.Set;
  */
 @Service
 public class NoticeService implements INoticeService {
+    @Resource
+    ISocietyDao mSocietyDao;
+
     @Autowired(required = false)
     INoticeDao noticeDao;
 
     @Override
-    public boolean addNotice(Notice notice,String userId) {
+    public boolean addNotice(Notice notice,String userId) throws AuthenticationException {
+//        if(!mSocietyDao.isInSociety(notice.getSociety().getId(),userId)){
+//            throw new AuthenticationException("用户 " + userId + " 不在当前社团 " + notice.getSociety().getName() + " 中");
+//        }
+//        if (!mSocietyDao.isInSociety(notice.getSociety().getId(), notice.getExecutors())) {
+//            throw new AuthenticationException("有一些执行者不在当前社团 " + notice.getSociety().getName() + " 中");
+//        }
         return noticeDao.addNotice(notice,userId);
     }
 
     @Override
-    public boolean updateNotice(int notice_id,Notice newNotice, String user_id) {
+    public boolean updateNotice(int notice_id,Notice newNotice, String user_id) throws NoticeException {
+        if(noticeDao.getNoticeByNoticeId(notice_id,user_id,null)==null){
+            throw new NoticeException("公告不存在,公告ID有误");
+        }
         return noticeDao.updateNotice(notice_id,newNotice,user_id);
     }
 
     @Override
-    public boolean deleteNotice(int notice_id, String user_id) {
+    public boolean deleteNotice(int notice_id, String user_id) throws NoticeException {
+        if(noticeDao.getNoticeByNoticeId(notice_id,user_id,null)==null){
+            throw new NoticeException("公告不存在,公告ID有误");
+        }
         return noticeDao.deleteNotice(notice_id, user_id);
     }
 
