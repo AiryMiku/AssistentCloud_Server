@@ -30,15 +30,19 @@ public class NoticeController {
     public String addNotice(@Validated @RequestBody Notice notice,
                             BindingResult result,
                             @RequestAttribute("userId") String userId)throws FormException{
+        //System.out.println("s======="+System.currentTimeMillis());
         if(result.hasErrors()){
             throw new FormException(result);
         }
         if(noticeService.addNotice(notice,userId)){
+          //  System.out.println("e======="+System.currentTimeMillis());
             return "发布公告成功！";
         }
         else{
+           // System.out.println("e======="+System.currentTimeMillis());
             return "发布公告失败";
         }
+
     }
 
     /**
