@@ -163,4 +163,54 @@ public class RedisUtil {
            conn.sadd(notice_visitor, user);
        }
    }
+
+    /**
+     * 更新日榜
+     * @param conn
+     * @param societyId
+     * @param userId
+     * @param score
+     */
+   public static void updateScoreboard(Jedis conn,int societyId, String userId, int score){
+       String scoreboardkey="scoreboard:"+societyId+":"+DateUtil.formatCurrentDate();
+       conn.zincrby(scoreboardkey,score,userId);
+   }
+
+    /**
+     * 获取本周排行榜
+     * @param conn
+     * @param societyId
+     * @return
+     */
+   public static Set<String> getWeekScoreboard(Jedis conn,int societyId){
+        List<String> dates = DateUtil.getDateOfThisWeek(Calendar.getInstance());
+        List<String> scoreBoardKey = new ArrayList<>();
+        String lastWeekScoreboardKey = "scoreboard:"+societyId+":lastweek";
+
+        for (String date:dates){
+            scoreBoardKey.add("scoreboard:"+societyId+":"+date);
+        }
+        conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+        return conn.zrevrange(lastWeekScoreboardKey,0,99);
+
+   }
+
+    /**
+     * 获取本月排行榜
+     * @param conn
+     * @param societyId
+     * @return
+     */
+   public static Set<String> getMonthScoreboard(Jedis conn, int societyId){
+       List<String> dates = DateUtil.getDateOfThisMonth(Calendar.getInstance());
+       List<String> scoreBoardKey = new ArrayList<>();
+       String lastMonthScoreboardKey = "scoreboard:"+societyId+":lastmonth";
+
+       for (String date:dates){
+           scoreBoardKey.add("scoreboard:"+societyId+":"+date);
+       }
+       conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+
+       return conn.zrevrange(lastMonthScoreboardKey,0,99);
+   }
 }

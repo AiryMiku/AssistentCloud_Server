@@ -9,6 +9,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class NoticeController {
     @RequestMapping(method = RequestMethod.POST)
     public String addNotice(@Validated @RequestBody Notice notice,
                             BindingResult result,
-                            @RequestAttribute("userId") String userId)throws FormException{
+                            @RequestAttribute("userId") String userId) throws FormException, AuthenticationException {
         //System.out.println("s======="+System.currentTimeMillis());
         if(result.hasErrors()){
             throw new FormException(result);
@@ -64,7 +65,7 @@ public class NoticeController {
      */
     @RequestMapping(value = "/{notice_id}",method = RequestMethod.DELETE)
     public String deleteNotice(@PathVariable int notice_id,
-                               @RequestAttribute("userId") String userId){
+                               @RequestAttribute("userId") String userId) throws NoticeException {
         if(noticeService.deleteNotice(notice_id,userId)){
             return "公告删除成功！";
         }
@@ -84,7 +85,7 @@ public class NoticeController {
     public String updateNotice(@PathVariable int notice_id,
                                @RequestBody Notice notice,
                                BindingResult result,
-                               @RequestAttribute("userId") String userId)throws FormException{
+                               @RequestAttribute("userId") String userId) throws FormException, NoticeException {
         if(result.hasErrors()){
             throw new FormException(result);
         }

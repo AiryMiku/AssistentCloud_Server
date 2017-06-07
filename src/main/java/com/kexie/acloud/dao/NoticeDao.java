@@ -4,11 +4,8 @@ import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.log.Log;
-import com.kexie.acloud.util.MyJedisConnectionFactory;
-import com.kexie.acloud.util.RedisUtil;
+import com.kexie.acloud.util.*;
 
-import com.kexie.acloud.util.SendPushMsgRunnable;
-import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -59,8 +56,6 @@ public class NoticeDao implements INoticeDao {
                 user.setUserId(userId);
                 notice.setPublisher(user);
             }
-
-            notice.getSociety().setName(societyDao.getSocietyById(notice.getSociety().getId()).getName());
 
             Session session = getCurrentSession();
             session.save(notice);
@@ -178,11 +173,18 @@ public class NoticeDao implements INoticeDao {
     public Notice getNoticeByNoticeId(int noticeId, String userId, String identifier) throws NoticeException {
         if(!getPermission(noticeId,userId))
             throw new NoticeException("没有权限");
+
+        Notice notice = getCurrentSession().get(Notice.class, noticeId);
+
         if(identifier!=null) {
             RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(), userId, identifier, "notice");
+            // 更新用户今日积分
+            RedisUtil.updateScoreboard(jedisConnectionFactory.getJedis(),
+                    notice.getSociety().getId(),userId, ScoreBoardUtil.NOTICE);
         }
+
         String notice_visitor = "notice:visitor:" + noticeId;
-        Notice notice = getCurrentSession().get(Notice.class, noticeId);
+
         if(notice.getVisitor_status()==0){
             // 未被所有人查看
             if(!userId.equals(notice.getPublisher().getUserId())) {
@@ -197,6 +199,7 @@ public class NoticeDao implements INoticeDao {
                 redisTemplate.boundSetOps(notice_visitor).expire(5,TimeUnit.DAYS);
             }
         }
+
         return notice;
     }
 

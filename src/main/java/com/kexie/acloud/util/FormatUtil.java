@@ -1,10 +1,9 @@
 package com.kexie.acloud.util;
 
 import com.kexie.acloud.domain.User;
+import redis.clients.jedis.Tuple;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by zojian on 2017/6/2.
@@ -16,5 +15,13 @@ public class FormatUtil {
             executors.add(user.getUserId());
         }
         return executors;
+    }
+
+    public static Map<String,Integer> formatTuple(Set<Tuple> tuples){
+        Map<String,Integer> result = new HashMap<>();
+        for (Tuple t:tuples){
+            result.put(t.getElement(),(int)t.getScore());
+        }
+        return result;
     }
 }

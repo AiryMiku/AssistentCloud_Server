@@ -25,12 +25,13 @@ public class NoticeService implements INoticeService {
 
     @Override
     public boolean addNotice(Notice notice,String userId) throws AuthenticationException {
-//        if(!mSocietyDao.isInSociety(notice.getSociety().getId(),userId)){
-//            throw new AuthenticationException("用户 " + userId + " 不在当前社团 " + notice.getSociety().getName() + " 中");
-//        }
-//        if (!mSocietyDao.isInSociety(notice.getSociety().getId(), notice.getExecutors())) {
-//            throw new AuthenticationException("有一些执行者不在当前社团 " + notice.getSociety().getName() + " 中");
-//        }
+        notice.getSociety().setName(mSocietyDao.getSocietyById(notice.getSociety().getId()).getName());
+        if(!mSocietyDao.isInSociety(notice.getSociety().getId(),userId)){
+            throw new AuthenticationException("用户 " + userId + " 不在当前社团 " + notice.getSociety().getName() + " 中");
+        }
+        if (!mSocietyDao.isInSociety(notice.getSociety().getId(), notice.getExecutors())) {
+            throw new AuthenticationException("有一些执行者不在当前社团 " + notice.getSociety().getName() + " 中");
+        }
         return noticeDao.addNotice(notice,userId);
     }
 
