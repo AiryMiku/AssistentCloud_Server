@@ -13,29 +13,19 @@ import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
-
 import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.PathParam;
 
 /**
  * Created : wen
@@ -240,7 +230,7 @@ public class SocietyController {
 
         SocietyApply apply = new SocietyApply(userId, body.getSocietyId(), body.getReason());
 
-        mSocietyService.applyJoinSociety(apply);
+        mSocietyService.applyJoinSociety(apply,userId);
     }
 
     /**
@@ -263,6 +253,13 @@ public class SocietyController {
         });
 
         return array;
+    }
+
+    @RequestMapping(value = "/join/{societyApplyId}",method = RequestMethod.GET)
+    public SocietyApply getApplyById(@RequestAttribute("userId") String userId,
+                                     @PathVariable("societyApplyId") int societyApplyId,
+                                     @RequestParam(name = "identifier", required = false) String identifier){
+        return mSocietyService.getSocietyApplyById(societyApplyId,userId,identifier);
     }
 
     /**

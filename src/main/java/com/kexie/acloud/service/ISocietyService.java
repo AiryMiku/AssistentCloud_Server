@@ -65,7 +65,7 @@ public interface ISocietyService {
 
     List<Society> searchSocietyByName(String query);
 
-    void applyJoinSociety(SocietyApply apply) throws SocietyException;
+    void applyJoinSociety(SocietyApply apply, String userId) throws SocietyException;
 
     /**
      * 获取社团所有的申请请求
@@ -76,6 +76,7 @@ public interface ISocietyService {
      */
     List<SocietyApply> getSocietyApplyIn(String societyId, String userId) throws SocietyException, AuthorizedException;
 
+    SocietyApply getSocietyApplyById(int societyApplyId,String userId, String identifier);
     /**
      * 处理一个社团请求
      */

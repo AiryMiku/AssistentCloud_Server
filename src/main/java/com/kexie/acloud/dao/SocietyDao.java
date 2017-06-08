@@ -4,12 +4,15 @@ import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
-import com.kexie.acloud.util.BeanUtil;
+import com.kexie.acloud.util.*;
 
 import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -21,6 +24,12 @@ import javax.annotation.Resource;
  */
 @Repository
 public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
+
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
+
+    @Autowired
+    TaskExecutor taskExecutor;
 
     @Resource
     public void setSuperSessionFactory(SessionFactory sessionFactory) {
@@ -113,12 +122,49 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     public void addApply(SocietyApply apply) {
         // 添加一个加入社团的申请
         getHibernateTemplate().save(apply);
-    }
+        // 向在线社团负责人发送申请通知
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "apply",
+                apply.getId(),
+                "你有一条新成员申请，快去查看吧❤️",
+                apply.getUser().getUserId()+"申请加入"+apply.getSociety().getName(),
+                new ArrayList<User>() {
+                    {
+                        add(new User(apply.getSociety().getPrincipal().getUserId()));
+                    }}));
+        // 向社团负责人发送申请通知
+        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "apply",
+                apply.getId(),
+                "你有一条新成员申请，快去查看吧❤️",
+                apply.getUser().getUserId()+"申请加入"+apply.getSociety().getName(),
+                new ArrayList<User>() {
+                    {
+                        add(new User(apply.getSociety().getPrincipal().getUserId()));
+                    }}));
 
+    }
     @Override
     public List<SocietyApply> getAllSocietyApply(Integer societyId) {
         return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where society.id = ?", societyId);
     }
+
+    /**
+     * 根据ID获取社团申请
+     * @param societyApplyId
+     * @return
+     */
+    @Override
+    public SocietyApply getSocietyApplyById(int societyApplyId,String userId, String identifier){
+        if(identifier!=null) {
+            RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(),
+                    userId,
+                    identifier,
+                    "apply");
+        }
+        return getHibernateTemplate().get(SocietyApply.class,societyApplyId);
+    }
+
 
     @Override
     public SocietyApply getSocietyApply(int applyId) {

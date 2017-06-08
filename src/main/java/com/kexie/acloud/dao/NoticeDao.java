@@ -64,12 +64,14 @@ public class NoticeDao implements INoticeDao {
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
             // 向所有参与者发送新公告通知
             taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
 
@@ -98,12 +100,14 @@ public class NoticeDao implements INoticeDao {
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
+                    "你有一条公告更新了，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
             // 向所有参与者发送新公告通知
             taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
             return true;

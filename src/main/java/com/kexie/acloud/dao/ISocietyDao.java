@@ -68,6 +68,8 @@ public interface ISocietyDao {
 
     List<SocietyApply> getAllSocietyApply(Integer societyId);
 
+    SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier);
+
     SocietyApply getSocietyApply(int applyId);
 
     void deleteSocietyApply(int applyId);

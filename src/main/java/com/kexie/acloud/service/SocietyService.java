@@ -119,11 +119,21 @@ public class SocietyService implements ISocietyService {
      * @param apply
      */
     @Override
-    public void applyJoinSociety(SocietyApply apply) throws SocietyException {
-
+    public void applyJoinSociety(SocietyApply apply, String userId) throws SocietyException {
         if (!mSocietyDao.hasSociety(apply.getSociety().getId()))
             throw new SocietyException("社团不存在");
+        apply.setSociety(getSocietyById(apply.getSociety().getId()));
 
+        if(apply.getSociety().getPrincipal().getUserId().equals(userId))
+            throw new SocietyException("你是该社团的负责人!");
+        List<User> members = apply.getSociety().getMembers();
+        if(members!=null) {
+            for (User user : members) {
+                if (user.getUserId().equals(userId)) {
+                    throw new SocietyException("你已经在该社团中");
+                }
+            }
+        }
         // 添加一条申请记录
         mSocietyDao.addApply(apply);
     }
@@ -204,5 +214,11 @@ public class SocietyService implements ISocietyService {
             throw new SocietyException("社团不存在");
 
         return mSocietyDao.getSocietyPosition(societyId);
+    }
+
+    @Override
+    public SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier) {
+
+        return mSocietyDao.getSocietyApplyById(societyApplyId, userId, identifier);
     }
 }
