@@ -3,11 +3,10 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
-import com.kexie.acloud.util.BeanUtil;
-import com.kexie.acloud.util.MyJedisConnectionFactory;
-import com.kexie.acloud.util.RedisUtil;
+import com.kexie.acloud.util.*;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +21,9 @@ import java.util.List;
 @Repository
 
 public class TaskDao extends HibernateDaoSupport implements ITaskDao {
+
+    @Autowired
+    TaskExecutor taskExecutor;
 
     @Autowired
     MyJedisConnectionFactory jedisConnectionFactory;
@@ -51,14 +53,31 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     }
 
     @Override
-    public Task getTasksByTaskId(String taskId) {
+    public Task getTasksByTaskId(String taskId, String userId, String identifier) {
+        if(identifier!=null){
+            RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(),
+                    userId,
+                    identifier,
+                    "task");
+        }
         return getHibernateTemplate().get(Task.class, taskId);
     }
 
     public void add(Task task) {
         getHibernateTemplate().save(task);
-        // 向所有任务参与者发送新任务通知
-//        RedisUtil.sendMsg(jedisConnectionFactory.getJedis(),task.getExecutors(),"task",task.getTitle());
+        // 向所有在线的参与者发送新公告通知
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "task",
+                task.getId(),
+                task.getTitle(),
+                task.getExecutors()));
+        // 向所有参与者发送新公告通知
+        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "task",
+                task.getId(),
+                task.getTitle(),
+                task.getExecutors()));
+
     }
 
     @Override
@@ -71,6 +90,19 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
         BeanUtil.copyProperties(task, t);
         getHibernateTemplate().update(t);
+
+        // 向所有在线的参与者发送新公告通知
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "task",
+                task.getId(),
+                task.getTitle(),
+                task.getExecutors()));
+        // 向所有参与者发送新公告通知
+        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "task",
+                task.getId(),
+                task.getTitle(),
+                task.getExecutors()));
 
         return getHibernateTemplate().get(Task.class, task.getId());
     }

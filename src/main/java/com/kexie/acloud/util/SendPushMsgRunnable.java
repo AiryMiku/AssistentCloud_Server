@@ -16,6 +16,8 @@ public class SendPushMsgRunnable implements Runnable {
 
     private int id;
 
+    private String sid;
+
     private String info;
 
     private List<User> recipients;
@@ -28,9 +30,22 @@ public class SendPushMsgRunnable implements Runnable {
         this.recipients = recipients;
     }
 
+    public SendPushMsgRunnable(Jedis conn, String msgType, String id, String info, List<User> recipients) {
+        this.conn = conn;
+        this.msgType = msgType;
+        this.sid = id;
+        this.info = info;
+        this.recipients = recipients;
+    }
+
     @Override
     public void run() {
-        RedisUtil.sendPushMsg(conn,msgType,id,info,recipients);
+        if(id!=0) {
+            RedisUtil.sendPushMsg(conn, msgType, id, info, recipients);
+        }
+        else{
+            RedisUtil.sendPushMsg(conn, msgType, sid, info, recipients);
+        }
     }
 
 

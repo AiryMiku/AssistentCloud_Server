@@ -17,7 +17,9 @@ import java.util.Map;
 public class SendRealTImePushMsgRunnable implements Runnable {
     private Jedis conn;
 
-    private int id;
+    private int id = 0;
+
+    private String sid;
 
     private String info;
 
@@ -30,7 +32,13 @@ public class SendRealTImePushMsgRunnable implements Runnable {
 
     @Override
     public void run() {
-        Map<String,Object> message = RedisUtil.generateMessage(msgType, id, info, recipients);
+        Map<String,Object> message = null;
+        if(id!=0) {
+            message = RedisUtil.generateMessage(msgType, id, info, recipients);
+        }
+        else{
+            message = RedisUtil.generateMessage(msgType,sid,info, recipients);
+        }
         for (User user:recipients){
             WebSocketSession session = webSocketSessionMap.get(user.getUserId());
             String userId = user.getUserId();
@@ -57,6 +65,15 @@ public class SendRealTImePushMsgRunnable implements Runnable {
     public SendRealTImePushMsgRunnable(Jedis conn, String msgType, int id, String info, List<User> recipients) {
         this.conn = conn;
         this.id = id;
+        this.info = info;
+        this.msgType = msgType;
+        this.recipients = recipients;
+        this.webSocketSessionMap = PushHandler.getmUserWsSession();
+    }
+
+    public SendRealTImePushMsgRunnable(Jedis conn, String msgType, String id, String info, List<User> recipients) {
+        this.conn = conn;
+        this.sid = id;
         this.info = info;
         this.msgType = msgType;
         this.recipients = recipients;

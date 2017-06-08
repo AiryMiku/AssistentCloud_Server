@@ -3,6 +3,7 @@ package com.kexie.acloud.service;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.exception.NoticeException;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
 import java.util.Set;
 
@@ -15,14 +16,14 @@ public interface INoticeService {
      * @param notice 公告对象
      * @return
      */
-    boolean addNotice(Notice notice,String userId);
+    boolean addNotice(Notice notice,String userId) throws AuthenticationException;
 
     /**
      * 更新公告
      * @param notice_id
      * @return
      */
-    boolean updateNotice(int notice_id, Notice newNotice, String user_id);
+    boolean updateNotice(int notice_id, Notice newNotice, String user_id) throws NoticeException;
 
     /**
      * 删除公告
@@ -30,7 +31,7 @@ public interface INoticeService {
      * @param user_id
      * @return
      */
-    boolean deleteNotice(int notice_id, String user_id);
+    boolean deleteNotice(int notice_id, String user_id) throws NoticeException;
 
     /**
      * 根据用户ID分页获取所以用户可见的公告列表

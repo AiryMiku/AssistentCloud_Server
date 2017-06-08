@@ -1,6 +1,5 @@
 package com.kexie.acloud.domain.JsonSerializer;
 
-import com.alibaba.fastjson.serializer.JSONSerializable;
 import com.alibaba.fastjson.serializer.JSONSerializer;
 import com.alibaba.fastjson.serializer.ObjectSerializer;
 import com.alibaba.fastjson.serializer.SerializeWriter;
@@ -22,6 +21,7 @@ public class SocietySerializer implements ObjectSerializer{
         Society value = (Society) object;
         if (value == null)
             return;
-        out.writeInt(value.getId());
+        out.writeString(String.valueOf(value.getId()));
+        out.writeFieldValue(',', "society_name", value.getName());
     }
 }

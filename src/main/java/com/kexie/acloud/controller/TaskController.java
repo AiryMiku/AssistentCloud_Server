@@ -9,22 +9,13 @@ import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.ITaskService;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.naming.AuthenticationException;
+import java.util.List;
 
 /**
  * Created : wen
@@ -135,8 +126,10 @@ public class TaskController {
      * @return
      */
     @RequestMapping(value = "{taskId}", method = RequestMethod.GET)
-    public Task getTaskByTaskId(@PathVariable("taskId") String taskId) {
-        return mTaskService.getTaskByTaskId(taskId);
+    public Task getTaskByTaskId(@PathVariable("taskId") String taskId,
+                                @RequestParam(name = "identifier",required = false) String identifier,
+                                @RequestAttribute("userId") String userId) {
+        return mTaskService.getTaskByTaskId(taskId,userId,identifier);
     }
 
     /**

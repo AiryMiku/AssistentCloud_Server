@@ -39,6 +39,24 @@ public class RedisUtil {
         return values;
     }
 
+    public static Map<String,Object> generateMessage(String msgType, String id, String info, List<User>recipients){
+        String type="";
+
+        if(msgType.equals("notice")) type="公告通知";
+        else if(msgType.equals("meeting")) type="会议通知";
+        else if(msgType.equals("task")) type="任务通知";
+
+        String identifier = UUID.randomUUID().toString();
+        HashMap<String,Object> values = new HashMap<String,Object>();
+
+        values.put("id",id);
+        values.put("title","你有一条新的"+type);
+        values.put("info",info);
+        values.put("time",System.currentTimeMillis());
+        values.put("identifier",identifier);
+        return values;
+    }
+
     /**
      * 发送新通知
      * @param conn redis连接
@@ -62,6 +80,22 @@ public class RedisUtil {
        }
        transaction.exec();
    }
+
+    public static void sendPushMsg(Jedis conn,String msgType, String id, String info,List<User> recipients){
+
+        Set<String>reci = FormatUtil.formatUserId(recipients);
+        Map<String,Object> message = generateMessage(msgType, id, info, recipients);
+        Transaction transaction = conn.multi();
+        for (String user_id:reci) {
+
+            String packed = JSON.toJSONString(message);
+            transaction.hset(("msg:"+msgType+":"+user_id),
+                    message.get("identifier").toString(),// key
+                    packed                               // value
+            );
+        }
+        transaction.exec();
+    }
 
     /**
      * 返回某种类型的未读消息数量
@@ -162,5 +196,55 @@ public class RedisUtil {
        for(String user:executors) {
            conn.sadd(notice_visitor, user);
        }
+   }
+
+    /**
+     * 更新日榜
+     * @param conn
+     * @param societyId
+     * @param userId
+     * @param score
+     */
+   public static void updateScoreboard(Jedis conn,int societyId, String userId, int score){
+       String scoreboardkey="scoreboard:"+societyId+":"+DateUtil.formatCurrentDate();
+       conn.zincrby(scoreboardkey,score,userId);
+   }
+
+    /**
+     * 获取本周排行榜
+     * @param conn
+     * @param societyId
+     * @return
+     */
+   public static Set<String> getWeekScoreboard(Jedis conn,int societyId){
+        List<String> dates = DateUtil.getDateOfThisWeek(Calendar.getInstance());
+        List<String> scoreBoardKey = new ArrayList<>();
+        String lastWeekScoreboardKey = "scoreboard:"+societyId+":lastweek";
+
+        for (String date:dates){
+            scoreBoardKey.add("scoreboard:"+societyId+":"+date);
+        }
+        conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+        return conn.zrevrange(lastWeekScoreboardKey,0,99);
+
+   }
+
+    /**
+     * 获取本月排行榜
+     * @param conn
+     * @param societyId
+     * @return
+     */
+   public static Set<String> getMonthScoreboard(Jedis conn, int societyId){
+       List<String> dates = DateUtil.getDateOfThisMonth(Calendar.getInstance());
+       List<String> scoreBoardKey = new ArrayList<>();
+       String lastMonthScoreboardKey = "scoreboard:"+societyId+":lastmonth";
+
+       for (String date:dates){
+           scoreBoardKey.add("scoreboard:"+societyId+":"+date);
+       }
+       conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+
+       return conn.zrevrange(lastMonthScoreboardKey,0,99);
    }
 }

@@ -491,19 +491,21 @@ POST JSON 格式
 返回 JSON 格式
 
 ```json
-[
-  {
-      "id": 1,
-      "title": "标题6",
-      "content": "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-      "society": 1, //社团ID
-      "publisher": "zojian@qq.com",
-      "time": 1494251950565,
-      "executors": [ //哪些用户可见
-        "admin@qq.com"
-      ]
+{
+    "id": 1204,
+    "status": 0,
+    "visitor_status": 0,
+    "title": "测试",
+    "content": "内容内容",
+    "society": "ACM",
+    "society_id": 4,
+    "publisher": "zojian@qq.com",
+    "time": 1496760791825,
+    "executors": [
+      "zojian2@qq.com",
+      "zojian3@qq.com"
+    ]
   }
-]
 ```
 
 ### 3.分页获取该用户可见的所有公告（按时间降序）
@@ -512,19 +514,7 @@ POST JSON 格式
 
 返回的JSON格式
 ```json
-[
-  {
-    "id": 6,
-    "title": "标题6",
-    "content": "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-    "society": 1,
-    "publisher": "zojian@qq.com",
-    "time": 1494251950565,
-    "executors": [
-      "admin@qq.com"
-    ]
-  }
-]
+同上
 ```
 
 ### 4.分页获取该用户在某个社团内可见的公告（按时间降序）
@@ -533,30 +523,7 @@ POST JSON 格式
 
 返回的JSON格式
 ```json
-[
-  {
-    "id": 6,
-    "title": "标题6",
-    "content": "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-    "society": 1,
-    "publisher": "zojian@qq.com",
-    "time": 1494251950565,
-    "executors": [
-      "admin@qq.com"
-    ]
-  },
-  {
-    "id": 7,
-    "title": "123123标题",
-    "content": "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-    "society": 1,
-    "publisher": "zojian@qq.com",
-    "time": 1494251950565,
-    "executors": [
-      "admin@qq.com"
-    ]
-  }
-]
+同上
 ```
 
 ### 5.删除公告

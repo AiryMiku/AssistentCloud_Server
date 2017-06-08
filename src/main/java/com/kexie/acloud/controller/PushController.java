@@ -18,7 +18,7 @@ public class PushController {
     MyJedisConnectionFactory jedisConnectionFactory;
 
     /**
-     * 获取用户所有的公告未读通知
+     * 获取用户所有的未读通知
      * @param userId
      * @return
      */
@@ -29,7 +29,7 @@ public class PushController {
     }
 
     /**
-     * 获取用户未读公告消息的数量
+     * 获取用户未读通知的数量
      * @param userId
      * @return
      */

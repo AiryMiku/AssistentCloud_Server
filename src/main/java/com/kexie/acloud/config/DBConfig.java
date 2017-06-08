@@ -68,7 +68,7 @@ public class DBConfig {
         dataSource.setUser(env.getProperty("database.root"));
         dataSource.setPassword(env.getProperty("database.password"));
         //设置连接池的最大连接数
-        dataSource.setMaxPoolSize(90);
+        dataSource.setMaxPoolSize(100);
         //设置连接池的最小连接数
         dataSource.setMinPoolSize(2);
         //设置连接池的初始连接数
@@ -77,6 +77,10 @@ public class DBConfig {
         dataSource.setMaxStatements(180);
         //设置连接池每次增加的连接数
         dataSource.setAcquireIncrement(5);
+        //设置最大空闲时间,60秒内未使用则连接被丢弃
+        dataSource.setMaxIdleTime(60);
+        //设置连接关闭时默认将所有未提交的操作回滚
+        dataSource.setAutoCommitOnClose(true);
         return dataSource;
     }
 

@@ -65,12 +65,14 @@ public class AppConfig extends WebMvcConfigurerAdapter {
                 .addPathPatterns("/user/**",
                         "/task/**",
                         "/society/user",
-                        "/room/**",
                         "/notices/**",
                         "/meeting/**",
                         "/society/join",
                         "/society/handle",
-                        "/message/**");
+                        "/message/**",
+                        "/scoreboard/**",
+                        "/task/**",
+                        "/room/**");
     }
 
     @Override
