@@ -5,9 +5,8 @@ import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 
-import java.util.List;
-
 import javax.naming.AuthenticationException;
+import java.util.List;
 
 /**
  * Created : wen
@@ -21,7 +20,7 @@ public interface ITaskService {
      *
      * @param taskId
      */
-    Task getTaskByTaskId(String taskId);
+    Task getTaskByTaskId(String taskId, String userId, String identifier);
 
     /**
      * 获取社团的所有Task

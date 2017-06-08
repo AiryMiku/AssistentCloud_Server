@@ -34,7 +34,7 @@ public interface ITaskDao {
      * @param taskId
      * @return
      */
-    Task getTasksByTaskId(String taskId);
+    Task getTasksByTaskId(String taskId, String userId, String identifier);
 
     void add(Task task);
 

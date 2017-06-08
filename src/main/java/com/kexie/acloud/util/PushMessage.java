@@ -6,13 +6,13 @@ import java.util.Date;
  * Created by zojian on 2017/6/2.
  */
 public class PushMessage {
-    private int id;
+    private String id;
     private String identifier;
     private Date time;
     private String title;
     private String info;
 
-    public PushMessage(String identifier,int id, Date time, String title, String message) {
+    public PushMessage(String identifier,String id, Date time, String title, String message) {
         this.id = id;
         this.time = time;
         this.title = title;
@@ -23,11 +23,11 @@ public class PushMessage {
     public PushMessage() {
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

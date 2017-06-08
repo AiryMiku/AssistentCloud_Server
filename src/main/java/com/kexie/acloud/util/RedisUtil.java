@@ -39,6 +39,24 @@ public class RedisUtil {
         return values;
     }
 
+    public static Map<String,Object> generateMessage(String msgType, String id, String info, List<User>recipients){
+        String type="";
+
+        if(msgType.equals("notice")) type="公告通知";
+        else if(msgType.equals("meeting")) type="会议通知";
+        else if(msgType.equals("task")) type="任务通知";
+
+        String identifier = UUID.randomUUID().toString();
+        HashMap<String,Object> values = new HashMap<String,Object>();
+
+        values.put("id",id);
+        values.put("title","你有一条新的"+type);
+        values.put("info",info);
+        values.put("time",System.currentTimeMillis());
+        values.put("identifier",identifier);
+        return values;
+    }
+
     /**
      * 发送新通知
      * @param conn redis连接
@@ -62,6 +80,22 @@ public class RedisUtil {
        }
        transaction.exec();
    }
+
+    public static void sendPushMsg(Jedis conn,String msgType, String id, String info,List<User> recipients){
+
+        Set<String>reci = FormatUtil.formatUserId(recipients);
+        Map<String,Object> message = generateMessage(msgType, id, info, recipients);
+        Transaction transaction = conn.multi();
+        for (String user_id:reci) {
+
+            String packed = JSON.toJSONString(message);
+            transaction.hset(("msg:"+msgType+":"+user_id),
+                    message.get("identifier").toString(),// key
+                    packed                               // value
+            );
+        }
+        transaction.exec();
+    }
 
     /**
      * 返回某种类型的未读消息数量
