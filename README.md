@@ -336,6 +336,21 @@ url：POST /colleges/{college_id}/majors
 ]
 ```
 
+### 根据申请ID获取社团申请请求
+- URL：/society/join/{id}
+- Method: GET
+
+返回的json格式
+```json
+{
+  "id": 11,
+  "reason": "申请理由",
+  "user": "zojian3@qq.com",
+  "society": "4",
+  "society_name": "ACM"
+}
+```
+
 ### 处理加入社团的请求
 
 URL ： /society/handle

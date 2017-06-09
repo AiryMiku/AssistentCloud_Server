@@ -171,8 +171,8 @@ public class Society {
                 .append(name).append('\"');
         sb.append(",\"summary\":\"")
                 .append(summary).append('\"');
-        sb.append(",\"principal\":")
-                .append(principal);
+        //sb.append(",\"principal\":")
+          //      .append(principal);
         sb.append(",\"createTime\":\"")
                 .append(createTime).append('\"');
         sb.append(",\"college\":")

@@ -128,7 +128,7 @@ public class SocietyService implements ISocietyService {
     }
 
     /**
-     * 添加社团
+     * 申请加入社团
      *
      * @param apply
      */
@@ -140,6 +140,7 @@ public class SocietyService implements ISocietyService {
 
         if(apply.getSociety().getPrincipal().getUserId().equals(userId))
             throw new SocietyException("你是该社团的负责人!");
+        // 判断是否已经加入
         List<User> members = apply.getSociety().getMembers();
         if(members!=null) {
             for (User user : members) {
@@ -147,6 +148,10 @@ public class SocietyService implements ISocietyService {
                     throw new SocietyException("你已经在该社团中");
                 }
             }
+        }
+        // 判断重复申请
+        if(mSocietyDao.getApplyByUserIdAndSocietyId(userId,apply.getSociety().getId()).size()>0) {
+            throw new SocietyException("你已经申请过了，请不要重复申请");
         }
         // 添加一条申请记录
         mSocietyDao.addApply(apply);
@@ -210,7 +215,7 @@ public class SocietyService implements ISocietyService {
 
             SocietyPosition lowestPosition = mSocietyDao.getLowestPosition(societyApply.getSociety());
 
-            mSocietyDao.addNewMember(lowestPosition.getId(), societyApply.getUser().getUserId());
+            mSocietyDao.addNewMember(lowestPosition, societyApply.getUser().getUserId());
 
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     applyId,
@@ -299,4 +304,5 @@ public class SocietyService implements ISocietyService {
        }
         return false;
     }
+
 }

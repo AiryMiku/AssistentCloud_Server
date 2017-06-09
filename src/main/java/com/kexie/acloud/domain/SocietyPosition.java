@@ -70,15 +70,11 @@ public class SocietyPosition {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"id\":")
-                .append(id);
-        sb.append(",\"name\":\"")
-                .append(name).append('\"');
-        sb.append(",\"grade\":")
-                .append(grade);
-        sb.append(",\"society\":")
-                .append(society);
+        final StringBuffer sb = new StringBuffer("SocietyPosition{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", grade=").append(grade);
+        sb.append(", society=").append(society);
         sb.append('}');
         return sb.toString();
     }

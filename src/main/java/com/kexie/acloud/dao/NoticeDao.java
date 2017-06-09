@@ -3,6 +3,7 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.NoticeException;
+import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.log.Log;
 import com.kexie.acloud.util.*;
 
@@ -28,6 +29,9 @@ import java.util.concurrent.TimeUnit;
 @Repository
 @Transactional
 public class NoticeDao implements INoticeDao {
+
+    @Autowired
+    IUserDao userDao;
 
     @Autowired
     ISocietyDao societyDao;
@@ -173,10 +177,11 @@ public class NoticeDao implements INoticeDao {
 
     @Override
     public Notice getNoticeByNoticeId(int noticeId, String userId, String identifier) throws NoticeException {
-        if(!getPermission(noticeId,userId))
-            throw new NoticeException("没有权限");
 
         Notice notice = getCurrentSession().get(Notice.class, noticeId);
+
+        if(!societyDao.isInSociety(notice.getSociety().getId(),userId))
+            throw new NoticeException("你已经不在此社团中");
 
         if(identifier!=null) {
             RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(), userId, identifier, "notice");
@@ -206,10 +211,7 @@ public class NoticeDao implements INoticeDao {
     }
 
     @Override
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id) throws NoticeException {
-
-        if (!getPermission(notice_id, user_id))
-            throw new NoticeException("没有权限");
+    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id){
 
         Set<String> result = RedisUtil.getNoticeVisitor(jedisConnectionFactory.getJedis(), notice_id);
         if (result.size() == 0) {

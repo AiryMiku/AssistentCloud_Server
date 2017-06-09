@@ -111,11 +111,15 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         getHibernateTemplate().save(society);
     }
 
+    /**
+     * 添加成员
+     * @param position
+     * @param userId
+     */
     @Override
-    public void addNewMember(int positionId, String userId) {
+    public void addNewMember(SocietyPosition position, String userId) {
         User user = getHibernateTemplate().load(User.class, userId);
-        SocietyPosition societyPosition = new SocietyPosition(positionId);
-        user.getSocietyPositions().add(societyPosition);
+        user.getSocietyPositions().add(position);
     }
 
     @Override
@@ -172,6 +176,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     @Override
     public void deleteSocietyApply(int applyId) {
+        getHibernateTemplate().flush();
         getHibernateTemplate().clear();
         SocietyApply societyApply = new SocietyApply();
         societyApply.setId(applyId);
@@ -188,7 +193,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     @Override
     public List<SocietyPosition> getSocietyPosition(int societyId) {
         return (List<SocietyPosition>) getHibernateTemplate()
-                .find("from society_position sp where sp.society.id = ?", societyId);
+                .find("from society_position  where society_id = ?", societyId);
     }
 
     @Override
@@ -213,5 +218,19 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
                         add(new User(userId));
                     }
                 }));
+    }
+
+    public List<SocietyApply> getApplyByUserIdAndSocietyId(String userId, int societyId){
+        return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where user_id=? and society_id=?",userId,societyId);
+    }
+
+    /**
+     * 根据职位ID获取职位信息
+     * @param positionId
+     * @return
+     */
+    @Override
+    public SocietyPosition getPositionByPositionId(int positionId) {
+       return getHibernateTemplate().get(SocietyPosition.class, positionId);
     }
 }

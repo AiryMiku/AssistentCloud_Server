@@ -223,7 +223,7 @@ public class SocietyController {
      * @throws FormException
      */
     @RequestMapping(value = "join", method = RequestMethod.POST)
-    public void joinSociety(@Validated @RequestBody ApplyEntity body, BindingResult form,
+    public String joinSociety(@Validated @RequestBody ApplyEntity body, BindingResult form,
                             @RequestAttribute("userId") String userId) throws SocietyException, FormException {
 
         if (form.hasErrors()) throw new FormException(form);
@@ -231,6 +231,8 @@ public class SocietyController {
         SocietyApply apply = new SocietyApply(userId, body.getSocietyId(), body.getReason());
 
         mSocietyService.applyJoinSociety(apply,userId);
+
+        return "申请成功，请耐心等候";
     }
 
     /**
@@ -273,10 +275,11 @@ public class SocietyController {
      * 处理一个加入社团的请求
      */
     @RequestMapping(value = "handle", method = RequestMethod.POST)
-    public void handleSociety(@RequestParam("applyId") String applyId,
+    public String handleSociety(@RequestParam("applyId") String applyId,
                               @RequestParam("isAllow") boolean isAllow,
                               @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
         mSocietyService.handleSocietyApple(applyId, isAllow, userId);
+        return "处理成功";
     }
 
     /**
