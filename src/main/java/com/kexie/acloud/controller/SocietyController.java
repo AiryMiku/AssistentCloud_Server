@@ -13,6 +13,7 @@ import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +40,25 @@ public class SocietyController {
 
     @Resource
     private ISocietyService mSocietyService;
+
+    /**
+     * 创建社团
+     *
+     * @param society
+     * @param form
+     * @throws FormException
+     * @throws SocietyException
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    public void addSociety(@Validated(Society.Create.class) @RequestBody Society society, BindingResult form,
+                           @RequestAttribute("userId") String userId) throws FormException, SocietyException {
+
+        if (form.hasErrors()) throw new FormException(form);
+
+        society.setPrincipal(new User(userId));
+
+        mSocietyService.add(society);
+    }
 
     /**
      * 获取学校所有社团的信息
@@ -108,21 +129,7 @@ public class SocietyController {
         return mSocietyService.getSocietyById(societyId);
     }
 
-    /**
-     * 添加一个社团
-     *
-     * @param society
-     * @param form
-     * @throws FormException
-     * @throws SocietyException
-     */
-    @RequestMapping(method = RequestMethod.POST)
-    public void addSociety(@Validated(Society.Create.class) @RequestBody Society society, BindingResult form) throws FormException, SocietyException {
 
-        if (form.hasErrors()) throw new FormException(form);
-
-        mSocietyService.add(society);
-    }
 
     /**
      * 更新社团
@@ -225,13 +232,13 @@ public class SocietyController {
      */
     @RequestMapping(value = "join", method = RequestMethod.POST)
     public String joinSociety(@Validated @RequestBody ApplyEntity body, BindingResult form,
-                            @RequestAttribute("userId") String userId) throws SocietyException, FormException {
+                              @RequestAttribute("userId") String userId) throws SocietyException, FormException {
 
         if (form.hasErrors()) throw new FormException(form);
 
         SocietyApply apply = new SocietyApply(userId, body.getSocietyId(), body.getReason());
 
-        mSocietyService.applyJoinSociety(apply,userId);
+        mSocietyService.applyJoinSociety(apply, userId);
 
         return "申请成功，请耐心等候";
     }
@@ -260,16 +267,17 @@ public class SocietyController {
 
     /**
      * 根据申请id获取申请信息
+     *
      * @param userId
      * @param societyApplyId
      * @param identifier
      * @return
      */
-    @RequestMapping(value = "/join/{societyApplyId}",method = RequestMethod.GET)
+    @RequestMapping(value = "/join/{societyApplyId}", method = RequestMethod.GET)
     public SocietyApply getApplyById(@RequestAttribute("userId") String userId,
                                      @PathVariable("societyApplyId") int societyApplyId,
-                                     @RequestParam(name = "identifier", required = false) String identifier){
-        return mSocietyService.getSocietyApplyById(societyApplyId,userId,identifier);
+                                     @RequestParam(name = "identifier", required = false) String identifier) {
+        return mSocietyService.getSocietyApplyById(societyApplyId, userId, identifier);
     }
 
     /**
@@ -277,8 +285,8 @@ public class SocietyController {
      */
     @RequestMapping(value = "handle", method = RequestMethod.POST)
     public String handleSociety(@RequestParam("applyId") String applyId,
-                              @RequestParam("isAllow") boolean isAllow,
-                              @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
+                                @RequestParam("isAllow") boolean isAllow,
+                                @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
         mSocietyService.handleSocietyApple(applyId, isAllow, userId);
         return "处理成功";
     }
@@ -306,10 +314,11 @@ public class SocietyController {
 
         return result;
     }
+
     @RequestMapping(value = "/remove")
     public String removeMember(@RequestAttribute("userId") String userId,
-                                @RequestParam("societyId") int societyId,
-                                @RequestParam("removeUserId") String removeUserId) throws SocietyException {
+                               @RequestParam("societyId") int societyId,
+                               @RequestParam("removeUserId") String removeUserId) throws SocietyException {
         return mSocietyService.removeMember(societyId, userId, removeUserId);
     }
 }

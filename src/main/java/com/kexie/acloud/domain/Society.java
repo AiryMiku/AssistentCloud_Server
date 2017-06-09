@@ -68,7 +68,7 @@ public class Society {
     @ManyToOne
     @JoinColumn(name = "principal_id")
     @JSONField(serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
-    @NotNull(groups = {Create.class}, message = "社团不能没有社团负责人")
+//    @NotNull(groups = {Create.class}, message = "社团不能没有社团负责人")
     private User principal;
 
     // 创建时间

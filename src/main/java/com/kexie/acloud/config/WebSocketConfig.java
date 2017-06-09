@@ -6,6 +6,7 @@ import com.kexie.acloud.interceptor.MeetingHandShake;
 import com.kexie.acloud.interceptor.PushHandShake;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -22,10 +23,10 @@ import javax.annotation.Resource;
 public class WebSocketConfig extends WebMvcConfigurerAdapter implements WebSocketConfigurer {
 
     @Resource(name = "MeetingHandler")
-    MeetingHandler handler;
+    WebSocketHandler handler;
 
     @Resource(name = "PushHandler")
-    PushHandler pushHandler;
+    WebSocketHandler pushHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {

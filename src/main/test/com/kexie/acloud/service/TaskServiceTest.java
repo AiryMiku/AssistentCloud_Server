@@ -28,7 +28,7 @@ public class TaskServiceTest {
 
     @Test
     public void update() throws Exception {
-        Task t =  taskDao.getTaskByTaskId("4028b8815bba5116015bba5120590000");
+        Task t =  taskDao.getTaskByTaskId("4028b8815bba5116015bba5120590000","","");
         t.setTitle("更新之后的值");
         taskDao.update(t);
     }

@@ -82,7 +82,7 @@ public class TaskDaoTest {
 
     @Test
     public void update() {
-        Task task = taskDao.getTasksByTaskId("123");
+        Task task = taskDao.getTasksByTaskId("123","","");
         System.out.println(task);
         System.out.println(JSON.toJSONString(task));
 

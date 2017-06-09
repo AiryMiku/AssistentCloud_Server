@@ -81,9 +81,13 @@ public class MeetingHandler implements WebSocketHandler {
         // 更新房间成员
         updateRoomMember(roomId, userId);
         // 保存这个Session
-        mUserWsSession.putIfAbsent(userId, session);
-        // 通知有新成员加入
-        notifyRoomMemberHasNewMember(roomId, user, session);
+        synchronized (MeetingHandler.class) {
+            if (mUserWsSession.get(userId) == null) {
+                mUserWsSession.put(userId, session);
+                // 通知有新成员加入
+                notifyRoomMemberHasNewMember(roomId, user, session);
+            }
+        }
     }
 
     /**

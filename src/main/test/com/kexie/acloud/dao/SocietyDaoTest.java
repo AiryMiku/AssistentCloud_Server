@@ -21,7 +21,7 @@ import java.util.Date;
 public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
     @Test
     public void deleteMember() throws Exception {
-        societyDao.deleteMember(1, "123");
+//        societyDao.deleteMember(1, "123");
     }
 
     @Test
@@ -31,7 +31,7 @@ public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
 
     @Test
     public void addMember() throws Exception {
-        societyDao.addNewMember(1, "123");
+//        societyDao.addNewMember(1, "123");
         System.out.println(userDao.getUser("123"));
     }
 

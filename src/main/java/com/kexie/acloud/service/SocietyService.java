@@ -11,6 +11,7 @@ import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
@@ -43,10 +44,10 @@ public class SocietyService implements ISocietyService {
     @Override
     public void add(Society society) throws SocietyException {
         // 学院是否有同名
-        if (!mSocietyDao.hasSociety(society.getName(), society.getCollege().getId()))
-            mSocietyDao.add(society);
-        else
+        if (mSocietyDao.hasSociety(society.getName(), society.getCollege().getId()))
             throw new SocietyException("社团已经存在啦");
+
+        mSocietyDao.add(society);
     }
 
     @Override
@@ -64,6 +65,7 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 获取社团中的成员
+     *
      * @param society_id
      * @return
      */
@@ -138,11 +140,15 @@ public class SocietyService implements ISocietyService {
             throw new SocietyException("社团不存在");
         apply.setSociety(getSocietyById(apply.getSociety().getId()));
 
-        if(apply.getSociety().getPrincipal().getUserId().equals(userId))
+        if (mSocietyDao.isInSociety(apply.getSociety().getId(), apply.getUser().getUserId())) {
+            throw new SocietyException("你已经在这个社团啦");
+        }
+
+        if (apply.getSociety().getPrincipal().getUserId().equals(userId))
             throw new SocietyException("你是该社团的负责人!");
         // 判断是否已经加入
         List<User> members = apply.getSociety().getMembers();
-        if(members!=null) {
+        if (members != null) {
             for (User user : members) {
                 if (user.getUserId().equals(userId)) {
                     throw new SocietyException("你已经在该社团中");
@@ -150,7 +156,7 @@ public class SocietyService implements ISocietyService {
             }
         }
         // 判断重复申请
-        if(mSocietyDao.getApplyByUserIdAndSocietyId(userId,apply.getSociety().getId()).size()>0) {
+        if (mSocietyDao.getApplyByUserIdAndSocietyId(userId, apply.getSociety().getId()).size() > 0) {
             throw new SocietyException("你已经申请过了，请不要重复申请");
         }
         // 添加一条申请记录
@@ -208,7 +214,7 @@ public class SocietyService implements ISocietyService {
             if (!position.getName().contains("会长"))
                 throw new AuthorizedException("处理人没有权限处理社团申请(职位没有包含主席");
 
-        SocietyApply apply = mSocietyDao.getSocietyApplyById(Integer.parseInt(applyId),null,null);
+        SocietyApply apply = mSocietyDao.getSocietyApplyById(Integer.parseInt(applyId), null, null);
 
         // TODO: 2017/5/30 推送到用户中
         if (isAllow) {
@@ -219,9 +225,9 @@ public class SocietyService implements ISocietyService {
 
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     applyId,
-                    apply.getSociety().getName()+"接受了你的申请❤️",
-                    "恭喜你已经是"+apply.getSociety().getName()+"的一员了",
-                    new ArrayList<User>(){
+                    apply.getSociety().getName() + "接受了你的申请❤️",
+                    "恭喜你已经是" + apply.getSociety().getName() + "的一员了",
+                    new ArrayList<User>() {
                         {
                             add(apply.getUser());
                         }
@@ -230,9 +236,9 @@ public class SocietyService implements ISocietyService {
         } else {
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     applyId,
-                    apply.getSociety().getName()+"拒绝了你的申请(；′⌒`)",
-                    "恭喜你已经是"+apply.getSociety().getName()+"的一员了",
-                    new ArrayList<User>(){
+                    apply.getSociety().getName() + "拒绝了你的申请(；′⌒`)",
+                    "恭喜你已经是" + apply.getSociety().getName() + "的一员了",
+                    new ArrayList<User>() {
                         {
                             add(apply.getUser());
                         }
@@ -245,6 +251,7 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 社团负责人移除成员
+     *
      * @param societyId
      * @param userId
      * @param removeUserId
@@ -254,15 +261,14 @@ public class SocietyService implements ISocietyService {
     public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException {
         Society society = mSocietyDao.getSocietyById(societyId);
 
-        if(inSociety(societyId,removeUserId)) {
+        if (inSociety(societyId, removeUserId)) {
             if (userId.equals(society.getPrincipal().getUserId())) {
                 mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
                 return "移除成功";
             } else {
                 throw new SocietyException("你没有权限");
             }
-        }
-        else {
+        } else {
             throw new SocietyException("成员不在该社团中");
         }
     }
@@ -284,6 +290,7 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 判断成员是否在社团中
+     *
      * @param societyId
      * @param userId
      * @return
@@ -291,17 +298,16 @@ public class SocietyService implements ISocietyService {
      */
     @Override
     public boolean inSociety(int societyId, String userId) throws SocietyException {
-       List<Society> societies = getSocietiesByUserId(userId);
-       if(societies!=null){
-           for (Society society : societies){
-               if(society.getId()==societyId){
-                   return true;
-               }
-           }
-       }
-       else {
-           return false;
-       }
+        List<Society> societies = getSocietiesByUserId(userId);
+        if (societies != null) {
+            for (Society society : societies) {
+                if (society.getId() == societyId) {
+                    return true;
+                }
+            }
+        } else {
+            return false;
+        }
         return false;
     }
 

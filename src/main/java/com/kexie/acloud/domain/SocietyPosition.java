@@ -29,6 +29,10 @@ public class SocietyPosition {
     @JoinColumn(name = "society_id", nullable = false)
     private Society society;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public SocietyPosition() {
     }
 
