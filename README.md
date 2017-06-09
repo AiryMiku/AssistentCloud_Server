@@ -619,5 +619,20 @@ GET /message/count/notice
 ### 4.获取离线通知
 当建立websocket连接时，服务器会自动发送该用户的所有未读通知
 
+## 积分排行榜模块
+
+### 1.获取社团周/月积分排行榜
+- URL：/scoreboard/{type}/{societyId} （type：week或者month）
+- Method: GET
+
+返回的json格式 （从高到低）
+```json
+[
+  "zojian@qq.com",
+  "zojian1@qq.com",
+  "zojian3@qq.com"
+]
+```
+
 ## 会议模块
 

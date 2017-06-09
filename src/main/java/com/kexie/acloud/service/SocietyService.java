@@ -73,12 +73,9 @@ public class SocietyService implements ISocietyService {
 
     @Override
     public Society getSocietyById(int society_id) throws SocietyException {
-
         Society society = mSocietyDao.getSocietyById(society_id);
-
         if (society == null)
             throw new SocietyException("社团不存在");
-
         return society;
     }
 
@@ -270,24 +267,33 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 社团负责人移除成员
-     *
      * @param societyId
      * @param userId
      * @param removeUserId
      * @throws SocietyException
      */
     @Override
-    public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException {
-        Society society = mSocietyDao.getSocietyById(societyId);
+    public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException, AuthorizedException {
 
-        if (inSociety(societyId, removeUserId)) {
-            if (userId.equals(society.getPrincipal().getUserId())) {
+        Society society = mSocietyDao.getSocietyById(societyId);
+        // 处理人职位
+        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(userId, societyId);
+
+        if (position == null)
+            throw new SocietyException("用户社团职位为空");
+
+        if (!position.getName().contains("主席"))
+            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+
+        // 不能移除自己
+        if(userId.equals(removeUserId))
+            throw new SocietyException("你想干嘛？");
+
+        if(inSociety(societyId,removeUserId)) {
                 mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
                 return "移除成功";
-            } else {
-                throw new SocietyException("你没有权限");
-            }
-        } else {
+        }
+        else {
             throw new SocietyException("成员不在该社团中");
         }
     }
@@ -309,7 +315,6 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 判断成员是否在社团中
-     *
      * @param societyId
      * @param userId
      * @return
