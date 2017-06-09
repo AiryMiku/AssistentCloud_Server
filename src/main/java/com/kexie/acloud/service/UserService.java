@@ -1,15 +1,18 @@
 package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.IUserDao;
+import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.UserException;
-import com.kexie.acloud.util.BeanUtil;
-import com.kexie.acloud.util.EncryptionUtil;
+import com.kexie.acloud.util.*;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created : wen
@@ -19,6 +22,9 @@ import javax.annotation.Resource;
 @Component("UserService")
 @Transactional
 public class UserService implements IUserService {
+
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
 
     @Resource(name = "UserDao")
     private IUserDao mUserDao;
@@ -34,7 +40,18 @@ public class UserService implements IUserService {
         if (!EncryptionUtil.verify(user.getPassword(), loginUser.getSalt(), loginUser.getHash())) {
             throw new UserException("账号或密码错误");
         }
-
+        Calendar calendar = Calendar.getInstance();
+        // 用户今日第一次登录,积分+2
+        if(!DateUtil.formatDate(calendar).equals(RedisUtil.getLastLoginDate(jedisConnectionFactory.getJedis(),user.getUserId()))){
+            RedisUtil.updateLoginDate(jedisConnectionFactory.getJedis(),user.getUserId(),DateUtil.formatCurrentDate());
+            List<Society> societies = mUserDao.getSocietiesByUserId(user.getUserId());
+            for (Society society: societies){
+                RedisUtil.updateScoreboard(jedisConnectionFactory.getJedis(),
+                        society.getId(),
+                        user.getUserId(),
+                        2);
+            }
+        }
         return loginUser;
     }
 

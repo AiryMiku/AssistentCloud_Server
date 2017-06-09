@@ -31,8 +31,8 @@ public class ScoreBoardController {
      */
     @RequestMapping(value = "/{type}/{societyId}",method = RequestMethod.GET)
     public Set<String> getScoreBoard(@PathVariable("type") String type,
-                             @PathVariable("societyId") int societyId,
-                             @RequestAttribute("userId") String userId) throws Exception {
+                                    @PathVariable("societyId") int societyId,
+                                    @RequestAttribute("userId") String userId) throws Exception {
         if(societyDao.isInSociety(societyId,userId)) {
             if(type.equals("week")) {
                 return RedisUtil.getWeekScoreboard(jedisConnectionFactory.getJedis(), societyId);

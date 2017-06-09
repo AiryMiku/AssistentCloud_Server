@@ -308,7 +308,7 @@ public class SocietyController {
     @RequestMapping(value = "/remove")
     public String removeMember(@RequestAttribute("userId") String userId,
                                 @RequestParam("societyId") int societyId,
-                                @RequestParam("removeUserId") String removeUserId) throws SocietyException {
+                                @RequestParam("removeUserId") String removeUserId) throws SocietyException, AuthorizedException {
         return mSocietyService.removeMember(societyId, userId, removeUserId);
     }
 }

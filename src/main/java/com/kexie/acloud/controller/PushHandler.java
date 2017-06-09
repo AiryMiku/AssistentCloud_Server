@@ -1,6 +1,7 @@
 package com.kexie.acloud.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class PushHandler implements WebSocketHandler {
     @Autowired
     MyJedisConnectionFactory jedisConnectionFactory;
+
+    @Autowired
+    IUserDao userDao;
+
 
     // 用户WebSocketSession: UserId - session
     private static final Map<String, WebSocketSession> mUserWsSession = new ConcurrentHashMap<>();

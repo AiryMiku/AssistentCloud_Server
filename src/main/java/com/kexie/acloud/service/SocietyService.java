@@ -251,16 +251,25 @@ public class SocietyService implements ISocietyService {
      * @throws SocietyException
      */
     @Override
-    public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException {
+    public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException, AuthorizedException {
+
         Society society = mSocietyDao.getSocietyById(societyId);
+        // 处理人职位
+        SocietyPosition position = mSocietyDao.getSocietyPositionByUserId(userId, societyId);
+
+        if (position == null)
+            throw new SocietyException("用户社团职位为空");
+
+        if (!position.getName().contains("主席"))
+            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+
+        // 不能移除自己
+        if(userId.equals(removeUserId))
+            throw new SocietyException("你想干嘛？");
 
         if(inSociety(societyId,removeUserId)) {
-            if (userId.equals(society.getPrincipal().getUserId())) {
                 mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
                 return "移除成功";
-            } else {
-                throw new SocietyException("你没有权限");
-            }
         }
         else {
             throw new SocietyException("成员不在该社团中");

@@ -215,7 +215,7 @@ public class RedisUtil {
             scoreBoardKey.add("scoreboard:"+societyId+":"+date);
         }
         conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
-        return conn.zrevrange(lastWeekScoreboardKey,0,99);
+        return conn.zrevrange(lastWeekScoreboardKey,0,9);
 
    }
 
@@ -235,6 +235,28 @@ public class RedisUtil {
        }
        conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
 
-       return conn.zrevrange(lastMonthScoreboardKey,0,99);
+       return conn.zrevrange(lastMonthScoreboardKey,0,9);
+   }
+
+    /**
+     * 更新用户最近一次登录时间
+     * @param conn
+     * @param userId
+     * @param currentDate
+     */
+   public static void updateLoginDate(Jedis conn, String userId, String currentDate){
+       String loginDateKey = "logindate";
+       conn.hset(loginDateKey,userId,currentDate);
+   }
+
+    /**
+     * 获取用户上次登录的时间
+     * @param conn
+     * @param userId
+     * @return
+     */
+   public static String getLastLoginDate(Jedis conn, String userId){
+       String loginDateKey = "logindate";
+       return conn.hget(loginDateKey,userId);
    }
 }
