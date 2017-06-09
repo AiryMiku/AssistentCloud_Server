@@ -62,11 +62,13 @@ public interface ISocietyDao {
 
     boolean isInSociety(int societyId, List<User> users);
 
-    void addNewMember(int positionId, String userId);
+    void addNewMember(SocietyPosition position, String userId);
 
     void addApply(SocietyApply apply);
 
     List<SocietyApply> getAllSocietyApply(Integer societyId);
+
+    SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier);
 
     SocietyApply getSocietyApply(int applyId);
 
@@ -76,5 +78,9 @@ public interface ISocietyDao {
 
     List<SocietyPosition> getSocietyPosition(int societyId);
 
-    void deleteMember(int societyId, String userId);
+    void deleteMember(int societyId,String societyName, String userId);
+
+    List<SocietyApply> getApplyByUserIdAndSocietyId(String userId, int societyId);
+
+    SocietyPosition getPositionByPositionId(int positionId);
 }

@@ -21,36 +21,26 @@ public class RedisUtil {
      * @return
      */
 
-    public static Map<String,Object> generateMessage(String msgType, int id, String info, List<User>recipients){
-        String type="";
-
-        if(msgType.equals("notice")) type="公告通知";
-        else if(msgType.equals("meeting")) type="会议通知";
-        else if(msgType.equals("task")) type="任务通知";
+    public static Map<String,Object> generateMessage(int id,String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
-        values.put("title","你有一条新的"+type);
+        values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
         values.put("identifier",identifier);
         return values;
     }
 
-    public static Map<String,Object> generateMessage(String msgType, String id, String info, List<User>recipients){
-        String type="";
-
-        if(msgType.equals("notice")) type="公告通知";
-        else if(msgType.equals("meeting")) type="会议通知";
-        else if(msgType.equals("task")) type="任务通知";
+    public static Map<String,Object> generateMessage(String id, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
-        values.put("title","你有一条新的"+type);
+        values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
         values.put("identifier",identifier);
@@ -65,10 +55,10 @@ public class RedisUtil {
      * @param info 消息粗略内容
      * @param recipients
      */
-   public static void sendPushMsg(Jedis conn,String msgType, int id, String info,List<User> recipients){
+   public static void sendPushMsg(Jedis conn,String msgType, int id, String title, String info,List<User> recipients){
 
        Set<String>reci = FormatUtil.formatUserId(recipients);
-       Map<String,Object> message = generateMessage(msgType, id, info, recipients);
+       Map<String,Object> message = generateMessage(id, title, info, recipients);
        Transaction transaction = conn.multi();
        for (String user_id:reci) {
 
@@ -81,10 +71,10 @@ public class RedisUtil {
        transaction.exec();
    }
 
-    public static void sendPushMsg(Jedis conn,String msgType, String id, String info,List<User> recipients){
+    public static void sendPushMsg(Jedis conn,String msgType, String id, String title, String info,List<User> recipients){
 
         Set<String>reci = FormatUtil.formatUserId(recipients);
-        Map<String,Object> message = generateMessage(msgType, id, info, recipients);
+        Map<String,Object> message = generateMessage(id, title, info, recipients);
         Transaction transaction = conn.multi();
         for (String user_id:reci) {
 

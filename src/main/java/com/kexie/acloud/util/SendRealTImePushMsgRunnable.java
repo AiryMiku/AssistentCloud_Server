@@ -21,9 +21,9 @@ public class SendRealTImePushMsgRunnable implements Runnable {
 
     private String sid;
 
-    private String info;
+    private String title;
 
-    private String msgType;
+    private String info;
 
     private List<User>recipients;
 
@@ -33,11 +33,12 @@ public class SendRealTImePushMsgRunnable implements Runnable {
     @Override
     public void run() {
         Map<String,Object> message = null;
+        // 构造消息
         if(id!=0) {
-            message = RedisUtil.generateMessage(msgType, id, info, recipients);
+            message = RedisUtil.generateMessage(id, title, info, recipients);
         }
         else{
-            message = RedisUtil.generateMessage(msgType,sid,info, recipients);
+            message = RedisUtil.generateMessage(sid, title, info, recipients);
         }
         for (User user:recipients){
             WebSocketSession session = webSocketSessionMap.get(user.getUserId());
@@ -62,20 +63,20 @@ public class SendRealTImePushMsgRunnable implements Runnable {
         }
     }
 
-    public SendRealTImePushMsgRunnable(Jedis conn, String msgType, int id, String info, List<User> recipients) {
+    public SendRealTImePushMsgRunnable(Jedis conn,int id,String title, String info, List<User> recipients) {
         this.conn = conn;
         this.id = id;
+        this.title = title;
         this.info = info;
-        this.msgType = msgType;
         this.recipients = recipients;
         this.webSocketSessionMap = PushHandler.getmUserWsSession();
     }
 
-    public SendRealTImePushMsgRunnable(Jedis conn, String msgType, String id, String info, List<User> recipients) {
+    public SendRealTImePushMsgRunnable(Jedis conn, String id, String title, String info, List<User> recipients) {
         this.conn = conn;
         this.sid = id;
+        this.title = title;
         this.info = info;
-        this.msgType = msgType;
         this.recipients = recipients;
         this.webSocketSessionMap = PushHandler.getmUserWsSession();
     }

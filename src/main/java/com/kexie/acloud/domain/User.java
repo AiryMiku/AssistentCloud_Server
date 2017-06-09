@@ -4,26 +4,12 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.kexie.acloud.domain.JsonSerializer.MajorConvert;
 import com.kexie.acloud.domain.JsonSerializer.MajorDeserializer;
 import com.kexie.acloud.domain.JsonSerializer.MajorSerializer;
-
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Created : wen
@@ -169,33 +155,20 @@ public class User {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("\"userId\":\"")
-                .append(userId).append('\"');
-        sb.append(",\"password\":\"")
-                .append(password).append('\"');
-        sb.append(",\"salt\":\"")
-                .append(salt).append('\"');
-        sb.append(",\"hash\":\"")
-                .append(hash).append('\"');
-        sb.append(",\"realName\":\"")
-                .append(realName).append('\"');
-        sb.append(",\"nickName\":\"")
-                .append(nickName).append('\"');
-        sb.append(",\"stuId\":\"")
-                .append(stuId).append('\"');
-        sb.append(",\"societyPostions\":")
-                .append(societyPositions);
-        sb.append(",\"major\":")
-                .append(major);
-        sb.append(",\"classNum\":\"")
-                .append(classNum).append('\"');
-        sb.append(",\"phone\":")
-                .append(phone);
-        sb.append(",\"gender\":")
-                .append(gender);
-        sb.append(",\"logoUrl\":\"")
-                .append(logoUrl).append('\"');
+        final StringBuffer sb = new StringBuffer("User{");
+        sb.append("userId='").append(userId).append('\'');
+        sb.append(", password='").append(password).append('\'');
+        sb.append(", salt='").append(salt).append('\'');
+        sb.append(", hash='").append(hash).append('\'');
+        sb.append(", realName='").append(realName).append('\'');
+        sb.append(", nickName='").append(nickName).append('\'');
+        sb.append(", stuId='").append(stuId).append('\'');
+        sb.append(", societyPositions=").append(societyPositions);
+        sb.append(", major=").append(major);
+        sb.append(", classNum='").append(classNum).append('\'');
+        sb.append(", phone=").append(phone);
+        sb.append(", gender=").append(gender);
+        sb.append(", logoUrl='").append(logoUrl).append('\'');
         sb.append('}');
         return sb.toString();
     }

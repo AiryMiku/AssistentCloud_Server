@@ -67,12 +67,16 @@ public class NoticeService implements INoticeService {
     }
 
     @Override
-    public Notice getNoticeByNoticeId(int notice_id,String user_id,String identifier) throws NoticeException {
-        return noticeDao.getNoticeByNoticeId(notice_id,user_id,identifier);
+    public Notice getNoticeByNoticeId(int noticeId,String userId,String identifier) throws NoticeException {
+        if(!noticeDao.getPermission(noticeId,userId))
+            throw new NoticeException("没有权限");
+        return noticeDao.getNoticeByNoticeId(noticeId,userId,identifier);
     }
 
     @Override
-    public Set<String> getNoticeVisitorByNoticeId(int notice_id, String user_id) throws NoticeException {
-        return noticeDao.getNoticeVisitorByNoticeId(notice_id,user_id);
+    public Set<String> getNoticeVisitorByNoticeId(int noticeId, String userId) throws NoticeException {
+        if(!noticeDao.getPermission(noticeId,userId))
+            throw new NoticeException("没有权限");
+        return noticeDao.getNoticeVisitorByNoticeId(noticeId,userId);
     }
 }
