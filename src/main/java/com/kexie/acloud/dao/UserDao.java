@@ -7,14 +7,11 @@ import com.kexie.acloud.domain.User;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -66,7 +63,7 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
     @Override
     public List<User> getUserBySociety(int society_id) {
 
-        List<SocietyPosition> positions = (List<SocietyPosition>) getHibernateTemplate().find("from society_position where society.id = ?",society_id);
+        List<SocietyPosition> positions = (List<SocietyPosition>) getHibernateTemplate().find("from society_position where society.id = ?", society_id);
 
         List<User> users = (List<User>) getHibernateTemplate().find("from User");
 
@@ -75,7 +72,7 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
         users.forEach(user -> {
             for (SocietyPosition position : user.getSocietyPositions()) {
                 for (SocietyPosition societyPosition : positions) {
-                    if(position.getId() == societyPosition.getId()){
+                    if (position.getId() == societyPosition.getId()) {
                         result.add(user);
                         return;
                     }
@@ -97,5 +94,19 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
             result.add(position.getSociety());
         });
         return result;
+    }
+
+    /**
+     * 模糊搜索用户
+     *
+     * @param query
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<User> getUserBySearch(String query) {
+        String search = "%" + query + "%";
+        return (List<User>) getHibernateTemplate()
+                .find("from User where userId like ? or nickName like ?",
+                        search, search);
     }
 }

@@ -9,6 +9,8 @@ import com.kexie.acloud.util.EncryptionUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 /**
@@ -79,5 +81,15 @@ public class UserService implements IUserService {
         user.setUserId(userId);
         user.setLogoUrl(relativePath);
         update(user);
+    }
+
+    /**
+     * 通过id或者昵称搜索用户
+     *
+     * @param query 搜索的关键字
+     */
+    @Override
+    public List<User> searchUser(String query) {
+        return mUserDao.getUserBySearch(query);
     }
 }

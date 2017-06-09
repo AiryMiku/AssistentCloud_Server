@@ -113,11 +113,12 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     /**
      * 添加成员
+     *
      * @param position
      * @param userId
      */
     @Override
-    public void addNewMember(SocietyPosition position, String userId) {
+    public void addMember(SocietyPosition position, String userId) {
         User user = getHibernateTemplate().load(User.class, userId);
         user.getSocietyPositions().add(position);
     }
@@ -130,23 +131,26 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                 apply.getId(),
                 "你有一条新成员申请，快去查看吧❤️",
-                apply.getUser().getUserId()+"申请加入"+apply.getSociety().getName(),
+                apply.getUser().getUserId() + "申请加入" + apply.getSociety().getName(),
                 new ArrayList<User>() {
                     {
                         add(new User(apply.getSociety().getPrincipal().getUserId()));
-                    }}));
+                    }
+                }));
         // 向社团负责人发送申请通知
         taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                 "apply",
                 apply.getId(),
                 "你有一条新成员申请，快去查看吧❤️",
-                apply.getUser().getUserId()+"申请加入"+apply.getSociety().getName(),
+                apply.getUser().getUserId() + "申请加入" + apply.getSociety().getName(),
                 new ArrayList<User>() {
                     {
                         add(new User(apply.getSociety().getPrincipal().getUserId()));
-                    }}));
+                    }
+                }));
 
     }
+
     @Override
     public List<SocietyApply> getAllSocietyApply(Integer societyId) {
         return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where society_id = ?", societyId);
@@ -154,18 +158,19 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     /**
      * 根据ID获取社团申请
+     *
      * @param societyApplyId
      * @return
      */
     @Override
-    public SocietyApply getSocietyApplyById(int societyApplyId,String userId, String identifier){
-        if(identifier!=null) {
+    public SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier) {
+        if (identifier != null) {
             RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(),
                     userId,
                     identifier,
                     "apply");
         }
-        return getHibernateTemplate().get(SocietyApply.class,societyApplyId);
+        return getHibernateTemplate().get(SocietyApply.class, societyApplyId);
     }
 
 
@@ -197,7 +202,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public void deleteMember(int societyId,String societyName, String userId) {
+    public void deleteMember(int societyId, String societyName, String userId) {
         User user = getHibernateTemplate().load(User.class, userId);
         List<SocietyPosition> positions = user.getSocietyPositions();
         for (int i = 0; i < positions.size(); i++) {
@@ -211,26 +216,39 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         // 给被移除的成员发送通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                 0,
-                "你退出了"+societyName,
-                "很遗憾，一个悲伤的消息，你离开了"+societyName,
-                new ArrayList<User>(){
+                "你退出了" + societyName,
+                "很遗憾，一个悲伤的消息，你离开了" + societyName,
+                new ArrayList<User>() {
                     {
                         add(new User(userId));
                     }
                 }));
     }
 
-    public List<SocietyApply> getApplyByUserIdAndSocietyId(String userId, int societyId){
-        return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where user_id=? and society_id=?",userId,societyId);
+    public List<SocietyApply> getApplyByUserIdAndSocietyId(String userId, int societyId) {
+        return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where user_id=? and society_id=?", userId, societyId);
     }
 
     /**
      * 根据职位ID获取职位信息
+     *
      * @param positionId
      * @return
      */
     @Override
     public SocietyPosition getPositionByPositionId(int positionId) {
-       return getHibernateTemplate().get(SocietyPosition.class, positionId);
+        return getHibernateTemplate().get(SocietyPosition.class, positionId);
+    }
+
+    /**
+     * 向社团中添加一个职位
+     *
+     * @param society  社团
+     * @param position 社团职位
+     */
+    @Override
+    public void addPosition(Society society, SocietyPosition position) {
+        position.setSociety(society);
+        getHibernateTemplate().save(position);
     }
 }

@@ -85,13 +85,24 @@ public class Society {
     @JoinColumn(name = "college_id")
     private College college;
 
+//    @OneToMany
+//    private List<SocietyPosition> positions;
+
     // 社团logo
     @Column(name = "society_logo")
-    private String societyLogo;
+    private String societyLogo = "http://i.niupic.com/images/2017/06/06/9q1wfr.jpg";
 
     public Society() {
 
     }
+
+//    public List<SocietyPosition> getPositions() {
+//        return positions;
+//    }
+//
+//    public void setPositions(List<SocietyPosition> positions) {
+//        this.positions = positions;
+//    }
 
     public Society(int id) {
         this.id = id;

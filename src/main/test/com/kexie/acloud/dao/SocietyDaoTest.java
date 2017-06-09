@@ -31,7 +31,7 @@ public class SocietyDaoTest extends com.kexie.acloud.dao.BaseTest {
 
     @Test
     public void addMember() throws Exception {
-//        societyDao.addNewMember(1, "123");
+//        societyDao.addMember(1, "123");
         System.out.println(userDao.getUser("123"));
     }
 

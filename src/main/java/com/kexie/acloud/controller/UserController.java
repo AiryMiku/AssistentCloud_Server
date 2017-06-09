@@ -1,5 +1,7 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -69,7 +72,7 @@ public class UserController {
      * 上传社团logo
      *
      * @param logo
-     * @param societyId
+     * @param userId
      */
     @RequestMapping(value = "logo", method = RequestMethod.POST)
     public void uploadLogo(HttpServletRequest request, @RequestParam("logo") MultipartFile logo,
@@ -87,4 +90,27 @@ public class UserController {
         mUserService.updateUserLogo(userId, relativePath);
     }
 
+    /**
+     * 通过id或者昵称模糊搜索用户
+     */
+    @RequestMapping(value = "search", method = RequestMethod.GET)
+    public JSONArray searchUser(@RequestParam("query") String query) {
+
+        if (query.equals("")) return null;
+
+        List<User> users = mUserService.searchUser(query);
+        JSONArray array = new JSONArray();
+
+        users.forEach(user -> {
+            JSONObject json = new JSONObject();
+
+            json.put("nickName", user.getNickName());
+            json.put("logo", user.getLogoUrl());
+            json.put("userId", user.getUserId());
+
+            array.add(json);
+        });
+
+        return array;
+    }
 }

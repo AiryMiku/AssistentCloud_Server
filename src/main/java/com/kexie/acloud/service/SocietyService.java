@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,12 +43,27 @@ public class SocietyService implements ISocietyService {
     private IUserDao mUserDao;
 
     @Override
-    public void add(Society society) throws SocietyException {
+    public void add(Society society, List<SocietyPosition> positions) throws SocietyException {
+
+        User principal = society.getPrincipal();
+
         // 学院是否有同名
         if (mSocietyDao.hasSociety(society.getName(), society.getCollege().getId()))
             throw new SocietyException("社团已经存在啦");
 
+        // 添加这个社团
         mSocietyDao.add(society);
+
+        // 保存职位
+        positions.forEach(position -> mSocietyDao.addPosition(society, position));
+
+        // 发布者为最高的职位
+        SocietyPosition topPosition = positions.stream()
+                .max((s1, s2) -> s1.getGrade() - s2.getGrade())
+                .get();
+
+        // 添加发布者到当前社团中
+        mSocietyDao.addMember(topPosition, principal.getUserId());
     }
 
     @Override
@@ -57,9 +73,12 @@ public class SocietyService implements ISocietyService {
 
     @Override
     public Society getSocietyById(int society_id) throws SocietyException {
+
         Society society = mSocietyDao.getSocietyById(society_id);
+
         if (society == null)
             throw new SocietyException("社团不存在");
+
         return society;
     }
 
@@ -221,7 +240,7 @@ public class SocietyService implements ISocietyService {
 
             SocietyPosition lowestPosition = mSocietyDao.getLowestPosition(societyApply.getSociety());
 
-            mSocietyDao.addNewMember(lowestPosition, societyApply.getUser().getUserId());
+            mSocietyDao.addMember(lowestPosition, societyApply.getUser().getUserId());
 
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     applyId,
@@ -311,4 +330,16 @@ public class SocietyService implements ISocietyService {
         return false;
     }
 
+    /**
+     * 邀请一个用户加入一个社团
+     *
+     * @param societyId
+     * @param inviteId
+     * @param inviteMsg
+     */
+    @Override
+    public void handleSocietyInvitation(String societyId, String inviteId, String inviteMsg) {
+//        mSocietyDao.add
+        // TODO: 2017/6/10 处理邀请一个用户加入社团
+    }
 }

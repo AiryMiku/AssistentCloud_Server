@@ -52,4 +52,11 @@ public interface IUserDao {
      * @return
      */
     List<Society> getSocietiesByUserId(String userId);
+
+    /**
+     * 模糊搜索用户
+     *
+     * @param query
+     */
+    List<User> getUserBySearch(String query);
 }

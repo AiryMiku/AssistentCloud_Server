@@ -21,9 +21,10 @@ public interface ISocietyService {
      * 添加社团
      *
      * @param society
+     * @param positions
      * @return
      */
-    void add(Society society) throws SocietyException;
+    void add(Society society, List<SocietyPosition> positions) throws SocietyException;
 
     /**
      * 更新社团信息
@@ -76,7 +77,8 @@ public interface ISocietyService {
      */
     List<SocietyApply> getSocietyApplyIn(String societyId, String userId) throws SocietyException, AuthorizedException;
 
-    SocietyApply getSocietyApplyById(int societyApplyId,String userId, String identifier);
+    SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier);
+
     /**
      * 处理一个社团请求
      */
@@ -87,5 +89,14 @@ public interface ISocietyService {
     List<SocietyPosition> getSocietyPosition(int societyId) throws SocietyException;
 
     boolean inSociety(int societyId, String userId) throws SocietyException;
+
+    /**
+     * 邀请一个用户加入一个社团
+     *
+     * @param societyId
+     * @param inviteId
+     * @param inviteMsg
+     */
+    void handleSocietyInvitation(String societyId, String inviteId, String inviteMsg);
 }
 

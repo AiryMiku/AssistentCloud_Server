@@ -1,8 +1,11 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.kexie.acloud.controller.form.ApplyEntity;
+import com.kexie.acloud.controller.form.CreateSocietyForm;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
 import com.kexie.acloud.domain.SocietyPosition;
@@ -15,6 +18,7 @@ import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.util.Removal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -44,20 +48,23 @@ public class SocietyController {
     /**
      * 创建社团
      *
-     * @param society
      * @param form
+     * @param result
+     * @param userId
      * @throws FormException
      * @throws SocietyException
      */
     @RequestMapping(method = RequestMethod.POST)
-    public void addSociety(@Validated(Society.Create.class) @RequestBody Society society, BindingResult form,
-                           @RequestAttribute("userId") String userId) throws FormException, SocietyException {
+    public void addSociety(@Validated @RequestBody CreateSocietyForm form,
+                           BindingResult result,
+                           @RequestAttribute("userId") String userId)
+            throws FormException, SocietyException {
 
-        if (form.hasErrors()) throw new FormException(form);
+        if (result.hasErrors()) throw new FormException(result);
 
-        society.setPrincipal(new User(userId));
+        Society society = form.toSociety(userId);
 
-        mSocietyService.add(society);
+        mSocietyService.add(society, form.getPositions());
     }
 
     /**
@@ -125,10 +132,20 @@ public class SocietyController {
      * @throws SocietyException
      */
     @RequestMapping(value = "{societyId}", method = RequestMethod.GET)
-    public Society getSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
-        return mSocietyService.getSocietyById(societyId);
-    }
+    public JSONObject getSociety(@PathVariable("societyId") int societyId) throws FormException, SocietyException {
 
+        Society society = mSocietyService.getSocietyById(societyId);
+
+        List<SocietyPosition> positions = mSocietyService.getSocietyPosition(societyId);
+        List<User> members = mSocietyService.getUsersIn(societyId);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("society", society);
+        jsonObject.put("positions", positions);
+        jsonObject.put("members", members);
+        JSON.DEFAULT_GENERATE_FEATURE |= SerializerFeature.DisableCircularReferenceDetect.getMask();
+        return jsonObject;
+    }
 
 
     /**
@@ -315,10 +332,29 @@ public class SocietyController {
         return result;
     }
 
+    /**
+     * 删除一个成员
+     *
+     * @param userId
+     * @param societyId
+     * @param removeUserId
+     * @return
+     * @throws SocietyException
+     */
     @RequestMapping(value = "/remove")
     public String removeMember(@RequestAttribute("userId") String userId,
                                @RequestParam("societyId") int societyId,
                                @RequestParam("removeUserId") String removeUserId) throws SocietyException {
         return mSocietyService.removeMember(societyId, userId, removeUserId);
+    }
+
+    /**
+     * 邀请一个成员加入社团
+     */
+    @RequestMapping(value = "/invite", method = RequestMethod.POST)
+    public void inviteUser(@RequestParam("societyId") String societyId,
+                           @RequestParam("inviteId") String inviteId,
+                           @RequestParam("inviteMsg") String inviteMsg) {
+        mSocietyService.handleSocietyInvitation(societyId,inviteId,inviteMsg);
     }
 }
