@@ -1,11 +1,12 @@
 package com.kexie.acloud.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.kexie.acloud.domain.JsonSerializer.SocietyDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.SocietySerializer;
+import com.kexie.acloud.domain.JsonSerializer.UserDeserializer;
+import com.kexie.acloud.domain.JsonSerializer.UserSerializer;
+
+import javax.persistence.*;
 
 /**
  * Created : wen
@@ -22,11 +23,13 @@ public class SocietyApply {
     // 申请人
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JSONField(ordinal = 1,serializeUsing = UserSerializer.class, deserializeUsing = UserDeserializer.class)
     public User user;
 
     // 申请社团
     @ManyToOne
     @JoinColumn(name = "society_id")
+    @JSONField(ordinal = 2,serializeUsing = SocietySerializer.class, deserializeUsing = SocietyDeserializer.class)
     public Society society;
 
     // 申请原因

@@ -124,7 +124,6 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         getHibernateTemplate().save(apply);
         // 向在线社团负责人发送申请通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                "apply",
                 apply.getId(),
                 "你有一条新成员申请，快去查看吧❤️",
                 apply.getUser().getUserId()+"申请加入"+apply.getSociety().getName(),
@@ -146,7 +145,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
     @Override
     public List<SocietyApply> getAllSocietyApply(Integer societyId) {
-        return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where society.id = ?", societyId);
+        return (List<SocietyApply>) getHibernateTemplate().find("from society_apply where society_id = ?", societyId);
     }
 
     /**
@@ -193,7 +192,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public void deleteMember(int societyId, String userId) {
+    public void deleteMember(int societyId,String societyName, String userId) {
         User user = getHibernateTemplate().load(User.class, userId);
         List<SocietyPosition> positions = user.getSocietyPositions();
         for (int i = 0; i < positions.size(); i++) {
@@ -202,5 +201,17 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
                 break;
             }
         }
+        user.setSocietyPositions(positions);
+        getHibernateTemplate().update(user);
+        // 给被移除的成员发送通知
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                0,
+                "你退出了"+societyName,
+                "很遗憾，一个悲伤的消息，你离开了"+societyName,
+                new ArrayList<User>(){
+                    {
+                        add(new User(userId));
+                    }
+                }));
     }
 }

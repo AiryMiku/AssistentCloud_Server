@@ -78,5 +78,5 @@ public interface ISocietyDao {
 
     List<SocietyPosition> getSocietyPosition(int societyId);
 
-    void deleteMember(int societyId, String userId);
+    void deleteMember(int societyId,String societyName, String userId);
 }

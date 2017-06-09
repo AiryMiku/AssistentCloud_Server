@@ -62,7 +62,6 @@ public class NoticeDao implements INoticeDao {
 
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    "notice",
                     notice.getId(),
                     "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
@@ -98,7 +97,6 @@ public class NoticeDao implements INoticeDao {
             getCurrentSession().update(notice);
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    "notice",
                     notice.getId(),
                     "你有一条公告更新了，快去查看吧❤️",
                     notice.getTitle(),

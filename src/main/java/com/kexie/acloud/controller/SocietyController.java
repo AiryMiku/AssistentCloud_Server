@@ -255,6 +255,13 @@ public class SocietyController {
         return array;
     }
 
+    /**
+     * 根据申请id获取申请信息
+     * @param userId
+     * @param societyApplyId
+     * @param identifier
+     * @return
+     */
     @RequestMapping(value = "/join/{societyApplyId}",method = RequestMethod.GET)
     public SocietyApply getApplyById(@RequestAttribute("userId") String userId,
                                      @PathVariable("societyApplyId") int societyApplyId,
@@ -294,5 +301,11 @@ public class SocietyController {
         });
 
         return result;
+    }
+    @RequestMapping(value = "/remove")
+    public String removeMember(@RequestAttribute("userId") String userId,
+                                @RequestParam("societyId") int societyId,
+                                @RequestParam("removeUserId") String removeUserId) throws SocietyException {
+        return mSocietyService.removeMember(societyId, userId, removeUserId);
     }
 }

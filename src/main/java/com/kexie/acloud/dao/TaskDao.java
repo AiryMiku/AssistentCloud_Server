@@ -67,7 +67,6 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         getHibernateTemplate().save(task);
         // 向所有在线的参与者发送新任务通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                "task",
                 task.getId(),
                 "你有一条新的任务通知，快去查看吧❤️",
                 task.getTitle(),
@@ -95,7 +94,6 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
         // 向所有在线的参与者发送新任务通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                "task",
                 task.getId(),
                 "你有一条任务更新了，快去查看吧❤️",
                 task.getTitle(),

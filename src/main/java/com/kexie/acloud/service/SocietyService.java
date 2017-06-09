@@ -9,11 +9,14 @@ import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
-
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +27,12 @@ import java.util.List;
 @Service
 @Transactional
 public class SocietyService implements ISocietyService {
+
+    @Autowired
+    TaskExecutor taskExecutor;
+
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
 
     @Autowired
     private ISocietyDao mSocietyDao;
@@ -53,6 +62,11 @@ public class SocietyService implements ISocietyService {
         return society;
     }
 
+    /**
+     * 获取社团中的成员
+     * @param society_id
+     * @return
+     */
     @Override
     public List<User> getUsersIn(int society_id) {
         return mUserDao.getUserBySociety(society_id);
@@ -189,22 +203,63 @@ public class SocietyService implements ISocietyService {
             if (!position.getName().contains("会长"))
                 throw new AuthorizedException("处理人没有权限处理社团申请(职位没有包含主席");
 
+        SocietyApply apply = mSocietyDao.getSocietyApplyById(Integer.parseInt(applyId),null,null);
+
         // TODO: 2017/5/30 推送到用户中
         if (isAllow) {
 
             SocietyPosition lowestPosition = mSocietyDao.getLowestPosition(societyApply.getSociety());
 
             mSocietyDao.addNewMember(lowestPosition.getId(), societyApply.getUser().getUserId());
+
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    applyId,
+                    apply.getSociety().getName()+"接受了你的申请❤️",
+                    "恭喜你已经是"+apply.getSociety().getName()+"的一员了",
+                    new ArrayList<User>(){
+                        {
+                            add(apply.getUser());
+                        }
+                    }));
+
         } else {
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    applyId,
+                    apply.getSociety().getName()+"拒绝了你的申请(；′⌒`)",
+                    "恭喜你已经是"+apply.getSociety().getName()+"的一员了",
+                    new ArrayList<User>(){
+                        {
+                            add(apply.getUser());
+                        }
+                    }));
         }
 
         // 删除这条申请
         mSocietyDao.deleteSocietyApply(new Integer(applyId));
     }
 
+    /**
+     * 社团负责人移除成员
+     * @param societyId
+     * @param userId
+     * @param removeUserId
+     * @throws SocietyException
+     */
     @Override
-    public void quitSociety(int societyId, String userId) {
-        mSocietyDao.deleteMember(societyId, userId);
+    public String removeMember(int societyId, String userId, String removeUserId) throws SocietyException {
+        Society society = mSocietyDao.getSocietyById(societyId);
+
+        if(inSociety(societyId,removeUserId)) {
+            if (userId.equals(society.getPrincipal().getUserId())) {
+                mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
+                return "移除成功";
+            } else {
+                throw new SocietyException("你没有权限");
+            }
+        }
+        else {
+            throw new SocietyException("成员不在该社团中");
+        }
     }
 
     @Override
@@ -220,5 +275,28 @@ public class SocietyService implements ISocietyService {
     public SocietyApply getSocietyApplyById(int societyApplyId, String userId, String identifier) {
 
         return mSocietyDao.getSocietyApplyById(societyApplyId, userId, identifier);
+    }
+
+    /**
+     * 判断成员是否在社团中
+     * @param societyId
+     * @param userId
+     * @return
+     * @throws SocietyException
+     */
+    @Override
+    public boolean inSociety(int societyId, String userId) throws SocietyException {
+       List<Society> societies = getSocietiesByUserId(userId);
+       if(societies!=null){
+           for (Society society : societies){
+               if(society.getId()==societyId){
+                   return true;
+               }
+           }
+       }
+       else {
+           return false;
+       }
+        return false;
     }
 }

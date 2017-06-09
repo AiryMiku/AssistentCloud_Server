@@ -82,8 +82,10 @@ public interface ISocietyService {
      */
     void handleSocietyApple(String applyId, boolean isAllow, String userId) throws SocietyException, AuthorizedException;
 
-    void quitSociety(int societyId, String userId);
+    String removeMember(int societyId, String userId, String removeUserId) throws SocietyException;
 
     List<SocietyPosition> getSocietyPosition(int societyId) throws SocietyException;
+
+    boolean inSociety(int societyId, String userId) throws SocietyException;
 }
 
