@@ -2,6 +2,7 @@ package com.kexie.acloud.service;
 
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyInvitation;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
@@ -93,10 +94,24 @@ public interface ISocietyService {
     /**
      * 邀请一个用户加入一个社团
      *
-     * @param societyId
-     * @param inviteId
-     * @param inviteMsg
+     * @param invitation
      */
-    void handleSocietyInvitation(String societyId, String inviteId, String inviteMsg);
+    void addSocietyInvitation(SocietyInvitation invitation) throws SocietyException, UserException, AuthorizedException;
+
+    /**
+     * 处理是否同意这个社团邀请
+     *
+     * @param inviteId
+     * @param isAllow
+     * @param userId
+     */
+    void handleSocietyInvitation(int inviteId, boolean isAllow, String userId) throws SocietyException, AuthorizedException;
+
+    /**
+     * 获取用户的邀请记录
+     *
+     * @param userId
+     */
+    List<SocietyInvitation> getUserInvitation(String userId);
 }
 

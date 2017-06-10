@@ -4,6 +4,7 @@ import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyInvitation;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -267,6 +267,7 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 社团负责人移除成员
+     *
      * @param societyId
      * @param userId
      * @param removeUserId
@@ -286,14 +287,13 @@ public class SocietyService implements ISocietyService {
             throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
 
         // 不能移除自己
-        if(userId.equals(removeUserId))
+        if (userId.equals(removeUserId))
             throw new SocietyException("你想干嘛？");
 
-        if(inSociety(societyId,removeUserId)) {
-                mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
-                return "移除成功";
-        }
-        else {
+        if (inSociety(societyId, removeUserId)) {
+            mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
+            return "移除成功";
+        } else {
             throw new SocietyException("成员不在该社团中");
         }
     }
@@ -315,6 +315,7 @@ public class SocietyService implements ISocietyService {
 
     /**
      * 判断成员是否在社团中
+     *
      * @param societyId
      * @param userId
      * @return
@@ -338,13 +339,92 @@ public class SocietyService implements ISocietyService {
     /**
      * 邀请一个用户加入一个社团
      *
-     * @param societyId
-     * @param inviteId
-     * @param inviteMsg
+     * @param invitation
+     * @throws SocietyException
+     * @throws UserException
+     * @throws AuthorizedException
      */
     @Override
-    public void handleSocietyInvitation(String societyId, String inviteId, String inviteMsg) {
-//        mSocietyDao.add
-        // TODO: 2017/6/10 处理邀请一个用户加入社团
+    public void addSocietyInvitation(SocietyInvitation invitation) throws SocietyException, UserException, AuthorizedException {
+
+        // 是否有这个社团
+        if (!mSocietyDao.hasSociety(invitation.getSociety().getId())) {
+            throw new SocietyException("没有这个社团");
+        }
+
+        // 是否有这个邀请人
+        if (!mUserDao.hasUserById(invitation.getInvitaUser().getUserId())) {
+            throw new UserException("没有这个用户");
+        }
+
+        // 判断邀请人是否有权利邀请别人
+        SocietyPosition handlerPosition = mSocietyDao.getSocietyPositionByUserId(
+                invitation.getHandleUser().getUserId(), invitation.getSociety().getId());
+        if (handlerPosition == null)
+            throw new SocietyException("用户社团职位为空,你不属于这个社团哦");
+        if (!handlerPosition.getName().contains("主席"))
+            throw new AuthorizedException("用户没有权限查询 社团申请(职位没有包含主席");
+
+        // 判断是否已经重复邀请
+        if (mSocietyDao.hasInvitation(invitation)) {
+            throw new SocietyException("当前社团已经发送过邀请了");
+        }
+
+        // 判断职位是否高于自己
+        // FIXME: 2017/6/10 解决bug
+        SocietyPosition invitePosition = mSocietyDao.getPositionByPositionId(invitation.getPosition().getId());
+        if (invitePosition == null) {
+            throw new SocietyException("你邀请的社团职位不存在");
+        }
+        if (invitePosition.getSociety().getId() != invitation.getSociety().getId()) {
+            throw new SocietyException("你邀请的社团职位不属于这个社团");
+        }
+        if (invitePosition.getGrade() > handlerPosition.getGrade()) {
+            throw new AuthorizedException("你不能赋予别人比自己还高的职位");
+        }
+
+        mSocietyDao.addInvitation(invitation);
+
+        // TODO: 2017/6/10 推送到userid这个用户，有一个邀请
+    }
+
+    /**
+     * 处理是否同意这个社团邀请
+     *
+     * @param inviteId
+     * @param isAllow
+     * @param userId
+     */
+    @Override
+    public void handleSocietyInvitation(int inviteId, boolean isAllow, String userId) throws SocietyException, AuthorizedException {
+
+        // 是否有这个申请
+        SocietyInvitation invitation = mSocietyDao.getInvitation(inviteId);
+
+        if (invitation == null) {
+            throw new SocietyException("这条邀请不存在");
+        }
+
+        // 当前用户是否是被邀请人
+        if (!invitation.getInvitaUser().getUserId().equals(userId)) {
+            throw new AuthorizedException("你不是这条邀请的被邀请人");
+        }
+
+        // 处理邀请
+        if (isAllow)
+            mSocietyDao.addMember(invitation.getPosition(), invitation.getInvitaUser().getUserId());
+
+        // 删除这条邀请
+        mSocietyDao.deleteInvitation(invitation.getInvitationId());
+    }
+
+    /**
+     * 获取用户的邀请记录
+     *
+     * @param userId
+     */
+    @Override
+    public List<SocietyInvitation> getUserInvitation(String userId) {
+        return mSocietyDao.getInvitationByUserId(userId);
     }
 }

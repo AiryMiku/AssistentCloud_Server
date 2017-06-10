@@ -2,6 +2,7 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyInvitation;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 
@@ -91,4 +92,38 @@ public interface ISocietyDao {
      * @param position 社团职位
      */
     void addPosition(Society society, SocietyPosition position);
+
+    /**
+     * 添加一个邀请
+     *
+     * @param invitation
+     */
+    void addInvitation(SocietyInvitation invitation);
+
+    /**
+     * 判断数据库中是否有相同的申请记录
+     * 既一个社团是否邀请了这个用户
+     *
+     * @param invitation
+     */
+    boolean hasInvitation(SocietyInvitation invitation);
+
+    boolean hasInvitation(int inviteId);
+
+    SocietyInvitation getInvitation(int inviteId);
+
+    /**
+     * 删除一条邀请
+     *
+     * @param invitationId
+     */
+    void deleteInvitation(int invitationId);
+
+    /**
+     * 获取用户的社团邀请
+     *
+     * @param userId
+     * @return
+     */
+    List<SocietyInvitation> getInvitationByUserId(String userId);
 }

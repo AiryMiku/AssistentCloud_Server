@@ -2,6 +2,7 @@ package com.kexie.acloud.dao;
 
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyInvitation;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.util.*;
@@ -250,5 +251,67 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     public void addPosition(Society society, SocietyPosition position) {
         position.setSociety(society);
         getHibernateTemplate().save(position);
+    }
+
+    /**
+     * 添加一个邀请
+     *
+     * @param invitation
+     */
+    @Override
+    public void addInvitation(SocietyInvitation invitation) {
+        getHibernateTemplate().save(invitation);
+    }
+
+    /**
+     * 判断数据库中是否有相同的申请记录
+     * 既一个社团是否邀请了这个用户
+     *
+     * @param invitation
+     */
+    @Override
+    public boolean hasInvitation(SocietyInvitation invitation) {
+        return getHibernateTemplate()
+                // TODO: 2017/6/10 不是社团已经邀请过这个人，是邀请者是否重复邀请了
+                .find("from society_invitation where society.id =? and invitaUser.userId = ?",
+                        invitation.getSociety().getId(), invitation.getInvitaUser().getUserId())
+                .size() != 0;
+    }
+
+    @Override
+    public boolean hasInvitation(int inviteId) {
+        return getHibernateTemplate().get(SocietyInvitation.class, inviteId) != null;
+    }
+
+    @Override
+    public SocietyInvitation getInvitation(int inviteId) {
+        return getHibernateTemplate().get(SocietyInvitation.class, inviteId);
+    }
+
+    /**
+     * 删除一条邀请
+     *
+     * @param invitationId
+     */
+    @Override
+    public void deleteInvitation(int invitationId) {
+        getHibernateTemplate().flush();
+        getHibernateTemplate().clear();
+        SocietyInvitation invitation = new SocietyInvitation();
+        invitation.setInvitationId(invitationId);
+        getHibernateTemplate().delete(invitation);
+    }
+
+    /**
+     * 获取用户的社团邀请
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<SocietyInvitation> getInvitationByUserId(String userId) {
+        return (List<SocietyInvitation>) getHibernateTemplate()
+                .find("from society_invitation where invitaUser.userId = ?",userId);
     }
 }

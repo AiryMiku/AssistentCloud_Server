@@ -8,6 +8,7 @@ import com.kexie.acloud.controller.form.ApplyEntity;
 import com.kexie.acloud.controller.form.CreateSocietyForm;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyApply;
+import com.kexie.acloud.domain.SocietyInvitation;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
@@ -18,7 +19,6 @@ import com.kexie.acloud.service.ISocietyService;
 import com.kexie.acloud.util.PathUtil;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.poi.util.Removal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -344,17 +344,54 @@ public class SocietyController {
     @RequestMapping(value = "/remove")
     public String removeMember(@RequestAttribute("userId") String userId,
                                @RequestParam("societyId") int societyId,
-                               @RequestParam("removeUserId") String removeUserId) throws SocietyException {
+                               @RequestParam("removeUserId") String removeUserId) throws SocietyException, AuthorizedException {
         return mSocietyService.removeMember(societyId, userId, removeUserId);
     }
 
     /**
      * 邀请一个成员加入社团
+     *
+     * @param societyId    社团Id
+     * @param inviteUserId 被邀请人
+     * @param inviteMsg    邀请信息
+     * @param userId       发起请求的人
+     * @throws UserException
+     * @throws SocietyException
      */
     @RequestMapping(value = "/invite", method = RequestMethod.POST)
-    public void inviteUser(@RequestParam("societyId") String societyId,
-                           @RequestParam("inviteId") String inviteId,
-                           @RequestParam("inviteMsg") String inviteMsg) {
-        mSocietyService.handleSocietyInvitation(societyId,inviteId,inviteMsg);
+    public void inviteUser(@RequestParam("societyId") int societyId,
+                           @RequestParam("inviteUserId") String inviteUserId,
+                           @RequestParam("positionId") int positionId,
+                           @RequestParam("inviteMsg") String inviteMsg,
+                           @RequestAttribute("userId") String userId) throws UserException, SocietyException, AuthorizedException {
+
+        SocietyInvitation invitation = new SocietyInvitation(inviteUserId, userId, societyId, positionId, inviteMsg);
+
+        mSocietyService.addSocietyInvitation(invitation);
+    }
+
+    /**
+     * 获取我的社团邀请
+     *
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/invite", method = RequestMethod.GET)
+    public List<SocietyInvitation> getInvitation(@RequestAttribute("userId") String userId) {
+        return mSocietyService.getUserInvitation(userId);
+    }
+
+    /**
+     * 处理是否同意这个社团邀请
+     *
+     * @param inviteId
+     * @param isAllow
+     * @param userId
+     */
+    @RequestMapping(value = "/invite/handle", method = RequestMethod.POST)
+    public void handleInvitation(@RequestParam("inviteId") int inviteId,
+                                 @RequestParam("isAllow") boolean isAllow,
+                                 @RequestAttribute("userId") String userId) throws AuthorizedException, SocietyException {
+        mSocietyService.handleSocietyInvitation(inviteId, isAllow, userId);
     }
 }
