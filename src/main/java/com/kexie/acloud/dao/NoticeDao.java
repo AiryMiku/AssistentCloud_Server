@@ -3,14 +3,9 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.NoticeException;
-import com.kexie.acloud.exception.SocietyException;
-import com.kexie.acloud.log.Log;
 import com.kexie.acloud.util.*;
-
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -64,20 +59,6 @@ public class NoticeDao implements INoticeDao {
             Session session = getCurrentSession();
             session.save(notice);
 
-            // 向所有在线的参与者发送新公告通知
-            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    notice.getId(),
-                    "你有一条新的公告通知，快去查看吧❤️",
-                    notice.getTitle(),
-                    notice.getExecutors()));
-            // 向所有参与者发送新公告通知
-            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    "notice",
-                    notice.getId(),
-                    "你有一条新的公告通知，快去查看吧❤️",
-                    notice.getTitle(),
-                    notice.getExecutors()));
-
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -99,19 +80,6 @@ public class NoticeDao implements INoticeDao {
             notice.setTime(new Date());
             getCurrentSession().evict(oldNotice);
             getCurrentSession().update(notice);
-            // 向所有在线的参与者发送新公告通知
-            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    notice.getId(),
-                    "你有一条公告更新了，快去查看吧❤️",
-                    notice.getTitle(),
-                    notice.getExecutors()));
-            // 向所有参与者发送新公告通知
-            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
-                    "notice",
-                    notice.getId(),
-                    "你有一条新的公告通知，快去查看吧❤️",
-                    notice.getTitle(),
-                    notice.getExecutors()));
             return true;
         } catch (Exception e) {
             e.printStackTrace();

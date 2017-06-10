@@ -48,7 +48,7 @@ public class SocietyInvitation {
     @JSONField(ordinal = 3)
     private SocietyPosition position;
 
-    // 申请原因
+    // 邀请原因
     private String message;
 
     public SocietyInvitation() {

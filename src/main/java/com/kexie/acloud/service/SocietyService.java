@@ -11,6 +11,7 @@ import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.SocietyException;
 import com.kexie.acloud.exception.UserException;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.SendPushMsgRunnable;
 import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -177,6 +178,30 @@ public class SocietyService implements ISocietyService {
         }
         // 添加一条申请记录
         mSocietyDao.addApply(apply);
+
+        // 向在线社团负责人发送申请通知
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                apply.getId(),
+                "你有一条新成员申请，快去查看吧❤️",
+                apply.getUser().getUserId()+"("+apply.getUser().getNickName()+")"
+                        + "申请加入" + apply.getSociety().getName(),
+                new ArrayList<User>() {
+                    {
+                        add(new User(apply.getSociety().getPrincipal().getUserId()));
+                    }
+                }));
+        // 向社团负责人发送申请通知
+        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "apply",
+                apply.getId(),
+                "你有一条新成员申请，快去查看吧❤️",
+                apply.getUser().getUserId()+"("+apply.getUser().getNickName()+")"
+                        + "申请加入" + apply.getSociety().getName(),
+                new ArrayList<User>() {
+                    {
+                        add(new User(apply.getSociety().getPrincipal().getUserId()));
+                    }
+                }));
     }
 
     /**
@@ -253,7 +278,7 @@ public class SocietyService implements ISocietyService {
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     applyId,
                     apply.getSociety().getName() + "拒绝了你的申请(；′⌒`)",
-                    "恭喜你已经是" + apply.getSociety().getName() + "的一员了",
+                    "不哭，摸摸头，再试一次",
                     new ArrayList<User>() {
                         {
                             add(apply.getUser());
@@ -291,7 +316,17 @@ public class SocietyService implements ISocietyService {
             throw new SocietyException("你想干嘛？");
 
         if (inSociety(societyId, removeUserId)) {
-            mSocietyDao.deleteMember(societyId, society.getName(), removeUserId);
+            mSocietyDao.deleteMember(societyId, removeUserId);
+            // 给被移除的成员发送通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    0,
+                    "你退出了" + society.getName(),
+                    "很遗憾，一个悲伤的消息，你离开了" + society.getName(),
+                    new ArrayList<User>() {
+                        {
+                            add(new User(removeUserId));
+                        }
+                    }));
             return "移除成功";
         } else {
             throw new SocietyException("成员不在该社团中");
@@ -383,9 +418,21 @@ public class SocietyService implements ISocietyService {
             throw new AuthorizedException("你不能赋予别人比自己还高的职位");
         }
 
+        Society society = mSocietyDao.getSocietyById(invitation.getSociety().getId());
+        invitation.setSociety(society);
+
         mSocietyDao.addInvitation(invitation);
 
         // TODO: 2017/6/10 推送到userid这个用户，有一个邀请
+        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                invitation.getInvitationId(),
+                invitation.getSociety().getName() + "邀请你加入他们❤️",
+                invitation.getSociety().getName()+":"+invitation.getMessage(),
+                new ArrayList<User>() {
+                    {
+                        add(invitation.getInvitaUser());
+                    }
+                }));
     }
 
     /**
@@ -411,8 +458,45 @@ public class SocietyService implements ISocietyService {
         }
 
         // 处理邀请
-        if (isAllow)
+        if (isAllow) {
             mSocietyDao.addMember(invitation.getPosition(), invitation.getInvitaUser().getUserId());
+            // 通知被邀请的人已经成功加入社团
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    inviteId,
+                    "欢迎加入"+invitation.getSociety().getName() + "❤️",
+                    "恭喜你已经是" + invitation.getSociety().getName() + "的一员了",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getInvitaUser());
+                        }
+                    }));
+
+            // 通知邀请发起人 邀请成功
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    inviteId,
+                    invitation.getInvitaUser().getUserId()+"("+invitation.getInvitaUser().getNickName()+")"+
+                            " 接受你的邀请加入"+invitation.getSociety().getName() + "❤️",
+                    "快去调戏小鲜肉吧",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getHandleUser());
+                        }
+                    }));
+
+        }
+        else{
+            // 通知被邀请的人加入社团失败
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    inviteId,
+                    "很遗憾"+invitation.getInvitaUser().getUserId()+"("+invitation.getInvitaUser().getNickName()+")"
+                            + "拒绝了你的邀请(；′⌒`)",
+                    "下次把他的腿给打断",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getHandleUser());
+                        }
+                    }));
+        }
 
         // 删除这条邀请
         mSocietyDao.deleteInvitation(invitation.getInvitationId());
