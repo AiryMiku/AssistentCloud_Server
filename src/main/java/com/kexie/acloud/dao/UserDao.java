@@ -49,6 +49,8 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
 
     @Override
     public User updateUser(User u) {
+        getHibernateTemplate().flush();
+        getHibernateTemplate().clear();
         User user = getHibernateTemplate().load(User.class, u.getUserId());
         BeanUtil.copyProperties(u, user);
         getHibernateTemplate().flush();
