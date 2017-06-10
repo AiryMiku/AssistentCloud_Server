@@ -54,8 +54,8 @@ public class UserController {
      * 更新用户信息
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public User updateUser(@Validated User user, BindingResult form,
-                           @RequestAttribute("userId") String userId) throws FormException, AuthorizedException {
+    public JSONObject updateUser(@Validated User user, BindingResult form,
+                                 @RequestAttribute("userId") String userId) throws FormException, AuthorizedException {
 
         if (form.hasErrors()) {
             throw new FormException(form);
@@ -63,9 +63,35 @@ public class UserController {
         user.setUserId(userId);
 
         User update = mUserService.update(user);
-        User result = new User();
-        BeanUtils.copyProperties(update, result, User.CLIENT_IGNORE_FIELD);
-        return result;
+
+        JSONObject json = new JSONObject(true);
+
+        JSONObject major = new JSONObject(true);
+        JSONObject college = new JSONObject(true);
+        JSONObject school = new JSONObject(true);
+
+        school.put("id", update.getMajor().getCollege().getSchool().getId());
+        school.put("name", update.getMajor().getCollege().getSchool().getName());
+
+        college.put("id", update.getMajor().getCollege().getId());
+        college.put("name", update.getMajor().getCollege().getName());
+        college.put("school", school);
+
+        major.put("id", update.getMajor().getId());
+        major.put("name", update.getMajor().getName());
+        major.put("college", college);
+
+        json.put("gender", update.getGender());
+        json.put("logoUrl", update.getLogoUrl());
+        json.put("major", major);
+        json.put("nickName", update.getNickName());
+        json.put("phone", update.getPhone());
+        json.put("realName", update.getNickName());
+        json.put("societyPositions", update.getSocietyPositions());
+        json.put("stuId", update.getStuId());
+        json.put("userId", update.getUserId());
+
+        return json;
     }
 
     /**
