@@ -7,6 +7,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -66,6 +67,7 @@ public class Notice {
     @ManyToMany(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     @JSONField(ordinal = 6, serializeUsing = UserIdListSerializer.class, deserializeUsing = UserIdListDeserializer.class)
+    @NotEmpty(message = "可见者不能为空")
     private List<User> executors;
 
     //公告状态 (0:可显示   1： 已删除)

@@ -43,11 +43,38 @@ public class UserController {
      * 获取用户信息
      */
     @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public User getUserInfo(@RequestAttribute("userId") String userId) throws UserException {
+    public JSONObject getUserInfo(@RequestAttribute("userId") String userId) throws UserException {
         User user = mUserService.getUserByUserId(userId);
-        User result = new User();
-        BeanUtils.copyProperties(user, result, User.CLIENT_IGNORE_FIELD);
-        return result;
+
+        JSONObject json = new JSONObject(true);
+
+        JSONObject major = new JSONObject(true);
+        JSONObject college = new JSONObject(true);
+        JSONObject school = new JSONObject(true);
+
+        if (user.getMajor() != null) {
+            school.put("id", user.getMajor().getCollege().getSchool().getId());
+            school.put("name", user.getMajor().getCollege().getSchool().getName());
+
+            college.put("id", user.getMajor().getCollege().getId());
+            college.put("name", user.getMajor().getCollege().getName());
+            college.put("school", school);
+
+            major.put("id", user.getMajor().getId());
+            major.put("name", user.getMajor().getName());
+            major.put("college", college);
+        }
+        json.put("gender", user.getGender());
+        json.put("logoUrl", user.getLogoUrl());
+        json.put("major", major);
+        json.put("nickName", user.getNickName());
+        json.put("phone", user.getPhone());
+        json.put("realName", user.getNickName());
+        json.put("societyPositions", user.getSocietyPositions());
+        json.put("stuId", user.getStuId());
+        json.put("userId", user.getUserId());
+
+        return json;
     }
 
     /**
@@ -70,16 +97,18 @@ public class UserController {
         JSONObject college = new JSONObject(true);
         JSONObject school = new JSONObject(true);
 
-        school.put("id", update.getMajor().getCollege().getSchool().getId());
-        school.put("name", update.getMajor().getCollege().getSchool().getName());
+        if (user.getMajor() != null) {
+            school.put("id", user.getMajor().getCollege().getSchool().getId());
+            school.put("name", user.getMajor().getCollege().getSchool().getName());
 
-        college.put("id", update.getMajor().getCollege().getId());
-        college.put("name", update.getMajor().getCollege().getName());
-        college.put("school", school);
+            college.put("id", user.getMajor().getCollege().getId());
+            college.put("name", user.getMajor().getCollege().getName());
+            college.put("school", school);
 
-        major.put("id", update.getMajor().getId());
-        major.put("name", update.getMajor().getName());
-        major.put("college", college);
+            major.put("id", user.getMajor().getId());
+            major.put("name", user.getMajor().getName());
+            major.put("college", college);
+        }
 
         json.put("gender", update.getGender());
         json.put("logoUrl", update.getLogoUrl());

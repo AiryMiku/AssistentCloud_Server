@@ -4,6 +4,7 @@ import com.kexie.acloud.domain.*;
 import com.kexie.acloud.util.BeanUtil;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
@@ -11,6 +12,7 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 /**
@@ -82,6 +84,8 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
 
     @Override
     public boolean isInSociety(int societyId, List<User> users) {
+        if (users == null)
+            return false;
         for (User user : users) {
             if (!isInSociety(societyId, user.getUserId()))
                 return false;
@@ -275,6 +279,6 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     @SuppressWarnings("unchecked")
     public List<SocietyInvitation> getInvitationByUserId(String userId) {
         return (List<SocietyInvitation>) getHibernateTemplate()
-                .find("from society_invitation where invitaUser.userId = ?",userId);
+                .find("from society_invitation where invitaUser.userId = ?", userId);
     }
 }

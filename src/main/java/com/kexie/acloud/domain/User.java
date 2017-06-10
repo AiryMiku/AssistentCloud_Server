@@ -71,7 +71,7 @@ public class User {
     // 专业
     @ManyToOne
 //    @NotNull(message = "专业不能为空", groups = RegisterForm.class)
-    @JSONField( deserializeUsing = MajorDeserializer.class)
+    @JSONField(serializeUsing = MajorSerializer.class, deserializeUsing = MajorDeserializer.class)
     @Convert(converter = MajorConvert.class)
     private Major major;
 
