@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import javax.annotation.Resource;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -44,10 +45,10 @@ public class UserService implements IUserService {
         }
         Calendar calendar = Calendar.getInstance();
         // 用户今日第一次登录,积分+2
-        if(!DateUtil.formatDate(calendar).equals(RedisUtil.getLastLoginDate(jedisConnectionFactory.getJedis(),user.getUserId()))){
-            RedisUtil.updateLoginDate(jedisConnectionFactory.getJedis(),user.getUserId(),DateUtil.formatCurrentDate());
+        if (!DateUtil.formatDate(calendar).equals(RedisUtil.getLastLoginDate(jedisConnectionFactory.getJedis(), user.getUserId()))) {
+            RedisUtil.updateLoginDate(jedisConnectionFactory.getJedis(), user.getUserId(), DateUtil.formatCurrentDate());
             List<Society> societies = mUserDao.getSocietiesByUserId(user.getUserId());
-            for (Society society: societies){
+            for (Society society : societies) {
                 RedisUtil.updateScoreboard(jedisConnectionFactory.getJedis(),
                         society.getId(),
                         user.getUserId(),
@@ -86,10 +87,8 @@ public class UserService implements IUserService {
 
     @Override
     public User update(User user) {
-        User u = mUserDao.getUser(user.getUserId());
-        BeanUtil.copyProperties(user, u);
-        mUserDao.updateUser(u);
-        return u;
+        User user1 = mUserDao.updateUser(user);
+        return user1;
     }
 
     @Override

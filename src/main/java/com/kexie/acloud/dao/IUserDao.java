@@ -36,7 +36,7 @@ public interface IUserDao {
     /**
      * 更新用户信息
      */
-    void updateUser(User user);
+    User updateUser(User user);
 
     /**
      * 删除所有的数据，测试可以用

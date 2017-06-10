@@ -4,6 +4,7 @@ package com.kexie.acloud.dao;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.SocietyPosition;
 import com.kexie.acloud.domain.User;
+import com.kexie.acloud.util.BeanUtil;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -47,8 +48,12 @@ public class UserDao extends HibernateDaoSupport implements IUserDao {
     }
 
     @Override
-    public void updateUser(User user) {
-        getHibernateTemplate().update(user);
+    public User updateUser(User u) {
+        User user = getHibernateTemplate().load(User.class, u.getUserId());
+        BeanUtil.copyProperties(u, user);
+        getHibernateTemplate().flush();
+        getHibernateTemplate().clear();
+        return getHibernateTemplate().get(User.class, u.getUserId());
     }
 
     @Override
