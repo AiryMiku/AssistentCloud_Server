@@ -4,7 +4,11 @@ import com.kexie.acloud.dao.INoticeDao;
 import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.exception.NoticeException;
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.SendPushMsgRunnable;
+import com.kexie.acloud.util.SendRealTImePushMsgRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,6 +21,13 @@ import java.util.Set;
  */
 @Service
 public class NoticeService implements INoticeService {
+
+    @Autowired
+    TaskExecutor taskExecutor;
+
+    @Autowired
+    MyJedisConnectionFactory jedisConnectionFactory;
+
     @Resource
     ISocietyDao mSocietyDao;
 
@@ -32,7 +43,24 @@ public class NoticeService implements INoticeService {
         if (!mSocietyDao.isInSociety(notice.getSociety().getId(), notice.getExecutors())) {
             throw new AuthenticationException("有一些执行者不在当前社团 " + notice.getSociety().getName() + " 中");
         }
-        return noticeDao.addNotice(notice,userId);
+        if(noticeDao.addNotice(notice,userId)) {
+
+            // 向所有在线的参与者发送新公告通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    notice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
+                    notice.getTitle(),
+                    notice.getExecutors()));
+            // 向所有参与者发送新公告通知
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    notice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
+                    notice.getTitle(),
+                    notice.getExecutors()));
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -40,7 +68,23 @@ public class NoticeService implements INoticeService {
         if(noticeDao.getNoticeByNoticeId(notice_id,user_id,null)==null){
             throw new NoticeException("公告不存在,公告ID有误");
         }
-        return noticeDao.updateNotice(notice_id,newNotice,user_id);
+        if(noticeDao.updateNotice(notice_id,newNotice,user_id)){
+            // 向所有在线的参与者发送新公告通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    newNotice.getId(),
+                    "你有一条公告更新了，快去查看吧❤️",
+                    newNotice.getTitle(),
+                    newNotice.getExecutors()));
+            // 向所有参与者发送新公告通知
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
+                    newNotice.getId(),
+                    "你有一条新的公告通知，快去查看吧❤️",
+                    newNotice.getTitle(),
+                    newNotice.getExecutors()));
+            return true;
+        }
+        return false;
     }
 
     @Override

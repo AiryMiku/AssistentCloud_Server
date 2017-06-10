@@ -1,22 +1,17 @@
 package com.kexie.acloud.dao;
 
-import com.kexie.acloud.domain.Society;
-import com.kexie.acloud.domain.SocietyApply;
-import com.kexie.acloud.domain.SocietyInvitation;
-import com.kexie.acloud.domain.SocietyPosition;
-import com.kexie.acloud.domain.User;
-import com.kexie.acloud.util.*;
-
+import com.kexie.acloud.domain.*;
+import com.kexie.acloud.util.BeanUtil;
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.RedisUtil;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created : wen
@@ -128,28 +123,6 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     public void addApply(SocietyApply apply) {
         // 添加一个加入社团的申请
         getHibernateTemplate().save(apply);
-        // 向在线社团负责人发送申请通知
-        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                apply.getId(),
-                "你有一条新成员申请，快去查看吧❤️",
-                apply.getUser().getUserId() + "申请加入" + apply.getSociety().getName(),
-                new ArrayList<User>() {
-                    {
-                        add(new User(apply.getSociety().getPrincipal().getUserId()));
-                    }
-                }));
-        // 向社团负责人发送申请通知
-        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
-                "apply",
-                apply.getId(),
-                "你有一条新成员申请，快去查看吧❤️",
-                apply.getUser().getUserId() + "申请加入" + apply.getSociety().getName(),
-                new ArrayList<User>() {
-                    {
-                        add(new User(apply.getSociety().getPrincipal().getUserId()));
-                    }
-                }));
-
     }
 
     @Override
@@ -203,7 +176,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     }
 
     @Override
-    public void deleteMember(int societyId, String societyName, String userId) {
+    public void deleteMember(int societyId, String userId) {
         User user = getHibernateTemplate().load(User.class, userId);
         List<SocietyPosition> positions = user.getSocietyPositions();
         for (int i = 0; i < positions.size(); i++) {
@@ -214,16 +187,6 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
         }
         user.setSocietyPositions(positions);
         getHibernateTemplate().update(user);
-        // 给被移除的成员发送通知
-        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                0,
-                "你退出了" + societyName,
-                "很遗憾，一个悲伤的消息，你离开了" + societyName,
-                new ArrayList<User>() {
-                    {
-                        add(new User(userId));
-                    }
-                }));
     }
 
     public List<SocietyApply> getApplyByUserIdAndSocietyId(String userId, int societyId) {
