@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.kexie.acloud.domain.User;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.Tuple;
 
 import java.util.*;
 
@@ -206,7 +207,7 @@ public class RedisUtil {
      * @param societyId
      * @return
      */
-   public static Set<String> getWeekScoreboard(Jedis conn,int societyId){
+   public static Set<Tuple> getWeekScoreboard(Jedis conn, int societyId){
         List<String> dates = DateUtil.getDateOfThisWeek(Calendar.getInstance());
         List<String> scoreBoardKey = new ArrayList<>();
         String lastWeekScoreboardKey = "scoreboard:"+societyId+":lastweek";
@@ -215,7 +216,7 @@ public class RedisUtil {
             scoreBoardKey.add("scoreboard:"+societyId+":"+date);
         }
         conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
-        return conn.zrevrange(lastWeekScoreboardKey,0,9);
+        return conn.zrevrangeWithScores(lastWeekScoreboardKey,0,9);
 
    }
 
@@ -225,7 +226,7 @@ public class RedisUtil {
      * @param societyId
      * @return
      */
-   public static Set<String> getMonthScoreboard(Jedis conn, int societyId){
+   public static Set<Tuple> getMonthScoreboard(Jedis conn, int societyId){
        List<String> dates = DateUtil.getDateOfThisMonth(Calendar.getInstance());
        List<String> scoreBoardKey = new ArrayList<>();
        String lastMonthScoreboardKey = "scoreboard:"+societyId+":lastmonth";
@@ -235,7 +236,7 @@ public class RedisUtil {
        }
        conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
 
-       return conn.zrevrange(lastMonthScoreboardKey,0,9);
+       return conn.zrevrangeWithScores(lastMonthScoreboardKey,0,9);
    }
 
     /**

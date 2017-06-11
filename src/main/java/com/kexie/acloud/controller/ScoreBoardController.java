@@ -1,10 +1,13 @@
 package com.kexie.acloud.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.kexie.acloud.dao.ISocietyDao;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
 import com.kexie.acloud.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Tuple;
 
 import java.util.Set;
 
@@ -30,20 +33,28 @@ public class ScoreBoardController {
      * @throws Exception
      */
     @RequestMapping(value = "/{type}/{societyId}",method = RequestMethod.GET)
-    public Set<String> getScoreBoard(@PathVariable("type") String type,
-                                    @PathVariable("societyId") int societyId,
-                                    @RequestAttribute("userId") String userId) throws Exception {
+    public JSONArray getScoreBoard(@PathVariable("type") String type,
+                                   @PathVariable("societyId") int societyId,
+                                   @RequestAttribute("userId") String userId) throws Exception {
+        Set<Tuple> tuples = null;
         if(societyDao.isInSociety(societyId,userId)) {
             if(type.equals("week")) {
-                return RedisUtil.getWeekScoreboard(jedisConnectionFactory.getJedis(), societyId);
+                tuples = RedisUtil.getWeekScoreboard(jedisConnectionFactory.getJedis(), societyId);
             }
             else if(type.equals("month")){
-                return RedisUtil.getMonthScoreboard(jedisConnectionFactory.getJedis(),societyId);
+                tuples = RedisUtil.getMonthScoreboard(jedisConnectionFactory.getJedis(),societyId);
             }
+            JSONArray array = new JSONArray();
+            tuples.forEach(tuple -> {
+                JSONObject json = new JSONObject();
+                json.put("userId", tuple.getElement());
+                json.put("score", tuple.getScore());
+                array.add(json);
+            });
+            return array;
         }
         else
             throw new Exception("该用户未在社团中");
-        return null;
     }
 
 

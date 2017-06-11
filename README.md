@@ -625,12 +625,17 @@ GET /message/count/notice
 - URL：/scoreboard/{type}/{societyId} （type：week或者month）
 - Method: GET
 
-返回的json格式 （从高到低）
+返回的json格式 （从高到低）可能有同分数的情况，前端判断一下啊
 ```json
 [
-  "zojian@qq.com",
-  "zojian1@qq.com",
-  "zojian3@qq.com"
+  {
+    "score": 6,
+    "userId": "zojian2@qq.com"
+  },
+  {
+    "score": 2,
+    "userId": "zojian@qq.com"
+  }
 ]
 ```
 
