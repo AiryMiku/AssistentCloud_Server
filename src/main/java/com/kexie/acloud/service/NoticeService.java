@@ -2,6 +2,7 @@ package com.kexie.acloud.service;
 
 import com.kexie.acloud.dao.INoticeDao;
 import com.kexie.acloud.dao.ISocietyDao;
+import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.Notice;
 import com.kexie.acloud.exception.NoticeException;
 import com.kexie.acloud.util.MyJedisConnectionFactory;
@@ -31,23 +32,32 @@ public class NoticeService implements INoticeService {
     @Resource
     ISocietyDao mSocietyDao;
 
+    @Autowired
+    IUserDao userDao;
+
     @Autowired(required = false)
     INoticeDao noticeDao;
 
     @Override
     public boolean addNotice(Notice notice,String userId) throws AuthenticationException {
-        notice.getSociety().setName(mSocietyDao.getSocietyById(notice.getSociety().getId()).getName());
+
+        // 加载社团完整数据
+        notice.setSociety(mSocietyDao.getSocietyById(notice.getSociety().getId()));
+
         if(!mSocietyDao.isInSociety(notice.getSociety().getId(),userId)){
             throw new AuthenticationException("用户 " + userId + " 不在当前社团 " + notice.getSociety().getName() + " 中");
         }
         if (!mSocietyDao.isInSociety(notice.getSociety().getId(), notice.getExecutors())) {
             throw new AuthenticationException("有一些执行者不在当前社团 " + notice.getSociety().getName() + " 中");
         }
+
         if(noticeDao.addNotice(notice,userId)) {
 
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     notice.getId(),
+                    notice.getPublisher().getUserId(),
+                    notice.getPublisher().getLogoUrl(),
                     "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
@@ -55,6 +65,8 @@ public class NoticeService implements INoticeService {
             taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     notice.getId(),
+                    notice.getPublisher().getUserId(),
+                    notice.getPublisher().getLogoUrl(),
                     "你有一条新的公告通知，快去查看吧❤️",
                     notice.getTitle(),
                     notice.getExecutors()));
@@ -72,6 +84,8 @@ public class NoticeService implements INoticeService {
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                     newNotice.getId(),
+                    newNotice.getPublisher().getUserId(),
+                    newNotice.getPublisher().getLogoUrl(),
                     "你有一条公告更新了，快去查看吧❤️",
                     newNotice.getTitle(),
                     newNotice.getExecutors()));
@@ -79,6 +93,8 @@ public class NoticeService implements INoticeService {
             taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                     "notice",
                     newNotice.getId(),
+                    newNotice.getPublisher().getUserId(),
+                    newNotice.getPublisher().getLogoUrl(),
                     "你有一条新的公告通知，快去查看吧❤️",
                     newNotice.getTitle(),
                     newNotice.getExecutors()));

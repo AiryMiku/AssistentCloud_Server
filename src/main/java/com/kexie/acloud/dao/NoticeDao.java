@@ -51,9 +51,8 @@ public class NoticeDao implements INoticeDao {
     public boolean addNotice(Notice notice,String userId) {
         try {
             if(notice.getPublisher()==null) {
-                User user = new User();
-                user.setUserId(userId);
-                notice.setPublisher(user);
+                // 加载发布者完整数据
+                notice.setPublisher(userDao.getUser(userId));
             }
 
             Session session = getCurrentSession();

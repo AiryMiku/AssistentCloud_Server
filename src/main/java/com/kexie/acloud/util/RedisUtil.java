@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.kexie.acloud.domain.User;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.Tuple;
 
 import java.util.*;
 
@@ -14,19 +15,20 @@ public class RedisUtil {
 
     /**
      * 生成消息
-     * @param msgType
      * @param id
      * @param info
      * @param recipients
      * @return
      */
 
-    public static Map<String,Object> generateMessage(int id,String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(int id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
+        values.put("publisher",publisher);
+        values.put("logo",logo);
         values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
@@ -34,12 +36,14 @@ public class RedisUtil {
         return values;
     }
 
-    public static Map<String,Object> generateMessage(String id, String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(String id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
+        values.put("publisher",publisher);
+        values.put("logo",logo);
         values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
@@ -55,10 +59,10 @@ public class RedisUtil {
      * @param info 消息粗略内容
      * @param recipients
      */
-   public static void sendPushMsg(Jedis conn,String msgType, int id, String title, String info,List<User> recipients){
+   public static void sendPushMsg(Jedis conn,String msgType, int id, String publisher, String logo, String title, String info,List<User> recipients){
 
        Set<String>reci = FormatUtil.formatUserId(recipients);
-       Map<String,Object> message = generateMessage(id, title, info, recipients);
+       Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
        Transaction transaction = conn.multi();
        for (String user_id:reci) {
 
@@ -71,10 +75,10 @@ public class RedisUtil {
        transaction.exec();
    }
 
-    public static void sendPushMsg(Jedis conn,String msgType, String id, String title, String info,List<User> recipients){
+    public static void sendPushMsg(Jedis conn,String msgType, String id,String publisher, String logo, String title, String info,List<User> recipients){
 
         Set<String>reci = FormatUtil.formatUserId(recipients);
-        Map<String,Object> message = generateMessage(id, title, info, recipients);
+        Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
         Transaction transaction = conn.multi();
         for (String user_id:reci) {
 
@@ -206,7 +210,7 @@ public class RedisUtil {
      * @param societyId
      * @return
      */
-   public static Set<String> getWeekScoreboard(Jedis conn,int societyId){
+   public static Set<Tuple> getWeekScoreboard(Jedis conn, int societyId){
         List<String> dates = DateUtil.getDateOfThisWeek(Calendar.getInstance());
         List<String> scoreBoardKey = new ArrayList<>();
         String lastWeekScoreboardKey = "scoreboard:"+societyId+":lastweek";
@@ -215,7 +219,11 @@ public class RedisUtil {
             scoreBoardKey.add("scoreboard:"+societyId+":"+date);
         }
         conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
-        return conn.zrevrange(lastWeekScoreboardKey,0,9);
+        if(conn.ttl(lastWeekScoreboardKey)==-1){
+            // 设置过期时间 7天
+            conn.expire(lastWeekScoreboardKey,604800);
+        }
+        return conn.zrevrangeWithScores(lastWeekScoreboardKey,0,9);
 
    }
 
@@ -225,7 +233,7 @@ public class RedisUtil {
      * @param societyId
      * @return
      */
-   public static Set<String> getMonthScoreboard(Jedis conn, int societyId){
+   public static Set<Tuple> getMonthScoreboard(Jedis conn, int societyId){
        List<String> dates = DateUtil.getDateOfThisMonth(Calendar.getInstance());
        List<String> scoreBoardKey = new ArrayList<>();
        String lastMonthScoreboardKey = "scoreboard:"+societyId+":lastmonth";
@@ -234,8 +242,12 @@ public class RedisUtil {
            scoreBoardKey.add("scoreboard:"+societyId+":"+date);
        }
        conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+       if(conn.ttl(lastMonthScoreboardKey)==-1){
+           // 设置过期时间 31天
+           conn.expire(lastMonthScoreboardKey,2678400);
+       }
 
-       return conn.zrevrange(lastMonthScoreboardKey,0,9);
+       return conn.zrevrangeWithScores(lastMonthScoreboardKey,0,9);
    }
 
     /**

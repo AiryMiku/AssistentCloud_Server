@@ -589,6 +589,8 @@ JSON 格式
 [
   {
     "id": 39, // 公告ID
+    "publisher": zojian@qq.com
+    "logo": http://i.niupic.com/images/2017/06/06/9q1wfr.jpg,
     "identifier": "b5de015f-98bd-4233-9c92-a983abfe34d0",// 标识符（用于删除已读消息）
     "info": "测试", // 通知粗略内容
     "time": 1496647542777,
@@ -625,12 +627,17 @@ GET /message/count/notice
 - URL：/scoreboard/{type}/{societyId} （type：week或者month）
 - Method: GET
 
-返回的json格式 （从高到低）
+返回的json格式 （从高到低）可能有同分数的情况，前端判断一下啊
 ```json
 [
-  "zojian@qq.com",
-  "zojian1@qq.com",
-  "zojian3@qq.com"
+  {
+    "score": 6,
+    "userId": "zojian2@qq.com"
+  },
+  {
+    "score": 2,
+    "userId": "zojian@qq.com"
+  }
 ]
 ```
 

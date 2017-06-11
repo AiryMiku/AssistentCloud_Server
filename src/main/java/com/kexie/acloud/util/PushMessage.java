@@ -8,12 +8,16 @@ import java.util.Date;
 public class PushMessage {
     private String id;
     private String identifier;
+    private String publisher;
+    private String logo;
     private Date time;
     private String title;
     private String info;
 
-    public PushMessage(String identifier,String id, Date time, String title, String message) {
+    public PushMessage(String identifier,String id, String publisher, String logo, Date time, String title, String message) {
         this.id = id;
+        this.publisher = publisher;
+        this.logo = logo;
         this.time = time;
         this.title = title;
         this.info = info;
@@ -61,5 +65,21 @@ public class PushMessage {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public String getLogo() {
+        return logo;
+    }
+
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 }
