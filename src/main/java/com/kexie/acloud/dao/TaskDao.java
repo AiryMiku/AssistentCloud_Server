@@ -23,6 +23,9 @@ import java.util.List;
 public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Autowired
+    IUserDao userDao;
+
+    @Autowired
     TaskExecutor taskExecutor;
 
     @Autowired
@@ -64,10 +67,14 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     }
 
     public void add(Task task) {
+        // 加载完整的发布者信息
+        task.setPublisher(userDao.getUser(task.getPublisher().getUserId()));
         getHibernateTemplate().save(task);
         // 向所有在线的参与者发送新任务通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                 task.getId(),
+                task.getPublisher().getUserId(),
+                task.getPublisher().getLogoUrl(),
                 "你有一条新的任务通知，快去查看吧❤️",
                 task.getTitle(),
                 task.getExecutors()));
@@ -75,6 +82,8 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                 "task",
                 task.getId(),
+                task.getPublisher().getUserId(),
+                task.getPublisher().getLogoUrl(),
                 "你有一条新的任务通知，快去查看吧❤️",
                 task.getTitle(),
                 task.getExecutors()));
@@ -95,6 +104,8 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         // 向所有在线的参与者发送新任务通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
                 task.getId(),
+                task.getPublisher().getUserId(),
+                task.getPublisher().getLogoUrl(),
                 "你有一条任务更新了，快去查看吧❤️",
                 task.getTitle(),
                 task.getExecutors()));
@@ -102,6 +113,8 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
                 "task",
                 task.getId(),
+                task.getPublisher().getUserId(),
+                task.getPublisher().getLogoUrl(),
                 "你有一条任务更新了，快去查看吧❤️",
                 task.getTitle(),
                 task.getExecutors()));

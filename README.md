@@ -589,6 +589,8 @@ JSON 格式
 [
   {
     "id": 39, // 公告ID
+    "publisher": zojian@qq.com
+    "logo": http://i.niupic.com/images/2017/06/06/9q1wfr.jpg,
     "identifier": "b5de015f-98bd-4233-9c92-a983abfe34d0",// 标识符（用于删除已读消息）
     "info": "测试", // 通知粗略内容
     "time": 1496647542777,

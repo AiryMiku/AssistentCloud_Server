@@ -21,12 +21,14 @@ public class RedisUtil {
      * @return
      */
 
-    public static Map<String,Object> generateMessage(int id,String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(int id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
+        values.put("publisher",publisher);
+        values.put("logo",logo);
         values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
@@ -34,12 +36,14 @@ public class RedisUtil {
         return values;
     }
 
-    public static Map<String,Object> generateMessage(String id, String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(String id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
         values.put("id",id);
+        values.put("publisher",publisher);
+        values.put("logo",logo);
         values.put("title",title);
         values.put("info",info);
         values.put("time",System.currentTimeMillis());
@@ -55,10 +59,10 @@ public class RedisUtil {
      * @param info 消息粗略内容
      * @param recipients
      */
-   public static void sendPushMsg(Jedis conn,String msgType, int id, String title, String info,List<User> recipients){
+   public static void sendPushMsg(Jedis conn,String msgType, int id, String publisher, String logo, String title, String info,List<User> recipients){
 
        Set<String>reci = FormatUtil.formatUserId(recipients);
-       Map<String,Object> message = generateMessage(id, title, info, recipients);
+       Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
        Transaction transaction = conn.multi();
        for (String user_id:reci) {
 
@@ -71,10 +75,10 @@ public class RedisUtil {
        transaction.exec();
    }
 
-    public static void sendPushMsg(Jedis conn,String msgType, String id, String title, String info,List<User> recipients){
+    public static void sendPushMsg(Jedis conn,String msgType, String id,String publisher, String logo, String title, String info,List<User> recipients){
 
         Set<String>reci = FormatUtil.formatUserId(recipients);
-        Map<String,Object> message = generateMessage(id, title, info, recipients);
+        Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
         Transaction transaction = conn.multi();
         for (String user_id:reci) {
 
