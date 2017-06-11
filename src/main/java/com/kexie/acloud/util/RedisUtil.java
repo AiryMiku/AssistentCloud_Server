@@ -15,7 +15,6 @@ public class RedisUtil {
 
     /**
      * 生成消息
-     * @param msgType
      * @param id
      * @param info
      * @param recipients
@@ -216,6 +215,10 @@ public class RedisUtil {
             scoreBoardKey.add("scoreboard:"+societyId+":"+date);
         }
         conn.zunionstore(lastWeekScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+        if(conn.ttl(lastWeekScoreboardKey)==-1){
+            // 设置过期时间 7天
+            conn.expire(lastWeekScoreboardKey,604800);
+        }
         return conn.zrevrangeWithScores(lastWeekScoreboardKey,0,9);
 
    }
@@ -235,6 +238,10 @@ public class RedisUtil {
            scoreBoardKey.add("scoreboard:"+societyId+":"+date);
        }
        conn.zunionstore(lastMonthScoreboardKey, scoreBoardKey.toArray(new String[scoreBoardKey.size()]));
+       if(conn.ttl(lastMonthScoreboardKey)==-1){
+           // 设置过期时间 31天
+           conn.expire(lastMonthScoreboardKey,2678400);
+       }
 
        return conn.zrevrangeWithScores(lastMonthScoreboardKey,0,9);
    }
