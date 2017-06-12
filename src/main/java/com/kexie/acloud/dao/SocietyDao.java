@@ -169,7 +169,7 @@ public class SocietyDao extends HibernateDaoSupport implements ISocietyDao {
     @Override
     public SocietyPosition getLowestPosition(Society society) {
         return (SocietyPosition) getHibernateTemplate()
-                .find("from society_position sp where sp.society = ? and sp.grade = 0", society)
+                .find("from society_position sp where sp.society = ? and sp.grade = 1", society)
                 .get(0);
     }
 

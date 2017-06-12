@@ -97,16 +97,16 @@ public class UserController {
         JSONObject college = new JSONObject(true);
         JSONObject school = new JSONObject(true);
 
-        if (user.getMajor() != null) {
-            school.put("id", user.getMajor().getCollege().getSchool().getId());
-            school.put("name", user.getMajor().getCollege().getSchool().getName());
+        if (update.getMajor() != null) {
+            school.put("id", update.getMajor().getCollege().getSchool().getId());
+            school.put("name", update.getMajor().getCollege().getSchool().getName());
 
-            college.put("id", user.getMajor().getCollege().getId());
-            college.put("name", user.getMajor().getCollege().getName());
+            college.put("id", update.getMajor().getCollege().getId());
+            college.put("name", update.getMajor().getCollege().getName());
             college.put("school", school);
 
-            major.put("id", user.getMajor().getId());
-            major.put("name", user.getMajor().getName());
+            major.put("id", update.getMajor().getId());
+            major.put("name", update.getMajor().getName());
             major.put("college", college);
         }
 
@@ -141,7 +141,7 @@ public class UserController {
         // 写入本地中
         FileUtils.copyInputStreamToFile(logo.getInputStream(), new File(systemPath, fileName));
 
-        String relativePath = "/resources/user/logo/" + fileName;
+        String relativePath = "http://112.74.214.252:8080/acloud/resources/user/logo/" + fileName;
         mUserService.updateUserLogo(userId, relativePath);
     }
 
