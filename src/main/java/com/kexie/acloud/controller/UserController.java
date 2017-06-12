@@ -141,7 +141,7 @@ public class UserController {
         // 写入本地中
         FileUtils.copyInputStreamToFile(logo.getInputStream(), new File(systemPath, fileName));
 
-        String relativePath = "/resources/user/logo/" + fileName;
+        String relativePath = "http://112.74.214.252:8080/acloud/resources/user/logo/" + fileName;
         mUserService.updateUserLogo(userId, relativePath);
     }
 

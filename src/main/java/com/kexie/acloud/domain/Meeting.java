@@ -86,7 +86,6 @@ public class Meeting {
     // 会议是否结束
     private boolean isEnd = false;
 
-
     public List<User> getMembers() {
         return members;
     }

@@ -115,7 +115,7 @@ public class TaskController {
      * @return
      */
     @RequestMapping(value = "user", method = RequestMethod.GET)
-    public List<Task> getTaskByUserId(@RequestParam("userId") String userId) {
+    public List<Task> getTaskByUserId(@RequestAttribute("userId") String userId) {
         return mTaskService.getTaskByUserId(userId);
     }
 
