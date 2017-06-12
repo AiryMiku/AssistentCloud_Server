@@ -344,6 +344,18 @@ public class SocietyService implements ISocietyService {
                             add(new User(removeUserId));
                         }
                     }));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "system",
+                    0,
+                    society.getName(),
+                    society.getSocietyLogo(),
+                    "你退出了" + society.getName(),
+                    "很遗憾，一个悲伤的消息，你离开了" + society.getName(),
+                    new ArrayList<User>() {
+                        {
+                            add(new User(removeUserId));
+                        }
+                    }));
             return "移除成功";
         } else {
             throw new SocietyException("成员不在该社团中");
@@ -452,6 +464,19 @@ public class SocietyService implements ISocietyService {
                         add(invitation.getInvitaUser());
                     }
                 }));
+        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "apply",
+                invitation.getInvitationId(),
+                invitation.getSociety().getName(),
+                invitation.getSociety().getSocietyLogo(),
+                invitation.getSociety().getName() + "邀请你加入他们❤️",
+                invitation.getSociety().getName()+":"+invitation.getMessage(),
+                new ArrayList<User>() {
+                    {
+                        add(invitation.getInvitaUser());
+                    }
+                }));
+
     }
 
     /**
@@ -491,9 +516,34 @@ public class SocietyService implements ISocietyService {
                             add(invitation.getInvitaUser());
                         }
                     }));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "apply",
+                    inviteId,
+                    invitation.getSociety().getName(),
+                    invitation.getSociety().getSocietyLogo(),
+                    "欢迎加入"+invitation.getSociety().getName() + "❤️",
+                    "恭喜你已经是" + invitation.getSociety().getName() + "的一员了",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getInvitaUser());
+                        }
+                    }));
 
             // 通知邀请发起人 邀请成功
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    inviteId,
+                    invitation.getInvitaUser().getUserId(),
+                    invitation.getInvitaUser().getLogoUrl(),
+                    invitation.getInvitaUser().getUserId()+"("+invitation.getInvitaUser().getNickName()+")"+
+                            " 接受你的邀请加入"+invitation.getSociety().getName() + "❤️",
+                    "快去调戏小鲜肉吧",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getHandleUser());
+                        }
+                    }));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "apply",
                     inviteId,
                     invitation.getInvitaUser().getUserId(),
                     invitation.getInvitaUser().getLogoUrl(),
@@ -510,6 +560,20 @@ public class SocietyService implements ISocietyService {
         else{
             // 通知被邀请的人加入社团失败
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    inviteId,
+                    invitation.getInvitaUser().getUserId(),
+                    invitation.getInvitaUser().getLogoUrl(),
+                    "很遗憾"+invitation.getInvitaUser().getUserId()+"("+invitation.getInvitaUser().getNickName()+")"
+                            + "拒绝了你的邀请(；′⌒`)",
+                    "下次把他的腿给打断",
+                    new ArrayList<User>() {
+                        {
+                            add(invitation.getHandleUser());
+                        }
+                    }));
+
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "apply",
                     inviteId,
                     invitation.getInvitaUser().getUserId(),
                     invitation.getInvitaUser().getLogoUrl(),
