@@ -72,7 +72,7 @@ public interface ITaskService {
      * @param taskId  更新任务的Id
      * @param subTask 最新的子任务
      */
-    void updateSubTask(String taskId, List<SubTask> subTask);
+    void updateSubTask(String taskId, List<Integer> subTask, String userId);
 
     /**
      * 更新任务的执行者

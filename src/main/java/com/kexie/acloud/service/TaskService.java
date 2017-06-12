@@ -92,10 +92,24 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public void updateSubTask(String taskId, List<SubTask> subTask) {
-        Task task = mTaskDao.getTasksByTaskId(taskId,null,null);
-        task.setSubTask(subTask);
-        mTaskDao.update(task);
+    public void updateSubTask(String taskId, List<Integer> subTask, String userId) {
+//        Task task = mTaskDao.getTasksByTaskId(taskId,null,null);
+//        task.setSubTask(subTask);
+//        mTaskDao.update(task);
+        if(!mTaskDao.isInExecutor(taskId,userId)){
+            throw new TaskException("你不是任务执行者");
+        }
+
+        if(mTaskDao.isSubTaskInTask(taskId,subTask)){
+            for(Integer subTaskId : subTask) {
+                SubTask st = mTaskDao.getSubTaskById(subTaskId);
+                st.setProgress(1);
+                mTaskDao.updateSubTask(st);
+            }
+        }
+        else{
+            throw new TaskException("有些子任务不属于当前任务");
+        }
     }
 
     @Override

@@ -24,4 +24,14 @@ public class FormatUtil {
         }
         return result;
     }
+
+    public static List<Integer> formatJsonList(String jsonList){
+        String a = jsonList.substring(1,jsonList.length()-1);
+        String[] b = a.split(",");
+        List<Integer> result = new ArrayList<>();
+        for(String c : b){
+            result.add(Integer.parseInt(c));
+        }
+        return result;
+    }
 }

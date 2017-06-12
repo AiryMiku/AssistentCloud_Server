@@ -11,6 +11,7 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +25,9 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
 
     @Autowired
     IUserDao userDao;
+
+    @Autowired
+    ISocietyDao societyDao;
 
     @Autowired
     TaskExecutor taskExecutor;
@@ -99,25 +103,46 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         getHibernateTemplate().clear();
 
         BeanUtil.copyProperties(task, t);
+
+        // 加载完整社团信息
+        t.setSociety(societyDao.getSocietyById(t.getSociety().getId()));
+
         getHibernateTemplate().update(t);
 
-        // 向所有在线的参与者发送新任务通知
-        taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
-                task.getId(),
-                task.getPublisher().getUserId(),
-                task.getPublisher().getLogoUrl(),
-                "你有一条任务更新了，快去查看吧❤️",
-                task.getTitle(),
-                task.getExecutors()));
-        // 向所有参与者发送新任务通知
-        taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
-                "task",
-                task.getId(),
-                task.getPublisher().getUserId(),
-                task.getPublisher().getLogoUrl(),
-                "你有一条任务更新了，快去查看吧❤️",
-                task.getTitle(),
-                task.getExecutors()));
+        if(t.getTaskType()==2){
+            // 任务完成,向任务发布者发送通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    task.getId(),
+                    task.getSociety().getName(),
+                    task.getSociety().getSocietyLogo(),
+                    "你有一条任务完成了，快去查看吧❤️",
+                    task.getTitle(),
+                    new ArrayList<User>(){
+                        {
+                            add(new User(task.getPublisher().getUserId()));
+                        }
+                    }));
+        }
+        else {
+
+            // 向所有在线的参与者发送新任务通知
+            taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    task.getId(),
+                    task.getPublisher().getUserId(),
+                    task.getPublisher().getLogoUrl(),
+                    "你有一条任务更新了，快去查看吧❤️",
+                    task.getTitle(),
+                    task.getExecutors()));
+            // 向所有参与者发送新任务通知
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "task",
+                    task.getId(),
+                    task.getPublisher().getUserId(),
+                    task.getPublisher().getLogoUrl(),
+                    "你有一条任务更新了，快去查看吧❤️",
+                    task.getTitle(),
+                    task.getExecutors()));
+        }
 
         return getHibernateTemplate().get(Task.class, task.getId());
     }
@@ -125,6 +150,7 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
     @Override
     public void updateSubTask(SubTask subTask) {
         getHibernateTemplate().update(subTask);
+        // TODO: 子任务更新需要通知发布者，但是还需要上级任务的信息
     }
 
     @SuppressWarnings("unchecked")
@@ -148,5 +174,21 @@ public class TaskDao extends HibernateDaoSupport implements ITaskDao {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isSubTaskInTask(String taskId, List<Integer> subTask) {
+        for (Integer subTaskId : subTask){
+            // TODO:查询二级任务是否属于一级任务
+//            if(getHibernateTemplate().find("from Task t where t.id = ? and = ?",taskId,subTaskId).size()==0){
+//                return false;
+//            }
+        }
+        return true;
+    }
+
+    @Override
+    public SubTask getSubTaskById(int subTaskId) {
+        return getHibernateTemplate().get(SubTask.class,subTaskId);
     }
 }

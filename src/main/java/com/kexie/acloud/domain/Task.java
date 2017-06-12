@@ -85,7 +85,7 @@ public class Task {
     //      而且遇到上面的问题，所以使用一个实体SubTask保存子任务
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "task_subTask", joinColumns = @JoinColumn(name = "task_id"))
-    @Fetch(value = FetchMode.SUBSELECT)
+    @Fetch(value = FetchMode.SELECT)
     private List<SubTask> subTask;
 
     public String getId() {

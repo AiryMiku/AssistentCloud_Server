@@ -44,5 +44,10 @@ public interface ITaskDao {
 
     List<Task> getTasksBySocietyId(int societyId);
 
+    SubTask getSubTaskById(int subTaskId);
+
     boolean isInExecutor(String id, String userId);
+
+    // 判断二级任务与一级任务的关系
+    boolean isSubTaskInTask(String taskId, List<Integer>subTask);
 }

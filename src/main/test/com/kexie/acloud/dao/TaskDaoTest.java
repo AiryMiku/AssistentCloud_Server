@@ -4,10 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.kexie.acloud.config.AppConfig;
 import com.kexie.acloud.domain.Society;
-import com.kexie.acloud.domain.SubTask;
 import com.kexie.acloud.domain.Task;
 import com.kexie.acloud.domain.User;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,15 +58,15 @@ public class TaskDaoTest {
         t2.setSociety(society);
 
         // 子任务
-        List<SubTask> subTasks = new ArrayList<>();
-        subTasks.add(new SubTask("问题1", 0.1));
-        task.setSubTask(subTasks);
-
-        List<SubTask> subTasks2 = new ArrayList<>();
-        subTasks2.add(new SubTask("问题1", 0.1));
-        subTasks2.add(new SubTask("问题2", 0.2));
-        subTasks2.add(new SubTask("问题3", 0.3));
-        t2.setSubTask(subTasks2);
+//        List<SubTask> subTasks = new ArrayList<>();
+//        subTasks.add(new SubTask("问题1", 0.1));
+//        task.setSubTask(subTasks);
+//
+//        List<SubTask> subTasks2 = new ArrayList<>();
+//        subTasks2.add(new SubTask("问题1", 0.1));
+//        subTasks2.add(new SubTask("问题2", 0.2));
+//        subTasks2.add(new SubTask("问题3", 0.3));
+//        t2.setSubTask(subTasks2);
 
         taskDao.add(task);
         taskDao.add(t2);

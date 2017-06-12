@@ -9,6 +9,7 @@ import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.AuthorizedException;
 import com.kexie.acloud.exception.FormException;
 import com.kexie.acloud.service.ITaskService;
+import com.kexie.acloud.util.FormatUtil;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +52,7 @@ public class TaskController {
     }
 
     /**
-     * 更新任务
+     * 更新一级任务
      *
      * @param taskForm
      * @param form
@@ -70,6 +71,19 @@ public class TaskController {
         Task result = mTaskService.update(task);
 
         return result;
+    }
+
+    /**
+     * 更新二级任务
+     * @param jsonObject
+     * @param userId
+     */
+    @RequestMapping(value = "/subtask",method = RequestMethod.POST)
+    public void updateSubTask(@RequestBody JSONObject jsonObject,
+                              @RequestAttribute("userId") String userId){
+        mTaskService.updateSubTask(jsonObject.get("taskId").toString(),
+                FormatUtil.formatJsonList(jsonObject.get("subTask").toString()),
+                userId);
     }
 
     /**

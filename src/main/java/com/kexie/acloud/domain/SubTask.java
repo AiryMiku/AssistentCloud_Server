@@ -21,12 +21,12 @@ public class SubTask {
 
     private String question;
 
-    @Column(name = "progress", columnDefinition = "double default 0.0")
-    private double progress;
+    @Column(name = "progress")
+    private int progress = 0;
 
     public SubTask(){}
 
-    public SubTask(String question, double progress) {
+    public SubTask(String question, int progress) {
         this.question = question;
         this.progress = progress;
     }
@@ -47,11 +47,11 @@ public class SubTask {
         this.question = question;
     }
 
-    public double getProgress() {
+    public int getProgress() {
         return progress;
     }
 
-    public void setProgress(double progress) {
+    public void setProgress(int progress) {
         this.progress = progress;
     }
 
