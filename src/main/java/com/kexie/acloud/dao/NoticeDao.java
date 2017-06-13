@@ -154,7 +154,10 @@ public class NoticeDao implements INoticeDao {
             RedisUtil.deleteMsg(jedisConnectionFactory.getJedis(), userId, identifier, "notice");
             // 更新用户今日积分
             RedisUtil.updateScoreboard(jedisConnectionFactory.getJedis(),
-                    notice.getSociety().getId(),userId, ScoreBoardUtil.NOTICE);
+                    notice.getSociety().getId(),
+                    userId,
+                    userDao.getUser(userId).getNickName(),
+                    ScoreBoardUtil.NOTICE);
         }
 
         String notice_visitor = "notice:visitor:" + noticeId;

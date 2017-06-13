@@ -201,9 +201,9 @@ public class RedisUtil {
      * @param userId
      * @param score
      */
-   public static void updateScoreboard(Jedis conn,int societyId, String userId, int score){
+   public static void updateScoreboard(Jedis conn,int societyId, String userId, String nikeName, int score){
        String scoreboardkey="scoreboard:"+societyId+":"+DateUtil.formatCurrentDate();
-       conn.zincrby(scoreboardkey,score,userId);
+       conn.zincrby(scoreboardkey,score,userId+"("+nikeName+")");
    }
 
     /**

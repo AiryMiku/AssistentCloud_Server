@@ -4,16 +4,15 @@ import com.kexie.acloud.dao.IUserDao;
 import com.kexie.acloud.domain.Society;
 import com.kexie.acloud.domain.User;
 import com.kexie.acloud.exception.UserException;
-import com.kexie.acloud.util.*;
-
+import com.kexie.acloud.util.DateUtil;
+import com.kexie.acloud.util.EncryptionUtil;
+import com.kexie.acloud.util.MyJedisConnectionFactory;
+import com.kexie.acloud.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 import javax.annotation.Resource;
-
 import java.util.Calendar;
 import java.util.List;
 
@@ -45,13 +44,14 @@ public class UserService implements IUserService {
         }
         Calendar calendar = Calendar.getInstance();
         // 用户今日第一次登录,积分+2
-        if (!DateUtil.formatDate(calendar).equals(RedisUtil.getLastLoginDate(jedisConnectionFactory.getJedis(), user.getUserId()))) {
-            RedisUtil.updateLoginDate(jedisConnectionFactory.getJedis(), user.getUserId(), DateUtil.formatCurrentDate());
-            List<Society> societies = mUserDao.getSocietiesByUserId(user.getUserId());
+        if (!DateUtil.formatDate(calendar).equals(RedisUtil.getLastLoginDate(jedisConnectionFactory.getJedis(), loginUser.getUserId()))) {
+            RedisUtil.updateLoginDate(jedisConnectionFactory.getJedis(), loginUser.getUserId(), DateUtil.formatCurrentDate());
+            List<Society> societies = mUserDao.getSocietiesByUserId(loginUser.getUserId());
             for (Society society : societies) {
                 RedisUtil.updateScoreboard(jedisConnectionFactory.getJedis(),
                         society.getId(),
-                        user.getUserId(),
+                        loginUser.getUserId(),
+                        loginUser.getNickName(),
                         2);
             }
         }
