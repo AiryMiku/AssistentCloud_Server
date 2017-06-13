@@ -13,9 +13,11 @@ public class PushMessage {
     private Date time;
     private String title;
     private String info;
+    private String msgType;
 
-    public PushMessage(String identifier,String id, String publisher, String logo, Date time, String title, String message) {
+    public PushMessage(String identifier, String msgType, String id, String publisher, String logo, Date time, String title, String message) {
         this.id = id;
+        this.msgType = msgType;
         this.publisher = publisher;
         this.logo = logo;
         this.time = time;
@@ -25,6 +27,14 @@ public class PushMessage {
     }
 
     public PushMessage() {
+    }
+
+    public String getMsgType() {
+        return msgType;
+    }
+
+    public void setMsgType(String msgType) {
+        this.msgType = msgType;
     }
 
     public String getId() {

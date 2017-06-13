@@ -55,6 +55,7 @@ public class NoticeService implements INoticeService {
 
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
                     notice.getId(),
                     notice.getPublisher().getUserId(),
                     notice.getPublisher().getLogoUrl(),
@@ -83,6 +84,7 @@ public class NoticeService implements INoticeService {
         if(noticeDao.updateNotice(notice_id,newNotice,user_id)){
             // 向所有在线的参与者发送新公告通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "notice",
                     newNotice.getId(),
                     newNotice.getPublisher().getUserId(),
                     newNotice.getPublisher().getLogoUrl(),

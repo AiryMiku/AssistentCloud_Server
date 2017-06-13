@@ -21,11 +21,12 @@ public class RedisUtil {
      * @return
      */
 
-    public static Map<String,Object> generateMessage(int id,String publisher,String logo, String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(String msgType, int id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
+        values.put("type",msgType);
         values.put("id",id);
         values.put("publisher",publisher);
         values.put("logo",logo);
@@ -36,11 +37,12 @@ public class RedisUtil {
         return values;
     }
 
-    public static Map<String,Object> generateMessage(String id,String publisher,String logo, String title, String info, List<User>recipients){
+    public static Map<String,Object> generateMessage(String msgType, String id,String publisher,String logo, String title, String info, List<User>recipients){
 
         String identifier = UUID.randomUUID().toString();
         HashMap<String,Object> values = new HashMap<String,Object>();
 
+        values.put("type",msgType);
         values.put("id",id);
         values.put("publisher",publisher);
         values.put("logo",logo);
@@ -62,7 +64,7 @@ public class RedisUtil {
    public static void sendPushMsg(Jedis conn,String msgType, int id, String publisher, String logo, String title, String info,List<User> recipients){
 
        Set<String>reci = FormatUtil.formatUserId(recipients);
-       Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
+       Map<String,Object> message = generateMessage(msgType, id, publisher, logo, title, info, recipients);
        Transaction transaction = conn.multi();
        for (String user_id:reci) {
 
@@ -78,7 +80,7 @@ public class RedisUtil {
     public static void sendPushMsg(Jedis conn,String msgType, String id,String publisher, String logo, String title, String info,List<User> recipients){
 
         Set<String>reci = FormatUtil.formatUserId(recipients);
-        Map<String,Object> message = generateMessage(id, publisher, logo, title, info, recipients);
+        Map<String,Object> message = generateMessage(msgType ,id, publisher, logo, title, info, recipients);
         Transaction transaction = conn.multi();
         for (String user_id:reci) {
 

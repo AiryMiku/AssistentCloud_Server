@@ -186,6 +186,7 @@ public class SocietyService implements ISocietyService {
 
         // 向在线社团负责人发送申请通知
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "society",
                 apply.getId(),
                 apply.getUser().getUserId(),
                 apply.getUser().getLogoUrl(),
@@ -275,6 +276,7 @@ public class SocietyService implements ISocietyService {
 
             // 向申请的在线用户发送申请成功的通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     applyId,
                     apply.getSociety().getName(),
                     apply.getSociety().getSocietyLogo(),
@@ -301,6 +303,7 @@ public class SocietyService implements ISocietyService {
         } else {
             // 向申请的在线用户发送申请失败的通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     applyId,
                     apply.getSociety().getName(),
                     apply.getSociety().getSocietyLogo(),
@@ -358,6 +361,7 @@ public class SocietyService implements ISocietyService {
             mSocietyDao.deleteMember(societyId, removeUserId);
             // 给被移除的成员发送通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     0,
                     society.getName(),
                     society.getSocietyLogo(),
@@ -478,6 +482,7 @@ public class SocietyService implements ISocietyService {
 
         // 推送到userid这个用户，有一个邀请
         taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                "society",
                 invitation.getInvitationId(),
                 invitation.getSociety().getName(),
                 invitation.getSociety().getSocietyLogo(),
@@ -530,6 +535,7 @@ public class SocietyService implements ISocietyService {
             mSocietyDao.addMember(invitation.getPosition(), invitation.getInvitaUser().getUserId());
             // 通知被邀请的人已经成功加入社团
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     inviteId,
                     invitation.getSociety().getName(),
                     invitation.getSociety().getSocietyLogo(),
@@ -555,6 +561,7 @@ public class SocietyService implements ISocietyService {
 
             // 通知邀请发起人 邀请成功
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     inviteId,
                     invitation.getInvitaUser().getUserId(),
                     invitation.getInvitaUser().getLogoUrl(),
@@ -584,6 +591,7 @@ public class SocietyService implements ISocietyService {
         else{
             // 通知被邀请的人加入社团失败
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "society",
                     inviteId,
                     invitation.getInvitaUser().getUserId(),
                     invitation.getInvitaUser().getLogoUrl(),

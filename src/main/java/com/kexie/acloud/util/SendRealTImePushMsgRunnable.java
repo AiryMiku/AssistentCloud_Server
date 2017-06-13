@@ -29,6 +29,8 @@ public class SendRealTImePushMsgRunnable implements Runnable {
 
     private String info;
 
+    private String msgType;
+
     private List<User>recipients;
 
     private Map<String, WebSocketSession> webSocketSessionMap;
@@ -39,10 +41,10 @@ public class SendRealTImePushMsgRunnable implements Runnable {
         Map<String,Object> message = null;
         // 构造消息
         if(id!=0) {
-            message = RedisUtil.generateMessage(id, publisher, logo, title, info, recipients);
+            message = RedisUtil.generateMessage(msgType, id, publisher, logo, title, info, recipients);
         }
         else{
-            message = RedisUtil.generateMessage(sid, publisher, logo, title, info, recipients);
+            message = RedisUtil.generateMessage(msgType, sid, publisher, logo, title, info, recipients);
         }
         for (User user:recipients){
             WebSocketSession session = webSocketSessionMap.get(user.getUserId());
@@ -67,8 +69,9 @@ public class SendRealTImePushMsgRunnable implements Runnable {
         }
     }
 
-    public SendRealTImePushMsgRunnable(Jedis conn,int id, String publisher, String logo, String title, String info, List<User> recipients) {
+    public SendRealTImePushMsgRunnable(Jedis conn,String msgType, int id, String publisher, String logo, String title, String info, List<User> recipients) {
         this.conn = conn;
+        this.msgType = msgType;
         this.id = id;
         this.publisher = publisher;
         this.logo = logo;
@@ -78,8 +81,9 @@ public class SendRealTImePushMsgRunnable implements Runnable {
         this.webSocketSessionMap = PushHandler.getmUserWsSession();
     }
 
-    public SendRealTImePushMsgRunnable(Jedis conn, String id, String publisher, String logo, String title, String info, List<User> recipients) {
+    public SendRealTImePushMsgRunnable(Jedis conn, String msgType, String id, String publisher, String logo, String title, String info, List<User> recipients) {
         this.conn = conn;
+        this.msgType = msgType;
         this.sid = id;
         this.publisher = publisher;
         this.logo = logo;
