@@ -587,7 +587,7 @@ GET /message/notice
 JSON 格式
 ```json
 [
-  {
+  {____
     "id": 39, // 公告ID
     "publisher": zojian@qq.com
     "logo": http://i.niupic.com/images/2017/06/06/9q1wfr.jpg,

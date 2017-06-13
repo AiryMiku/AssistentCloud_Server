@@ -285,10 +285,34 @@ public class SocietyService implements ISocietyService {
                             add(apply.getUser());
                         }
                     }));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "apply",
+                    applyId,
+                    apply.getSociety().getName(),
+                    apply.getSociety().getSocietyLogo(),
+                    apply.getSociety().getName() + "接受了你的申请❤️",
+                    "恭喜你已经是" + apply.getSociety().getName() + "的一员了",
+                    new ArrayList<User>() {
+                        {
+                            add(apply.getUser());
+                        }
+                    }));
 
         } else {
             // 向申请的在线用户发送申请失败的通知
             taskExecutor.execute(new SendRealTImePushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    applyId,
+                    apply.getSociety().getName(),
+                    apply.getSociety().getSocietyLogo(),
+                    apply.getSociety().getName() + "拒绝了你的申请(；′⌒`)",
+                    "不哭，摸摸头，再试一次",
+                    new ArrayList<User>() {
+                        {
+                            add(apply.getUser());
+                        }
+                    }));
+            taskExecutor.execute(new SendPushMsgRunnable(jedisConnectionFactory.getJedis(),
+                    "apply",
                     applyId,
                     apply.getSociety().getName(),
                     apply.getSociety().getSocietyLogo(),
